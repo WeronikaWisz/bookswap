@@ -1,6 +1,7 @@
 package com.bookswap.bookswapapp.enums;
 
-public enum BookLabel {
+public enum EBookStatus {
+    AVAILABLE,
     PERMANENT_SWAP,
     TEMPORARY_SWAP
 }

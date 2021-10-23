@@ -1,6 +1,6 @@
 package com.bookswap.bookswapapp.enums;
 
-public enum SwapStatus {
+public enum ESwapStatus {
     IN_PROGRESS,
     COMPLETED
 }

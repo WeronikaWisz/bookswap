@@ -1,7 +1,8 @@
 package com.bookswap.bookswapapp.enums;
 
-public enum RequestStatus {
+public enum ERequestStatus {
     WAITING,
     ACCEPTED,
-    DENIED
+    DENIED,
+    CANCELED
 }

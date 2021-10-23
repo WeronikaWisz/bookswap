@@ -1,7 +1,6 @@
 package com.bookswap.bookswapapp.models;
 
-import com.bookswap.bookswapapp.enums.BookLabel;
-import com.bookswap.bookswapapp.enums.SwapStatus;
+import com.bookswap.bookswapapp.enums.ESwapStatus;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -10,6 +9,7 @@ import javax.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
+@Table
 @Getter
 @Setter
 @NoArgsConstructor
@@ -25,7 +25,7 @@ public class Swap {
     private Book book2;
     @Enumerated
     @Column(columnDefinition = "smallint")
-    private SwapStatus status;
+    private ESwapStatus status;
     private LocalDateTime creationDate;
     private LocalDateTime updateDate;
 }
