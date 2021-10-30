@@ -1,0 +1,45 @@
+<mat-sidenav-container class="sidenav-container">
+  <mat-sidenav #drawer class="sidenav" fixedInViewport
+               [ngClass]="{hidden: (isHandset$ | async) === false}"
+      [attr.role]="(isHandset$ | async) ? 'dialog' : 'navigation'"
+      [mode]="(isHandset$ | async) ? 'over' : 'side'"
+      [opened]="(isHandset$ | async) === false">
+    <mat-toolbar>Menu</mat-toolbar>
+    <mat-nav-list>
+      <h2 matSubheader>MOJE KSIĄŻKI</h2>
+      <a mat-list-item href="#"><mat-icon>add_circle_outline</mat-icon> <span class="button-text">Dodaj książkę</span></a>
+      <a mat-list-item href="#"><mat-icon>list_alt</mat-icon> <span class="button-text">Przeglądaj</span></a>
+      <h2 matSubheader>MOJE KONTO</h2>
+      <a mat-list-item href="#"><mat-icon>person_outline</mat-icon> <span class="button-text">Mój profil</span></a>
+      <a mat-list-item href="#"><mat-icon>exit_to_app</mat-icon> <span class="button-text">Wyloguj</span></a>
+    </mat-nav-list>
+  </mat-sidenav>
+  <mat-sidenav-content>
+    <mat-toolbar color="primary">
+      <button
+        type="button"
+        aria-label="Toggle sidenav"
+        mat-icon-button
+        (click)="drawer.toggle()"
+        *ngIf="isHandset$ | async">
+        <mat-icon aria-label="Side nav toggle icon">menu</mat-icon>
+      </button>
+      <span>bookswap-gui</span>
+      <span class="spacer"></span>
+      <span *ngIf="(isHandset$ | async) === false">
+        <button mat-button [matMenuTriggerFor]="books">Moje książki</button>
+        <mat-menu #books="matMenu">
+          <button mat-menu-item>Dodaj książkę</button>
+          <button mat-menu-item>Przeglądaj</button>
+        </mat-menu>
+      </span>
+      <button mat-button [matMenuTriggerFor]="profile"><span class="user-info">Jan Kowalski</span><mat-icon>person</mat-icon></button>
+      <mat-menu #profile="matMenu">
+        <button mat-menu-item>Mój profil</button>
+        <button mat-menu-item>Wyloguj</button>
+      </mat-menu>
+    </mat-toolbar>
+    <ng-content></ng-content>
+    <!-- Add Content Here -->
+  </mat-sidenav-content>
+</mat-sidenav-container>
