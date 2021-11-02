@@ -11,7 +11,7 @@
       <a mat-list-item href="#"><mat-icon>list_alt</mat-icon> <span class="button-text">Przeglądaj</span></a>
       <h2 matSubheader>MOJE KONTO</h2>
       <a mat-list-item href="#"><mat-icon>person_outline</mat-icon> <span class="button-text">Mój profil</span></a>
-      <a mat-list-item href="#"><mat-icon>exit_to_app</mat-icon> <span class="button-text">Wyloguj</span></a>
+      <a mat-list-item href (click)="logout()"><mat-icon>logout</mat-icon> <span class="button-text">Wyloguj</span></a>
     </mat-nav-list>
   </mat-sidenav>
   <mat-sidenav-content>
@@ -21,23 +21,25 @@
         aria-label="Toggle sidenav"
         mat-icon-button
         (click)="drawer.toggle()"
-        *ngIf="isHandset$ | async">
+        *ngIf="(isHandset$ | async) && isLoggedIn">
         <mat-icon aria-label="Side nav toggle icon">menu</mat-icon>
       </button>
-      <span>bookswap-gui</span>
+      <span>Bookswap</span>
       <span class="spacer"></span>
-      <span *ngIf="(isHandset$ | async) === false">
+      <span *ngIf="(isHandset$ | async) === false && isLoggedIn">
         <button mat-button [matMenuTriggerFor]="books">Moje książki</button>
         <mat-menu #books="matMenu">
-          <button mat-menu-item>Dodaj książkę</button>
-          <button mat-menu-item>Przeglądaj</button>
+          <button mat-menu-item><mat-icon>add_circle_outline</mat-icon> Dodaj książkę</button>
+          <button mat-menu-item><mat-icon>list_alt</mat-icon> Przeglądaj</button>
         </mat-menu>
       </span>
-      <button mat-button [matMenuTriggerFor]="profile"><span class="user-info">Jan Kowalski</span><mat-icon>person</mat-icon></button>
+      <button mat-button [matMenuTriggerFor]="profile" *ngIf="isLoggedIn"><span class="user-info">{{username}}</span><mat-icon>person</mat-icon></button>
       <mat-menu #profile="matMenu">
-        <button mat-menu-item>Mój profil</button>
-        <button mat-menu-item>Wyloguj</button>
+        <button mat-menu-item><mat-icon>person_outline</mat-icon> Mój profil</button>
+        <button mat-menu-item (click)="logout()"><mat-icon>logout</mat-icon> Wyloguj</button>
       </mat-menu>
+      <button mat-button *ngIf="!isLoggedIn" routerLink="login">Logowanie</button>
+      <button mat-button *ngIf="!isLoggedIn" routerLink="register">Rejestracja</button>
     </mat-toolbar>
     <ng-content></ng-content>
     <!-- Add Content Here -->

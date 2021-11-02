@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { TokenStorageService } from "./services/token-storage.service";
 
 @Component({
   selector: 'app-root',
@@ -6,5 +7,5 @@ import { Component } from '@angular/core';
   styleUrls: ['./app.component.sass']
 })
 export class AppComponent {
-  title = 'bookswap-gui';
+  title = 'Bookswap';
 }

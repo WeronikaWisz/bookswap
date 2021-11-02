@@ -1,10 +1,7 @@
 package com.bookswap.bookswapapp.dtos.auth;
 
-import com.sun.istack.NotNull;
 import lombok.Getter;
 import lombok.Setter;
-
-import java.util.Set;
 
 @Getter
 @Setter
@@ -12,7 +9,6 @@ public class SignupRequest {
 
     private String username;
     private String email;
-    private Set<String> role;
     private String password;
     private String name;
     private String surname;
