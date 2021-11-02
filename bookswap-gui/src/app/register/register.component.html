@@ -1,6 +1,6 @@
 <mat-card class="example-card mat-elevation-z8">
   <mat-card-content>
-    <form [formGroup]="form">
+    <form [formGroup]="form" [style.fontSize.px]=16>
       <h2>Rejestracja</h2>
       <mat-vertical-stepper formArrayName="formArray" [linear]="false" #stepper>
         <mat-step formGroupName="0" [stepControl]="formArray?.get([0])!">
@@ -26,7 +26,6 @@
           <mat-form-field class="full-width-input">
             <mat-label>Numer telefonu</mat-label>
             <input matInput placeholder="(+48) 123 456 789" formControlName="phone" required>
-<!--            <span matPrefix>+48&nbsp;</span>-->
             <mat-error>
               Podaj poprawny numer telefonu
             </mat-error>
@@ -106,7 +105,9 @@
           </div>
         </mat-step>
       </mat-vertical-stepper>
-      <button mat-raised-button color="primary" [disabled]="form.invalid"><mat-icon>how_to_reg</mat-icon><span class="login-button">Zarejestruj</span></button>
+      <span class="register-button">
+        <button mat-raised-button color="primary" [disabled]="form.invalid"><mat-icon>how_to_reg</mat-icon><span class="signup-button">Zarejestruj</span></button>
+      </span>
     </form>
   </mat-card-content>
 </mat-card>
