@@ -1,6 +1,6 @@
 <mat-card class="example-card mat-elevation-z8">
   <mat-card-content>
-    <form [formGroup]="form" (ngSubmit)="onSubmit()" [style.fontSize.px]=16>
+    <form *ngIf="!isLoggedIn" [formGroup]="form" (ngSubmit)="onSubmit()" [style.fontSize.px]=16>
       <h2>Logowanie</h2>
       <mat-form-field class="full-width-input">
         <input matInput placeholder="Nazwa użytkownika" formControlName="username" required>
