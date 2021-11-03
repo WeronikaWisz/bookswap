@@ -1,0 +1,21 @@
+<div class="content mat-elevation-z8">
+  <div fxLayout="row wrap" fxLayoutGap="16px grid">
+    <div fxFlex="25%" fxFlex.xs="100%" fxFlex.sm="50%" *ngFor="let num of [1,2,3,4,5,6,7]">
+      <mat-card class="mat-elevation-z4">
+        <mat-card-header>
+          <mat-card-title>Schemat architektury</mat-card-title>
+        </mat-card-header>
+        <img mat-card-image src="./../assets/images/schemat_architektury.png">
+        <mat-card-content>
+          <p>
+            Tak wygląda schemat
+          </p>
+        </mat-card-content>
+        <mat-card-actions>
+          <button mat-button>LIKE</button>
+          <button mat-button>SHARE</button>
+        </mat-card-actions>
+      </mat-card>
+    </div>
+  </div>
+</div>
