@@ -24,6 +24,8 @@ import { ProfileComponent } from './profile/profile.component';
 
 import { authInterceptorProviders } from './helpers/auth.interceptor';
 import {MatStepperModule} from "@angular/material/stepper";
+import {FlexLayoutModule} from "@angular/flex-layout";
+import { UserBooksComponent } from './user-books/user-books.component';
 
 @NgModule({
   declarations: [
@@ -31,7 +33,8 @@ import {MatStepperModule} from "@angular/material/stepper";
     MainNavComponent,
     LoginComponent,
     RegisterComponent,
-    ProfileComponent
+    ProfileComponent,
+    UserBooksComponent
   ],
   imports: [
     BrowserModule,
@@ -51,7 +54,8 @@ import {MatStepperModule} from "@angular/material/stepper";
     MatSelectModule,
     MatInputModule,
     MatFormFieldModule,
-    MatStepperModule
+    MatStepperModule,
+    FlexLayoutModule
   ],
   providers: [authInterceptorProviders],
   bootstrap: [AppComponent]

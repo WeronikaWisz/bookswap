@@ -46,7 +46,7 @@ export class LoginComponent implements OnInit {
 
         this.isLoggedIn = true;
         this.roles = this.tokenStorage.getUser().roles;
-        this.router.navigate(['/profile']).then(() => this.reloadPage());
+        this.router.navigate(['/my-books']).then(() => this.reloadPage());
       },
       err => {
         this.form.controls['username'].setErrors({'incorrect': true});
