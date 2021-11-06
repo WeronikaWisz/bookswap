@@ -1,0 +1,20 @@
+<h1 mat-dialog-title>Filtry</h1>
+<div mat-dialog-content>
+<!--  <p>What's your favorite animal?</p>-->
+  <mat-form-field class="full-width-input">
+    <input matInput placeholder="Tytuł" [(ngModel)]="data.title">
+  </mat-form-field>
+  <mat-form-field class="full-width-input">
+    <input matInput placeholder="Autor" [(ngModel)]="data.author">
+  </mat-form-field>
+  <mat-form-field class="full-width-input">
+    <input matInput placeholder="Wydawnictwo" [(ngModel)]="data.publisher">
+  </mat-form-field>
+  <mat-form-field class="full-width-input">
+    <input matInput placeholder="Rok publikacji" [(ngModel)]="data.yearOfPublication">
+  </mat-form-field>
+</div>
+<div mat-dialog-actions>
+  <button mat-button (click)="onNoClick()">Zamknij</button>
+  <button mat-raised-button color="primary" [mat-dialog-close]="data" cdkFocusInitial>Zastosuj</button>
+</div>
