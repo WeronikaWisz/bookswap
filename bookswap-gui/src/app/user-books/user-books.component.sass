@@ -1,5 +1,33 @@
+@import '~@angular/material/theming'
+@import '../../custom-theme.scss'
+
+$accent-color: map-get($bookswap-gui-accent, 50)
+
 .content
-  padding: 30px
+  padding: 50px
+  width: 100%
 
 .content > mat-card
-  min-width: 600px
+  margin-bottom: 16px
+
+.mat-card
+  background-color: #f8f8f8
+
+.mat-card-image
+  padding: 0 10px 0 10px
+
+.mat-icon-button
+  margin-bottom: 16px
+
+.clickable
+  cursor: pointer
+  &:hover
+    @include mat-elevation(10)
+
+.mat-icon
+  color: #707070
+
+.book-list
+  padding: 10px
+  height: 810px
+  overflow-y: scroll

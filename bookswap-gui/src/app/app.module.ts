@@ -26,6 +26,9 @@ import { authInterceptorProviders } from './helpers/auth.interceptor';
 import {MatStepperModule} from "@angular/material/stepper";
 import {FlexLayoutModule} from "@angular/flex-layout";
 import { UserBooksComponent } from './user-books/user-books.component';
+import {MatRippleModule} from "@angular/material/core";
+import { FiltersDialogComponent } from './user-books/filters-dialog/filters-dialog.component';
+import {MatDialogModule} from "@angular/material/dialog";
 
 @NgModule({
   declarations: [
@@ -34,7 +37,8 @@ import { UserBooksComponent } from './user-books/user-books.component';
     LoginComponent,
     RegisterComponent,
     ProfileComponent,
-    UserBooksComponent
+    UserBooksComponent,
+    FiltersDialogComponent
   ],
   imports: [
     BrowserModule,
@@ -55,7 +59,9 @@ import { UserBooksComponent } from './user-books/user-books.component';
     MatInputModule,
     MatFormFieldModule,
     MatStepperModule,
-    FlexLayoutModule
+    FlexLayoutModule,
+    MatRippleModule,
+    MatDialogModule
   ],
   providers: [authInterceptorProviders],
   bootstrap: [AppComponent]
