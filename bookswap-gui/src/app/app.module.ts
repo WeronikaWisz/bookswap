@@ -27,8 +27,12 @@ import {MatStepperModule} from "@angular/material/stepper";
 import {FlexLayoutModule} from "@angular/flex-layout";
 import { UserBooksComponent } from './user-books/user-books.component';
 import {MatRippleModule} from "@angular/material/core";
-import { FiltersDialogComponent } from './user-books/filters-dialog/filters-dialog.component';
+import {ExampleHeader, FiltersDialogComponent} from './user-books/filters-dialog/filters-dialog.component';
 import {MatDialogModule} from "@angular/material/dialog";
+import {MatChipsModule} from "@angular/material/chips";
+import {MatAutocompleteModule} from "@angular/material/autocomplete";
+import {MatDatepickerModule} from "@angular/material/datepicker";
+import { AddBookComponent } from './add-book/add-book.component';
 
 @NgModule({
   declarations: [
@@ -38,31 +42,36 @@ import {MatDialogModule} from "@angular/material/dialog";
     RegisterComponent,
     ProfileComponent,
     UserBooksComponent,
-    FiltersDialogComponent
+    FiltersDialogComponent,
+    ExampleHeader,
+    AddBookComponent
   ],
-  imports: [
-    BrowserModule,
-    AppRoutingModule,
-    BrowserAnimationsModule,
-    LayoutModule,
-    MatToolbarModule,
-    MatButtonModule,
-    MatSidenavModule,
-    MatIconModule,
-    MatListModule,
-    MatMenuModule,
-    FormsModule,
-    HttpClientModule,
-    ReactiveFormsModule,
-    MatCardModule,
-    MatSelectModule,
-    MatInputModule,
-    MatFormFieldModule,
-    MatStepperModule,
-    FlexLayoutModule,
-    MatRippleModule,
-    MatDialogModule
-  ],
+    imports: [
+        BrowserModule,
+        AppRoutingModule,
+        BrowserAnimationsModule,
+        LayoutModule,
+        MatToolbarModule,
+        MatButtonModule,
+        MatSidenavModule,
+        MatIconModule,
+        MatListModule,
+        MatMenuModule,
+        FormsModule,
+        HttpClientModule,
+        ReactiveFormsModule,
+        MatCardModule,
+        MatSelectModule,
+        MatInputModule,
+        MatFormFieldModule,
+        MatStepperModule,
+        FlexLayoutModule,
+        MatRippleModule,
+        MatDialogModule,
+        MatChipsModule,
+        MatAutocompleteModule,
+        MatDatepickerModule
+    ],
   providers: [authInterceptorProviders],
   bootstrap: [AppComponent]
 })

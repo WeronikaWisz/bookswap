@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import {MatDialog} from '@angular/material/dialog';
 import { FiltersDialogComponent } from './filters-dialog/filters-dialog.component'
+import {BookFilter} from "../models/user-books/BookFilter";
 
 @Component({
   selector: 'app-user-books',
@@ -9,11 +10,14 @@ import { FiltersDialogComponent } from './filters-dialog/filters-dialog.componen
 })
 export class UserBooksComponent implements OnInit {
 
-  title: string = '';
-  author: string = '';
-  publisher: string = '';
-  yearOfPublication: string = '';
-  categories: string[] = [];
+  bookFilter: BookFilter = new class implements BookFilter {
+    author: string = '';
+    categories: string[] = [];
+    publisher: string = '';
+    title: string = '';
+    yearOfPublicationFrom: string = '';
+    yearOfPublicationTo: string = '';
+  }
 
   constructor(public dialog: MatDialog) { }
 
@@ -26,18 +30,14 @@ export class UserBooksComponent implements OnInit {
 
   openFilter(): void {
     const dialogRef = this.dialog.open(FiltersDialogComponent, {
-      width: '250px',
-      data: {
-        title: this.title,
-        author: this.author,
-        publisher: this.publisher,
-        yearOfPublication: this.yearOfPublication,
-        categories: this.categories
-      },
+      data: this.bookFilter
     });
 
     dialogRef.afterClosed().subscribe(result => {
-      // this.animal = result;
+      console.log(result);
+      if(result) {
+        this.bookFilter = result;
+      }
     });
   }
 

@@ -1,15 +1,16 @@
 <div class="content mat-elevation-z8">
   <div fxLayout="row" fxLayoutAlign="space-between center">
     <h1>Moje książki</h1>
-    <button mat-mini-fab color="white" (click)="openFilter()">
-      <mat-icon>filter_list</mat-icon>
+    <button mat-raised-button color="white" (click)="openFilter()">
+      <mat-icon>filter_list</mat-icon> Filtry
     </button>
   </div>
+  <p>Liczba książek: 200</p>
   <hr>
   <br/>
   <div class="book-list">
   <div fxLayout="row wrap" fxLayoutGap="16px grid">
-    <div fxFlex="20%" fxFlex.xs="100%" fxFlex.sm="50%" fxFlex.md="25%" *ngFor="let num of [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27]">
+    <div fxFlex="20%" fxFlex.xs="100%" fxFlex.sm="50%" fxFlex.md="25%" fxFlex.gt-lg="16.6%" *ngFor="let num of [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27]">
       <mat-card class="clickable mat-elevation-z4" (click)="onCardClick($event)" matRipple>
         <mat-card-header>
           <mat-card-title>Schemat architektury</mat-card-title>
