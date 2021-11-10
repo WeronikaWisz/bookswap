@@ -1,1 +1,93 @@
-<p>add-book works!</p>
+<mat-card class="example-card mat-elevation-z8">
+  <mat-card-content>
+    <form *ngIf="!isLoggedIn" [formGroup]="form">
+      <h2>Dodawanie książki</h2>
+      <mat-form-field class="full-width-input smaller-input" appearance="outline">
+        <mat-label>Tytuł</mat-label>
+        <input matInput formControlName="title" required>
+        <mat-error>
+          Tytuł jest wymagany
+        </mat-error>
+      </mat-form-field>
+      <mat-form-field class="full-width-input smaller-input" appearance="outline">
+        <mat-label>Autor</mat-label>
+        <input matInput formControlName="author" required>
+        <mat-error>
+          Autor jest wymagany
+        </mat-error>
+      </mat-form-field>
+      <mat-form-field class="full-width-input smaller-input" appearance="outline">
+        <mat-label>Wydawnictwo</mat-label>
+        <input matInput formControlName="publisher" required>
+        <mat-error>
+          Wydawnictwo jest wymagane
+        </mat-error>
+      </mat-form-field>
+      <mat-form-field class="smaller-input" appearance="outline">
+        <mat-label>Rok publikacji</mat-label>
+        <input matInput [max]="maxDate" [matDatepicker]="dp" formControlName="yearOfPublication" required>
+        <mat-datepicker-toggle matSuffix [for]="dp"></mat-datepicker-toggle>
+        <mat-datepicker [calendarHeaderComponent]="dataPickerHeader" #dp
+                        startView="multi-year"
+                        (yearSelected)="chosenYearHandler($event, dp)"
+                        panelClass="example-month-picker">
+        </mat-datepicker>
+        <mat-error>
+          Rok publikacji jest wymagany
+        </mat-error>
+      </mat-form-field>
+      <mat-form-field class="full-width-input wider-input" appearance="outline">
+        <mat-label>Opis</mat-label>
+        <textarea matInput #description
+                  formControlName="description"
+                  cdkTextareaAutosize
+                  #autosize="cdkTextareaAutosize"
+                  cdkAutosizeMinRows="3"
+                  cdkAutosizeMaxRows="5"
+                  [maxlength]="255"></textarea>
+        <mat-hint align="end">{{description.value?.length || 0}}/255</mat-hint>
+      </mat-form-field>
+      <mat-form-field class="example-chip-list wider-input" appearance="outline">
+        <mat-label>Kategorie</mat-label>
+        <mat-chip-list #chipList aria-label="Category selection">
+          <mat-chip
+            *ngFor="let category of categories"
+            [selectable]="true"
+            [removable]="true"
+            (removed)="remove(category)">
+            {{category}}
+            <button matChipRemove>
+              <mat-icon>cancel</mat-icon>
+            </button>
+          </mat-chip>
+          <input
+            placeholder="Wybierz kategorię..."
+            #categoryInput
+            [formControl]="categoriesCtrl"
+            [matAutocomplete]="auto"
+            [matChipInputFor]="chipList"
+            [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+            (matChipInputTokenEnd)="add($event)">
+        </mat-chip-list>
+        <mat-autocomplete #auto="matAutocomplete" (optionSelected)="selected($event)">
+          <mat-option *ngFor="let category of filteredCategories | async" [value]="category">
+            {{category}}
+          </mat-option>
+        </mat-autocomplete>
+      </mat-form-field>
+      <input type="file" class="file-input"
+             (change)="onFileSelected($event)" #fileUpload>
+      <div class="file-upload">
+        <button mat-mini-fab color="primary" class="upload-btn"
+                (click)="fileUpload.click()">
+          <mat-icon>add_photo_alternate</mat-icon>
+        </button>
+      </div>
+      <p>{{fileName || "Nie wybrano pliku."}}</p>
+      <div class="book-photo">
+        <img [src]="imageUrl" height="200">
+      </div>
+      <button mat-raised-button color="primary" [disabled]="form.invalid" (click)="onSubmit()"><mat-icon>add_circle_outline</mat-icon><span class="add-button">Dodaj książkę</span></button>
+    </form>
+  </mat-card-content>
+</mat-card>

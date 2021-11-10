@@ -1,9 +1,17 @@
-mat-form-field.left-mat-field
-  //margin-right: 30px
-  width: 50%
+@media (min-width: 600px)
+  mat-form-field.left-mat-field
+    //margin-right: 30px
+    width: 50%
+
+@media (max-width: 600px)
+  mat-form-field.left-mat-field
+    width: 100%
 
 mat-form-field.wider-inputs
   width: 100%
 
 mat-form-field
-  padding: 10px
+  padding: 0 10px 0 10px
+
+//.mat-dialog-title
+//  text-align: center

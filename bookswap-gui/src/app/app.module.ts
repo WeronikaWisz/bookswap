@@ -27,12 +27,13 @@ import {MatStepperModule} from "@angular/material/stepper";
 import {FlexLayoutModule} from "@angular/flex-layout";
 import { UserBooksComponent } from './user-books/user-books.component';
 import {MatRippleModule} from "@angular/material/core";
-import {ExampleHeader, FiltersDialogComponent} from './user-books/filters-dialog/filters-dialog.component';
+import {FiltersDialogComponent} from './user-books/filters-dialog/filters-dialog.component';
 import {MatDialogModule} from "@angular/material/dialog";
 import {MatChipsModule} from "@angular/material/chips";
 import {MatAutocompleteModule} from "@angular/material/autocomplete";
 import {MatDatepickerModule} from "@angular/material/datepicker";
 import { AddBookComponent } from './add-book/add-book.component';
+import {DataPickerHeader} from "./helpers/data-picker.header";
 
 @NgModule({
   declarations: [
@@ -43,7 +44,7 @@ import { AddBookComponent } from './add-book/add-book.component';
     ProfileComponent,
     UserBooksComponent,
     FiltersDialogComponent,
-    ExampleHeader,
+    DataPickerHeader,
     AddBookComponent
   ],
     imports: [

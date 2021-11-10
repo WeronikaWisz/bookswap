@@ -1,29 +1,32 @@
 <mat-card class="example-card mat-elevation-z8">
   <mat-card-content>
-    <form *ngIf="!isLoggedIn" [formGroup]="form" [style.fontSize.px]=16>
+    <form *ngIf="!isLoggedIn" [formGroup]="form">
       <h2>Rejestracja</h2>
       <mat-vertical-stepper formArrayName="formArray" [linear]="false" #stepper>
         <mat-step formGroupName="0" [stepControl]="formArray?.get([0])!">
           <ng-template matStepLabel>Wprowadź dane osobowe</ng-template>
-          <mat-form-field class="full-width-input left-mat-field">
-            <input matInput placeholder="Imię" formControlName="name" required>
+          <mat-form-field class="full-width-input left-mat-field" appearance="outline">
+            <mat-label>Imię</mat-label>
+            <input matInput formControlName="name" required>
             <mat-error>
               Podaj imię
             </mat-error>
           </mat-form-field>
-          <mat-form-field class="full-width-input">
-            <input matInput placeholder="Nazwisko" formControlName="surname" required>
+          <mat-form-field class="full-width-input" appearance="outline">
+            <mat-label>Nazwisko</mat-label>
+            <input matInput formControlName="surname" required>
             <mat-error>
               Podaj nazwisko
             </mat-error>
           </mat-form-field>
-          <mat-form-field class="full-width-input left-mat-field">
-            <input matInput placeholder="Email" formControlName="email" required>
+          <mat-form-field class="full-width-input left-mat-field" appearance="outline">
+            <mat-label>Email</mat-label>
+            <input matInput formControlName="email" required>
             <mat-error>
               Podaj poprawny adres email
             </mat-error>
           </mat-form-field>
-          <mat-form-field class="full-width-input">
+          <mat-form-field class="full-width-input" appearance="outline">
             <mat-label>Numer telefonu</mat-label>
             <input matInput placeholder="(+48) 123 456 789" formControlName="phone">
             <mat-error>
@@ -36,39 +39,44 @@
         </mat-step>
         <mat-step formGroupName="1" [stepControl]="formArray?.get([1])!">
           <ng-template matStepLabel>Wprowadź dane adresowe</ng-template>
-          <mat-form-field class="full-width-input left-mat-field">
+          <mat-form-field class="full-width-input left-mat-field" appearance="outline">
             <mat-label>Kod pocztowy</mat-label>
             <input matInput placeholder="12-345" formControlName="postalCode" required>
             <mat-error>
               Podaj poprawny kod pocztowy
             </mat-error>
           </mat-form-field>
-          <mat-form-field class="full-width-input">
-            <input matInput placeholder="Poczta" formControlName="post" required>
+          <mat-form-field class="full-width-input" appearance="outline">
+            <mat-label>Poczta</mat-label>
+            <input matInput formControlName="post" required>
             <mat-error>
               Podaj miejscowość poczty
             </mat-error>
           </mat-form-field>
-          <mat-form-field class="full-width-input left-mat-field">
-            <input matInput placeholder="Miejscowość" formControlName="city" required>
+          <mat-form-field class="full-width-input left-mat-field" appearance="outline">
+            <mat-label>Miejscowość</mat-label>
+            <input matInput formControlName="city" required>
             <mat-error>
               Podaj miejsce zamieszkania
             </mat-error>
           </mat-form-field>
-          <mat-form-field class="full-width-input">
-            <input matInput placeholder="Ulica" formControlName="street" required>
+          <mat-form-field class="full-width-input" appearance="outline">
+            <mat-label>Ulica</mat-label>
+            <input matInput formControlName="street" required>
             <mat-error>
               Podaj nazwę ulicy
             </mat-error>
           </mat-form-field>
-          <mat-form-field class="full-width-input left-mat-field">
-            <input matInput placeholder="Numer domu" formControlName="buildingNumber" required>
+          <mat-form-field class="full-width-input left-mat-field" appearance="outline">
+            <mat-label>Numer domu</mat-label>
+            <input matInput formControlName="buildingNumber" required>
             <mat-error>
               Podaj numer domu
             </mat-error>
           </mat-form-field>
-          <mat-form-field class="full-width-input">
-            <input matInput placeholder="Numer lokalu" formControlName="doorNumber">
+          <mat-form-field class="full-width-input" appearance="outline">
+            <mat-label>Numer lokalu</mat-label>
+            <input matInput formControlName="doorNumber">
             <mat-error>
               Podaj numer lokalu
             </mat-error>
@@ -80,16 +88,18 @@
         </mat-step>
         <mat-step formGroupName="2" [stepControl]="formArray?.get([2])!">
           <ng-template matStepLabel>Wprowadź dane do logowania</ng-template>
-          <mat-form-field class="full-width-input">
-            <input matInput placeholder="Nazwa użytkownika" formControlName="username" required>
+          <mat-form-field class="full-width-input" appearance="outline">
+            <mat-label>Nazwa użytkownika</mat-label>
+            <input matInput formControlName="username" required>
             <mat-hint>Minimum 6 znaków</mat-hint>
             <mat-error>
               Wprowadź nazwę użytkownika, minimum 6 znaków
             </mat-error>
           </mat-form-field>
           <br/>
-          <mat-form-field class="full-width-input left-mat-field">
-            <input matInput [type]="hide ? 'password' : 'text'" placeholder="Hasło" formControlName="password" required>
+          <mat-form-field class="full-width-input left-mat-field" appearance="outline">
+            <mat-label>Hasło</mat-label>
+            <input matInput [type]="hide ? 'password' : 'text'" formControlName="password" required>
             <button mat-icon-button matSuffix (click)="hide = !hide" [attr.aria-label]="'Hide password'" [attr.aria-pressed]="hide">
               <mat-icon>{{hide ? 'visibility_off' : 'visibility'}}</mat-icon>
             </button>
@@ -98,8 +108,9 @@
               Wprowadź hasło, minimum 12 znaków
             </mat-error>
           </mat-form-field>
-          <mat-form-field class="full-width-input">
-            <input matInput type="password" placeholder="Powtórz hasło" formControlName="confirmPassword" required>
+          <mat-form-field class="full-width-input" appearance="outline">
+            <mat-label>Powtórz hasło</mat-label>
+            <input matInput type="password" formControlName="confirmPassword" required>
             <mat-error>
               Potwierdź hasło
             </mat-error>

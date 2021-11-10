@@ -7,8 +7,8 @@
     <mat-toolbar>Menu</mat-toolbar>
     <mat-nav-list>
       <h2 matSubheader>MOJE KSIĄŻKI</h2>
-      <a mat-list-item href="#"><mat-icon>add_circle_outline</mat-icon> <span class="button-text">Dodaj książkę</span></a>
-      <a mat-list-item href="#"><mat-icon>list_alt</mat-icon> <span class="button-text">Przeglądaj</span></a>
+      <a mat-list-item href routerLink="add-book"><mat-icon>add_circle_outline</mat-icon> <span class="button-text">Dodaj książkę</span></a>
+      <a mat-list-item href routerLink="my-books"><mat-icon>list_alt</mat-icon> <span class="button-text">Przeglądaj</span></a>
       <h2 matSubheader>MOJE KONTO</h2>
       <a mat-list-item href="#"><mat-icon>person_outline</mat-icon> <span class="button-text">Mój profil</span></a>
       <a mat-list-item href (click)="logout()"><mat-icon>logout</mat-icon> <span class="button-text">Wyloguj</span></a>
@@ -29,13 +29,13 @@
       <span *ngIf="(isHandset$ | async) === false && isLoggedIn">
         <button mat-button [matMenuTriggerFor]="books">Moje książki</button>
         <mat-menu #books="matMenu">
-          <button mat-menu-item><mat-icon>add_circle_outline</mat-icon> Dodaj książkę</button>
-          <button mat-menu-item><mat-icon>list_alt</mat-icon> Przeglądaj</button>
+          <button mat-menu-item routerLink="add-book"><mat-icon>add_circle_outline</mat-icon> Dodaj książkę</button>
+          <button mat-menu-item routerLink="my-books"><mat-icon>list_alt</mat-icon> Przeglądaj</button>
         </mat-menu>
       </span>
       <button mat-button [matMenuTriggerFor]="profile" *ngIf="isLoggedIn"><span class="user-info">{{username}}</span><mat-icon>person</mat-icon></button>
       <mat-menu #profile="matMenu">
-        <button mat-menu-item><mat-icon>person_outline</mat-icon> Mój profil</button>
+        <button mat-menu-item routerLink="profile"><mat-icon>person_outline</mat-icon> Mój profil</button>
         <button mat-menu-item (click)="logout()"><mat-icon>logout</mat-icon> Wyloguj</button>
       </mat-menu>
       <button mat-button *ngIf="!isLoggedIn" routerLink="login">Logowanie</button>

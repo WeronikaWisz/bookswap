@@ -4,36 +4,26 @@ import {
   Inject,
   ViewChild,
   ElementRef,
-  ChangeDetectionStrategy,
-  OnDestroy,
-  ChangeDetectorRef
 } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA} from '@angular/material/dialog';
 import { BookFilter } from "../../models/user-books/BookFilter";
-import {FormControl, Validators} from "@angular/forms";
-import {Observable, Subject} from "rxjs";
+import {FormControl} from "@angular/forms";
+import {Observable} from "rxjs";
 import {COMMA, ENTER} from '@angular/cdk/keycodes';
-import {map, startWith, takeUntil} from 'rxjs/operators';
+import {map, startWith} from 'rxjs/operators';
 import {MatChipInputEvent} from "@angular/material/chips";
 import {MatAutocompleteSelectedEvent} from "@angular/material/autocomplete";
 import {MomentDateAdapter, MAT_MOMENT_DATE_ADAPTER_OPTIONS} from '@angular/material-moment-adapter';
-import {DateAdapter, MAT_DATE_FORMATS, MAT_DATE_LOCALE, MatDateFormats} from '@angular/material/core';
-import {MatCalendar, MatDatepicker} from '@angular/material/datepicker';
+import {DateAdapter, MAT_DATE_FORMATS, MAT_DATE_LOCALE} from '@angular/material/core';
+import {MatDatepicker} from '@angular/material/datepicker';
 
 import * as _moment from 'moment';
 import {default as _rollupMoment, Moment} from 'moment';
 
 const moment = _rollupMoment || _moment;
 
-export const MY_FORMATS = {
-  parse: {
-    dateInput: 'YYYY',
-  },
-  display: {
-    dateInput: 'YYYY'
-  },
-};
-
+import {MY_FORMATS} from "../../helpers/data-picker.header";
+import {DataPickerHeader} from "../../helpers/data-picker.header";
 
 @Component({
   selector: 'app-filters-dialog',
@@ -62,10 +52,10 @@ export class FiltersDialogComponent implements OnInit {
 
   maxDate: Date;
 
-  exampleHeaderFrom = ExampleHeader;
-  exampleHeaderTo = ExampleHeader;
+  exampleHeaderFrom = DataPickerHeader;
+  exampleHeaderTo = DataPickerHeader;
 
-  @ViewChild('fruitInput') fruitInput!: ElementRef<HTMLInputElement>;
+  @ViewChild('categoryInput') categoryInput!: ElementRef<HTMLInputElement>;
 
   constructor(
     public dialogRef: MatDialogRef<FiltersDialogComponent>,
@@ -120,7 +110,7 @@ export class FiltersDialogComponent implements OnInit {
 
   selected(event: MatAutocompleteSelectedEvent): void {
     this.categories.push(event.option.viewValue);
-    this.fruitInput.nativeElement.value = '';
+    this.categoryInput.nativeElement.value = '';
     this.categoriesCtrl.setValue(null);
   }
 
@@ -158,71 +148,4 @@ export class FiltersDialogComponent implements OnInit {
     return this.data
   }
 
-}
-
-@Component({
-  selector: 'example-header',
-  styles: [
-    `
-    .example-header
-      display: flex
-      align-items: center
-      padding: 0.5em
-
-    .example-header-label
-      flex: 1
-      height: 1em
-      font-weight: 500
-      text-align: center
-
-    .example-double-arrow .mat-icon
-      margin: -22%
-
-  `,
-  ],
-  template: `
-    <div class="example-header">
-      <button mat-icon-button (click)="previousClicked()">
-        <mat-icon>keyboard_arrow_left</mat-icon>
-      </button>
-      <span class="example-header-label">{{periodLabel}}</span>
-      <button mat-icon-button (click)="nextClicked()">
-        <mat-icon>keyboard_arrow_right</mat-icon>
-      </button>
-    </div>
-  `,
-  changeDetection: ChangeDetectionStrategy.OnPush,
-})
-export class ExampleHeader<D> implements OnDestroy {
-  private _destroyed = new Subject<void>();
-  currentDate: Moment;
-
-  constructor(
-    private _calendar: MatCalendar<D>,
-    private _dateAdapter: DateAdapter<D>,
-    @Inject(MAT_DATE_FORMATS) private _dateFormats: MatDateFormats,
-    cdr: ChangeDetectorRef,
-  ) {
-    _calendar.stateChanges.pipe(takeUntil(this._destroyed)).subscribe(() => cdr.markForCheck());
-    this.currentDate = moment();
-  }
-
-  ngOnDestroy() {
-    this._destroyed.next();
-    this._destroyed.complete();
-  }
-
-  get periodLabel() {
-    return this._calendar.selected ?
-      this._dateAdapter.format(this._calendar.selected as D, this._dateFormats.display.dateInput).toLocaleUpperCase()
-      : this.currentDate.year()
-  }
-
-  previousClicked() {
-    this._calendar.activeDate = this._dateAdapter.addCalendarYears(this._calendar.activeDate, -24);
-  }
-
-  nextClicked() {
-    this._calendar.activeDate = this._dateAdapter.addCalendarYears(this._calendar.activeDate, 24);
-  }
 }
