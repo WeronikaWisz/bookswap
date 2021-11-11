@@ -8,6 +8,8 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Table
@@ -22,7 +24,6 @@ public class Book {
     private String author;
     private String publisher;
     private Integer yearOfPublication;
-    private String category;
     private String description;
     @Lob
     private byte[] image;
@@ -37,5 +38,21 @@ public class Book {
     private EBookLabel label;
     private LocalDateTime creationDate;
     private LocalDateTime updateDate;
+    @ManyToMany
+    @JoinTable(
+            name = "books_categories",
+            joinColumns = @JoinColumn(name = "book_id"),
+            inverseJoinColumns = @JoinColumn(name = "category_id"))
+    private Set<Category> categories = new HashSet<>();
+
+    public void addCategory(Category category){
+        this.categories.add(category);
+        category.getBooks().add(this);
+    }
+
+    public void removeCategory(Category category){
+        this.categories.remove(category);
+        category.getBooks().remove(this);
+    }
 
 }

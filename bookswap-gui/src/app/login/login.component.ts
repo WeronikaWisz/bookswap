@@ -41,9 +41,9 @@ export class LoginComponent implements OnInit {
       "password": this.form.get('password')?.value
     }).subscribe(
       data => {
-        this.tokenStorage.saveToken(data.accessToken);
+        this.tokenStorage.saveToken(data.token);
         this.tokenStorage.saveUser(data);
-
+        console.log(data.token);
         this.isLoggedIn = true;
         this.roles = this.tokenStorage.getUser().roles;
         this.router.navigate(['/my-books']).then(() => this.reloadPage());

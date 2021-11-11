@@ -100,8 +100,8 @@ export class FiltersDialogComponent implements OnInit {
     this.categoriesCtrl.setValue(null);
   }
 
-  remove(fruit: string): void {
-    const index = this.categories.indexOf(fruit);
+  remove(category: string): void {
+    const index = this.categories.indexOf(category);
 
     if (index >= 0) {
       this.categories.splice(index, 1);

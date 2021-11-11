@@ -16,6 +16,7 @@ import {map, startWith} from "rxjs/operators";
 import {MatChipInputEvent} from "@angular/material/chips";
 import {MatAutocompleteSelectedEvent} from "@angular/material/autocomplete";
 import {COMMA, ENTER} from "@angular/cdk/keycodes";
+import {UserBookService} from "../services/user-book.service";
 
 const moment = _rollupMoment || _moment;
 
@@ -44,7 +45,7 @@ export class AddBookComponent implements OnInit {
   categoriesCtrl = new FormControl();
   filteredCategories: Observable<string[]>;
   categories: string[] = [];
-  allCategories: string[] = ['Przygodowa', 'Obyczajowa'];
+  allCategories: string[] = ['przygodowa', 'obyczajowa'];
   file: File | null = null;
   fileName: string = '';
   imageUrl = '';
@@ -53,7 +54,7 @@ export class AddBookComponent implements OnInit {
 
   constructor(private formBuilder: FormBuilder,
               private route: ActivatedRoute,
-              private router: Router,
+              private router: Router, private userBookService : UserBookService,
               private authService: AuthService, private tokenStorage: TokenStorageService) {
     const currentYear = moment();
     this.maxDate = new Date(currentYear.year(), 11, 31);
@@ -69,14 +70,14 @@ export class AddBookComponent implements OnInit {
       author: ['', Validators.required],
       publisher: ['', Validators.required],
       yearOfPublication: ['', Validators.required],
-      label: [''],
+      label: ['PERMANENT_SWAP'],
       description: ['']
     });
-    // if (this.tokenStorage.getToken()) {
-    //   this.isLoggedIn = true;
-    // } else {
-    //   this.router.navigate(['/login']).then(() => this.reloadPage());
-    // }
+    if (this.tokenStorage.getToken()) {
+      this.isLoggedIn = true;
+    } else {
+      this.router.navigate(['/login']).then(() => this.reloadPage());
+    }
   }
 
   add(event: MatChipInputEvent): void {
@@ -91,8 +92,8 @@ export class AddBookComponent implements OnInit {
     this.categoriesCtrl.setValue(null);
   }
 
-  remove(fruit: string): void {
-    const index = this.categories.indexOf(fruit);
+  remove(category: string): void {
+    const index = this.categories.indexOf(category);
 
     if (index >= 0) {
       this.categories.splice(index, 1);
@@ -120,28 +121,49 @@ export class AddBookComponent implements OnInit {
   }
 
   onSubmit(): void {
-    // Swal.fire({
-    //   position: 'top-end',
-    //   title: 'Logowanie nie powiodło się',
-    //   text: err.error.message,
-    //   icon: 'error',
-    //   showConfirmButton: false
-    // })
+    this.userBookService.addBook({
+      "title": this.form.get('title')?.value,
+      "author": this.form.get('author')?.value,
+      "publisher": this.form.get('publisher')?.value,
+      "yearOfPublication": this.form.get('yearOfPublication')?.value.year(),
+      "description": this.form.get('description')?.value,
+      "categories": this.categories,
+      "label": this.form.get('label')?.value
+    }, this.file).subscribe(
+      data => {
+        console.log(data);
+        Swal.fire({
+          position: 'top-end',
+          title: 'Pomyśnie dodano książkę',
+          icon: 'success',
+          showConfirmButton: false
+        })
+        // this.router.navigate(['/login']).then(() => this.showSuccess());
+      },
+      err => {
+        Swal.fire({
+          position: 'top-end',
+          title: 'Dodawanie nie powiodło się',
+          text: err.error.message,
+          icon: 'error',
+          showConfirmButton: false
+        })
+      }
+    );
   }
 
   onFileSelected(event: any) {
     this.file = event.target.files[0];
     if (this.file) {
       this.fileName = this.file.name;
-      var reader = new FileReader();
-      reader.readAsDataURL(event.target.files[0]); // read file as data url
-      reader.onload = (event) => { // called once readAsDataURL is completed
-        this.imageUrl = event.target!.result as string;
-      }
-      // const formData = new FormData();
-      // formData.append("thumbnail", file);
-      // const upload$ = this.http.post("/api/thumbnail-upload", formData);
-      // upload$.subscribe();
+      // var reader = new FileReader();
+      // reader.readAsDataURL(event.target.files[0]); // read file as data url
+      // reader.onload = (event) => { // called once readAsDataURL is completed
+      //   this.imageUrl = event.target!.result as string;
+      // }
+    } else {
+      this.fileName = '';
+      // this.imageUrl = '';
     }
   }
 

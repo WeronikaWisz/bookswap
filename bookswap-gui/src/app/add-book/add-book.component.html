@@ -1,6 +1,6 @@
 <mat-card class="example-card mat-elevation-z8">
   <mat-card-content>
-    <form *ngIf="!isLoggedIn" [formGroup]="form">
+    <form *ngIf="isLoggedIn" [formGroup]="form">
       <h2>Dodawanie książki</h2>
       <mat-form-field class="full-width-input smaller-input" appearance="outline">
         <mat-label>Tytuł</mat-label>
@@ -84,9 +84,9 @@
         </button>
       </div>
       <p>{{fileName || "Nie wybrano pliku."}}</p>
-      <div class="book-photo">
-        <img [src]="imageUrl" height="200">
-      </div>
+<!--      <div class="book-photo">-->
+<!--        <img [src]="imageUrl" height="200">-->
+<!--      </div>-->
       <button mat-raised-button color="primary" [disabled]="form.invalid" (click)="onSubmit()"><mat-icon>add_circle_outline</mat-icon><span class="add-button">Dodaj książkę</span></button>
     </form>
   </mat-card-content>
