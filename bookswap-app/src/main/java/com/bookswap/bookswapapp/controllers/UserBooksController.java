@@ -1,10 +1,12 @@
 package com.bookswap.bookswapapp.controllers;
 
 import com.bookswap.bookswapapp.dtos.auth.MessageResponse;
+import com.bookswap.bookswapapp.dtos.userbooks.BookDetails;
 import com.bookswap.bookswapapp.dtos.userbooks.BookListItem;
 import com.bookswap.bookswapapp.dtos.userbooks.NewBook;
 import com.bookswap.bookswapapp.enums.EBookStatus;
 import com.bookswap.bookswapapp.models.Book;
+import com.bookswap.bookswapapp.models.Category;
 import com.bookswap.bookswapapp.services.UserBooksService;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.PropertyMap;
@@ -43,6 +45,12 @@ public class UserBooksController {
                 skip(destination.getLabel());
             }
         });
+        modelMapper.addMappings(new PropertyMap<Book, BookDetails>() {
+            @Override
+            protected void configure() {
+                skip(destination.getCategories());
+            }
+        });
     }
 
     @PostMapping(path = "/book", consumes = {
@@ -73,12 +81,23 @@ public class UserBooksController {
         return ResponseEntity.ok(bookItemList);
     }
 
+    @GetMapping(path = "/book/{bookId}")
+    @PreAuthorize("hasRole('USER')")
+    public ResponseEntity<?> getBook(@PathVariable("bookId") Long id) {
+        BookDetails bookDetails = mapBookToBookDetails(userBooksService.getBook(id));
+        return ResponseEntity.ok(bookDetails);
+    }
+
     private Book mapNewBookToBook(NewBook newBook){
         return this.modelMapper.map(newBook, Book.class);
     }
 
-    private BookListItem mapBookToBookListItem(Book book){
-        return this.modelMapper.map(book, BookListItem.class);
+    private BookDetails mapBookToBookDetails(Book book){
+        BookDetails bookDetails = this.modelMapper.map(book, BookDetails.class);
+        if(book.getCategories() != null) {
+            bookDetails.setCategories(book.getCategories().stream().map(Category::getName).collect(Collectors.toList()));
+        }
+        return bookDetails;
     }
 
 }

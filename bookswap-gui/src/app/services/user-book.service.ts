@@ -4,6 +4,7 @@ import {Observable} from "rxjs";
 import {NewBook} from "../models/user-books/NewBook";
 import {EBookStatus} from "../enums/EBookStatus";
 import {BookListItem} from "../models/user-books/BookListItem";
+import {BookDetails} from "../models/user-books/BookDetails";
 
 const USER_BOOK_API = 'http://localhost:8080/user-books/';
 
@@ -33,6 +34,10 @@ export class UserBookService {
     return this.http.get<BookListItem[]>(USER_BOOK_API + 'books', {
       params: new HttpParams().set('status', EBookStatus[status])
     });
+  }
+
+  getBook(bookId: number): Observable<BookDetails>{
+    return this.http.get<BookDetails>(USER_BOOK_API + 'book/' + bookId);
   }
 
 }

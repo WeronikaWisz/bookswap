@@ -40,8 +40,24 @@ export class BrowseBooksComponent implements OnInit {
     this.loadBooks(EBookStatus.AVAILABLE);
   }
 
-  public onCardClick(evt: MouseEvent){
-    console.log(evt);
+  public onCardClick(idx: number){
+    console.log(idx);
+    this.userBookService.getBook(idx)
+      .subscribe(
+        data => {
+          console.log(data);
+        },
+        err => {
+          Swal.fire({
+            position: 'top-end',
+            title: 'Nie można załadować informacji o książce',
+            text: err.error.message,
+            icon: 'error',
+            showConfirmButton: false
+          })
+        }
+      )
+
   }
 
   openFilter(): void {

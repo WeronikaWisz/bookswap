@@ -13,11 +13,13 @@ import com.bookswap.bookswapapp.security.userdetails.UserDetailsI;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -79,13 +81,20 @@ public class UserBooksService {
                 .findBookByStatusAndUser(status, getCurrentUser()).orElse(Collections.emptyList());
         List<BookListItem> bookListItems = new ArrayList<>();
         for(Book book: bookList){
-            BookListItem bookListItem = new BookListItem(book.getTitle(), book.getAuthor());
+            BookListItem bookListItem = new BookListItem(book.getId(), book.getTitle(),
+                    book.getAuthor(), book.getLabel());
             if(book.getImage() != null) {
                 bookListItem.setImage(decompressBytes(book.getImage()));
             }
             bookListItems.add(bookListItem);
         }
         return bookListItems;
+    }
+
+    public Book getBook(Long id){
+        return bookRepository.findById(id).orElseThrow(
+                () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Book not found")
+        );
     }
 
     private Category getCategory(String name){
