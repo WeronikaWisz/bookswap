@@ -1,10 +1,10 @@
 import { Component, OnInit } from '@angular/core';
-import { AuthService } from '../services/auth.service';
+import { AuthService } from '../../../services/auth.service';
 import { AbstractControl, FormBuilder, FormGroup, Validators } from '@angular/forms';
-import Validation from '../helpers/validation';
+import Validation from '../../../helpers/validation';
 import {STEPPER_GLOBAL_OPTIONS} from '@angular/cdk/stepper';
 import {Router} from "@angular/router";
-import {TokenStorageService} from "../services/token-storage.service";
+import {TokenStorageService} from "../../../services/token-storage.service";
 import Swal from 'sweetalert2';
 
 @Component({

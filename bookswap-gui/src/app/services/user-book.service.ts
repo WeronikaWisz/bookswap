@@ -1,7 +1,9 @@
 import { Injectable } from '@angular/core';
-import {HttpClient, HttpHeaders} from "@angular/common/http";
+import {HttpClient, HttpHeaders, HttpParams} from "@angular/common/http";
 import {Observable} from "rxjs";
 import {NewBook} from "../models/user-books/NewBook";
+import {EBookStatus} from "../enums/EBookStatus";
+import {BookListItem} from "../models/user-books/BookListItem";
 
 const USER_BOOK_API = 'http://localhost:8080/user-books/';
 
@@ -25,6 +27,12 @@ export class UserBookService {
     formData.append('info', blobNewBook);
     console.log(newBook)
     return this.http.post(USER_BOOK_API + 'book', formData);
+  }
+
+  loadBooks(status: EBookStatus): Observable<BookListItem[]> {
+    return this.http.get<BookListItem[]>(USER_BOOK_API + 'books', {
+      params: new HttpParams().set('status', EBookStatus[status])
+    });
   }
 
 }

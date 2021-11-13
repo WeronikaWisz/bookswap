@@ -18,21 +18,21 @@ import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import {MatCardModule} from "@angular/material/card";
 import {MatSelectModule} from "@angular/material/select";
-import { LoginComponent } from './login/login.component';
-import { RegisterComponent } from './register/register.component';
-import { ProfileComponent } from './profile/profile.component';
+import { LoginComponent } from './views/manage-users/login/login.component';
+import { RegisterComponent } from './views/manage-users/register/register.component';
+import { ProfileComponent } from './views/manage-users/profile/profile.component';
 
 import { authInterceptorProviders } from './helpers/auth.interceptor';
 import {MatStepperModule} from "@angular/material/stepper";
 import {FlexLayoutModule} from "@angular/flex-layout";
-import { UserBooksComponent } from './user-books/user-books.component';
+import { BrowseBooksComponent } from './views/user-books/browse-books/browse-books.component';
 import {MatRippleModule} from "@angular/material/core";
-import {FiltersDialogComponent} from './user-books/filters-dialog/filters-dialog.component';
+import {FiltersDialogComponent} from './views/user-books/browse-books/filters-dialog/filters-dialog.component';
 import {MatDialogModule} from "@angular/material/dialog";
 import {MatChipsModule} from "@angular/material/chips";
 import {MatAutocompleteModule} from "@angular/material/autocomplete";
 import {MatDatepickerModule} from "@angular/material/datepicker";
-import { AddBookComponent } from './add-book/add-book.component';
+import { AddBookComponent } from './views/user-books/add-book/add-book.component';
 import {DataPickerHeader} from "./helpers/data-picker.header";
 
 @NgModule({
@@ -42,7 +42,7 @@ import {DataPickerHeader} from "./helpers/data-picker.header";
     LoginComponent,
     RegisterComponent,
     ProfileComponent,
-    UserBooksComponent,
+    BrowseBooksComponent,
     FiltersDialogComponent,
     DataPickerHeader,
     AddBookComponent

@@ -1,10 +1,10 @@
 import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
 import {FormBuilder, FormControl, FormGroup, Validators} from "@angular/forms";
 import {ActivatedRoute, Router} from "@angular/router";
-import {AuthService} from "../services/auth.service";
-import {TokenStorageService} from "../services/token-storage.service";
+import {AuthService} from "../../../services/auth.service";
+import {TokenStorageService} from "../../../services/token-storage.service";
 import Swal from "sweetalert2";
-import {DataPickerHeader, MY_FORMATS} from "../helpers/data-picker.header";
+import {DataPickerHeader, MY_FORMATS} from "../../../helpers/data-picker.header";
 import {MatDatepicker} from "@angular/material/datepicker";
 
 import * as _moment from 'moment';
@@ -16,7 +16,7 @@ import {map, startWith} from "rxjs/operators";
 import {MatChipInputEvent} from "@angular/material/chips";
 import {MatAutocompleteSelectedEvent} from "@angular/material/autocomplete";
 import {COMMA, ENTER} from "@angular/cdk/keycodes";
-import {UserBookService} from "../services/user-book.service";
+import {UserBookService} from "../../../services/user-book.service";
 
 const moment = _rollupMoment || _moment;
 
@@ -138,7 +138,6 @@ export class AddBookComponent implements OnInit {
           icon: 'success',
           showConfirmButton: false
         })
-        // this.router.navigate(['/login']).then(() => this.showSuccess());
       },
       err => {
         Swal.fire({

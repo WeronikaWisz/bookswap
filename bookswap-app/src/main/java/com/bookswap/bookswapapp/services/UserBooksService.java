@@ -1,5 +1,6 @@
 package com.bookswap.bookswapapp.services;
 
+import com.bookswap.bookswapapp.dtos.userbooks.BookListItem;
 import com.bookswap.bookswapapp.enums.EBookLabel;
 import com.bookswap.bookswapapp.enums.EBookStatus;
 import com.bookswap.bookswapapp.models.Book;
@@ -21,9 +22,13 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.zip.DataFormatException;
 import java.util.zip.Deflater;
+import java.util.zip.Inflater;
 
 @Service
 public class UserBooksService {
@@ -43,14 +48,20 @@ public class UserBooksService {
 
     @Transactional
     public void addBook(MultipartFile image, Book book, List<String> categories, String label) throws IOException {
-        book.setCreationDate(LocalDateTime.now());
         book.setImage(compressBytes(image.getBytes()));
+        addBookInfo(book, categories, label);
+    }
+
+    @Transactional
+    public void addBook(Book book, List<String> categories, String label){
+        addBookInfo(book, categories, label);
+    }
+
+    private void addBookInfo(Book book, List<String> categories, String label){
+        book.setCreationDate(LocalDateTime.now());
         book.setLabel(EBookLabel.valueOf(label));
         book.setStatus(EBookStatus.AVAILABLE);
-        UserDetailsI userDetails = (UserDetailsI) SecurityContextHolder.getContext().getAuthentication()
-                .getPrincipal();
-        String username = userDetails.getUsername();
-        User user = getUser(username);
+        User user = getCurrentUser();
         book.setUser(user);
         bookRepository.save(book);
         for(String name: categories){
@@ -61,6 +72,20 @@ public class UserBooksService {
 
     public List<Category> getCategories(){
         return categoryRepository.findAll();
+    }
+
+    public List<BookListItem> loadBooks(EBookStatus status){
+        List<Book> bookList = bookRepository
+                .findBookByStatusAndUser(status, getCurrentUser()).orElse(Collections.emptyList());
+        List<BookListItem> bookListItems = new ArrayList<>();
+        for(Book book: bookList){
+            BookListItem bookListItem = new BookListItem(book.getTitle(), book.getAuthor());
+            if(book.getImage() != null) {
+                bookListItem.setImage(decompressBytes(book.getImage()));
+            }
+            bookListItems.add(bookListItem);
+        }
+        return bookListItems;
     }
 
     private Category getCategory(String name){
@@ -93,10 +118,30 @@ public class UserBooksService {
         return outputStream.toByteArray();
     }
 
-    private User getUser(String username){
+    public static byte[] decompressBytes(byte[] data) {
+        Inflater inflater = new Inflater();
+        inflater.setInput(data);
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream(data.length);
+        byte[] buffer = new byte[1024];
+        try {
+            while (!inflater.finished()) {
+                int count = inflater.inflate(buffer);
+                outputStream.write(buffer, 0, count);
+            }
+            outputStream.close();
+        } catch (IOException ioe) {
+            logger.error("Error compressing the image: ", ioe.getMessage());
+        } catch ( DataFormatException e) {
+            logger.error("Error formatting the image: ", e.getMessage());
+        }
+        return outputStream.toByteArray();
+    }
+
+    private User getCurrentUser(){
+        UserDetailsI userDetails = (UserDetailsI) SecurityContextHolder.getContext().getAuthentication()
+                .getPrincipal();
+        String username = userDetails.getUsername();
         return userRepository.findByUsername(username).orElseThrow(
                 () -> new UsernameNotFoundException("Cannot found user"));
     }
-
-
 }

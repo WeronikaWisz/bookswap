@@ -1,7 +1,9 @@
 package com.bookswap.bookswapapp.controllers;
 
 import com.bookswap.bookswapapp.dtos.auth.MessageResponse;
+import com.bookswap.bookswapapp.dtos.userbooks.BookListItem;
 import com.bookswap.bookswapapp.dtos.userbooks.NewBook;
+import com.bookswap.bookswapapp.enums.EBookStatus;
 import com.bookswap.bookswapapp.models.Book;
 import com.bookswap.bookswapapp.services.UserBooksService;
 import org.modelmapper.ModelMapper;
@@ -17,6 +19,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/user-books")
@@ -46,20 +50,35 @@ public class UserBooksController {
             MediaType.MULTIPART_FORM_DATA_VALUE
     })
     @PreAuthorize("hasRole('USER')")
-    public ResponseEntity<?> addBook(@RequestPart("image") MultipartFile image, @RequestPart("info") NewBook newBook) {
-        try {
-            this.userBooksService.addBook(image, mapNewBookToBook(newBook), newBook.getCategories(), newBook.getLabel());
-        } catch (IOException e){
-            logger.error("Error getting bytes from file: ", e.getMessage());
-            return ResponseEntity
-                    .status(HttpStatus.EXPECTATION_FAILED)
-                    .body(new MessageResponse("Nie można zapisać pliku"));
+    public ResponseEntity<?> addBook(@RequestPart(name="image", required=false) MultipartFile image, @RequestPart("info") NewBook newBook) {
+        if(image!=null) {
+            try {
+                this.userBooksService.addBook(image, mapNewBookToBook(newBook), newBook.getCategories(), newBook.getLabel());
+            } catch (IOException e) {
+                logger.error("Error getting bytes from file: ", e.getMessage());
+                return ResponseEntity
+                        .status(HttpStatus.EXPECTATION_FAILED)
+                        .body(new MessageResponse("Nie można zapisać pliku"));
+            }
+        } else {
+            this.userBooksService.addBook(mapNewBookToBook(newBook), newBook.getCategories(), newBook.getLabel());
         }
         return ResponseEntity.ok(new MessageResponse("Pomyśnie dodano książkę"));
     }
 
+    @GetMapping(path = "/books")
+    @PreAuthorize("hasRole('USER')")
+    public ResponseEntity<?> loadBooks(@RequestParam EBookStatus status) {
+        List<BookListItem> bookItemList = userBooksService.loadBooks(status);
+        return ResponseEntity.ok(bookItemList);
+    }
+
     private Book mapNewBookToBook(NewBook newBook){
         return this.modelMapper.map(newBook, Book.class);
+    }
+
+    private BookListItem mapBookToBookListItem(Book book){
+        return this.modelMapper.map(book, BookListItem.class);
     }
 
 }

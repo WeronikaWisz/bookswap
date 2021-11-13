@@ -6,7 +6,7 @@ import {
   ElementRef,
 } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA} from '@angular/material/dialog';
-import { BookFilter } from "../../models/user-books/BookFilter";
+import { BookFilter } from "../../../../models/user-books/BookFilter";
 import {FormControl} from "@angular/forms";
 import {Observable} from "rxjs";
 import {COMMA, ENTER} from '@angular/cdk/keycodes';
@@ -22,8 +22,8 @@ import {default as _rollupMoment, Moment} from 'moment';
 
 const moment = _rollupMoment || _moment;
 
-import {MY_FORMATS} from "../../helpers/data-picker.header";
-import {DataPickerHeader} from "../../helpers/data-picker.header";
+import {MY_FORMATS} from "../../../../helpers/data-picker.header";
+import {DataPickerHeader} from "../../../../helpers/data-picker.header";
 
 @Component({
   selector: 'app-filters-dialog',
