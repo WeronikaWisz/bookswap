@@ -1,0 +1,56 @@
+<div class="header-small-width">
+  <h2 mat-dialog-title>{{data.bookBasics.title}}</h2>
+  <div>
+    <button mat-mini-fab color="primary">
+      <mat-icon>edit</mat-icon>
+    </button>
+  </div>
+</div>
+<div mat-dialog-content>
+  <div class="book-basic">
+    <div class="book-image">
+      <img *ngIf="data.bookBasics.image != null" [src]="'data:image/jpeg;base64,'+data.bookBasics.image" alt="Zdjęcie okładki">
+      <img *ngIf="data.bookBasics.image == null" src="./../../../../../assets/images/brak_obrazka.png" alt="Zdjęcie okładki">
+    </div>
+    <div class="book-info">
+      <h2 id="book-title">{{data.bookBasics.title}}</h2>
+      <div class="book-info-no-title">
+        <div>
+          <p><span class="description-titles">Autor:</span> {{data.bookBasics.author}}</p>
+          <p><span class="description-titles">Wydawnictwo:</span> {{data.bookDetails.publisher}}</p>
+          <p><span class="description-titles">Rok wydania:</span> {{data.bookDetails.yearOfPublication}}</p>
+        </div>
+        <br/>
+        <div>
+          <p>
+            <span class="description-titles">Status:</span>
+            <span> {{getStatus()}}</span>
+          </p>
+          <p><span class="description-titles">Typ wymiany:</span>
+            <span> {{getLabel()}}</span>
+          </p>
+        </div>
+      </div>
+    </div>
+    <div class="edit-button">
+      <button mat-mini-fab color="primary">
+        <mat-icon>edit</mat-icon>
+      </button>
+    </div>
+  </div>
+  <div class="book-details">
+    <p class="description-titles">Opis:</p>
+    {{data.bookDetails.description}}
+    <br/><br/>
+    <p class="description-titles">Kategorie: </p>
+    <mat-chip-list>
+      <mat-chip *ngFor="let category of data.bookDetails.categories" [selectable]="true">
+        {{category}}
+      </mat-chip>
+    </mat-chip-list>
+  </div>
+</div>
+<div mat-dialog-actions align="end">
+  <button mat-button (click)="onNoClick()">Zamknij</button>
+<!--  <button mat-raised-button color="primary" [mat-dialog-close]="sendData()" >Zastosuj</button>-->
+</div>
