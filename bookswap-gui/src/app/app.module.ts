@@ -34,6 +34,7 @@ import {MatAutocompleteModule} from "@angular/material/autocomplete";
 import {MatDatepickerModule} from "@angular/material/datepicker";
 import { AddBookComponent } from './views/user-books/add-book/add-book.component';
 import {DataPickerHeader} from "./helpers/data-picker.header";
+import { BookDetailsDialogComponent } from './views/user-books/browse-books/book-details-dialog/book-details-dialog.component';
 
 @NgModule({
   declarations: [
@@ -45,7 +46,8 @@ import {DataPickerHeader} from "./helpers/data-picker.header";
     BrowseBooksComponent,
     FiltersDialogComponent,
     DataPickerHeader,
-    AddBookComponent
+    AddBookComponent,
+    BookDetailsDialogComponent
   ],
     imports: [
         BrowserModule,

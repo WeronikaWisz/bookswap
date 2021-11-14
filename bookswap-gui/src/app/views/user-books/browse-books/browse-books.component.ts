@@ -8,6 +8,7 @@ import {TokenStorageService} from "../../../services/token-storage.service";
 import {EBookStatus} from "../../../enums/EBookStatus";
 import Swal from "sweetalert2";
 import {BookListItem} from "../../../models/user-books/BookListItem";
+import {BookDetailsDialogComponent} from "./book-details-dialog/book-details-dialog.component";
 
 @Component({
   selector: 'app-browse-books',
@@ -46,6 +47,15 @@ export class BrowseBooksComponent implements OnInit {
       .subscribe(
         data => {
           console.log(data);
+          const dialogRef = this.dialog.open(BookDetailsDialogComponent, {
+            data: {
+              bookBasics: this.books.find(element => element.id == idx),
+              bookDetails: data
+            }
+          });
+          dialogRef.afterClosed().subscribe(result => {
+            console.log(result);
+          });
         },
         err => {
           Swal.fire({
@@ -57,7 +67,6 @@ export class BrowseBooksComponent implements OnInit {
           })
         }
       )
-
   }
 
   openFilter(): void {
