@@ -1,8 +1,13 @@
+import {EBookStatus} from "../../enums/EBookStatus";
+import {EBookLabel} from "../../enums/EBookLabel";
+
 export interface BookFilter{
-  title: string;
-  author: string;
-  publisher: string;
+  titles: string[];
+  authors: string[];
+  publishers: string[];
   yearOfPublicationFrom: string;
   yearOfPublicationTo: string;
   categories: string[];
+  status?: EBookStatus;
+  label?: EBookLabel;
 }

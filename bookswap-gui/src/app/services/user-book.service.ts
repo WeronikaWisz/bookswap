@@ -5,6 +5,7 @@ import {NewBook} from "../models/user-books/NewBook";
 import {EBookStatus} from "../enums/EBookStatus";
 import {BookListItem} from "../models/user-books/BookListItem";
 import {BookDetails} from "../models/user-books/BookDetails";
+import {BookFilter} from "../models/user-books/BookFilter";
 
 const USER_BOOK_API = 'http://localhost:8080/user-books/';
 
@@ -38,6 +39,10 @@ export class UserBookService {
 
   getBook(bookId: number): Observable<BookDetails>{
     return this.http.get<BookDetails>(USER_BOOK_API + 'book/' + bookId);
+  }
+
+  loadFilteredBook(filters: BookFilter): Observable<BookListItem[]>{
+    return this.http.post<BookListItem[]>(USER_BOOK_API + 'books/filter', filters);
   }
 
 }

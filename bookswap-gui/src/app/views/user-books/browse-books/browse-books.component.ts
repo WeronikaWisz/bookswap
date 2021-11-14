@@ -18,12 +18,14 @@ import {BookDetailsDialogComponent} from "./book-details-dialog/book-details-dia
 export class BrowseBooksComponent implements OnInit {
 
   bookFilter: BookFilter = new class implements BookFilter {
-    author: string = '';
+    authors: string[] = [];
     categories: string[] = [];
-    publisher: string = '';
-    title: string = '';
+    publishers: string[] = [];
+    titles: string[] = [];
     yearOfPublicationFrom: string = '';
     yearOfPublicationTo: string = '';
+    label = undefined;
+    status = undefined;
   }
   isLoggedIn = false;
   books: BookListItem[] = [];
@@ -78,6 +80,23 @@ export class BrowseBooksComponent implements OnInit {
       console.log(result);
       if(result) {
         this.bookFilter = result;
+        this.userBookService.loadFilteredBook(this.bookFilter)
+          .subscribe(
+            data => {
+              console.log(data);
+              this.books = data;
+              this.bookCount = this.books.length;
+            },
+            err => {
+              Swal.fire({
+                position: 'top-end',
+                title: 'Nie można załadować książek',
+                text: err.error.message,
+                icon: 'error',
+                showConfirmButton: false
+              })
+            }
+          )
       }
     });
   }
