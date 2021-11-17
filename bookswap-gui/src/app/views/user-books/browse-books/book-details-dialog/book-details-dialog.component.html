@@ -1,7 +1,8 @@
 <div class="header-small-width">
   <h2 mat-dialog-title>{{data.bookBasics.title}}</h2>
   <div>
-    <button mat-mini-fab color="primary" [disabled]="getStatus() !== 'Dostępna'">
+    <button mat-mini-fab color="primary" [disabled]="getStatus() !== 'Dostępna'"
+            (click)="goToEditBook()">
       <mat-icon>edit</mat-icon>
     </button>
   </div>
@@ -33,7 +34,8 @@
       </div>
     </div>
     <div class="edit-button">
-      <button mat-mini-fab color="primary" [disabled]="getStatus() !== 'Dostępna'">
+      <button mat-mini-fab color="primary" [disabled]="getStatus() !== 'Dostępna'"
+              (click)="goToEditBook()">
         <mat-icon>edit</mat-icon>
       </button>
     </div>

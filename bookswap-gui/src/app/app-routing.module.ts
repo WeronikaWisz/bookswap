@@ -12,6 +12,7 @@ const routes: Routes = [
   { path: 'profile', component: ProfileComponent },
   { path: 'my-books', component: BrowseBooksComponent },
   { path: 'add-book', component: AddBookComponent },
+  { path: 'edit-book/:id', component: AddBookComponent },
   { path: '', redirectTo: 'login', pathMatch: 'full' }
 ];
 

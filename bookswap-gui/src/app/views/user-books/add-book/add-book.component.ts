@@ -52,6 +52,10 @@ export class AddBookComponent implements OnInit {
 
   @ViewChild('categoryInput') categoryInput!: ElementRef<HTMLInputElement>;
 
+  formTitle = "Dodawanie książki";
+  isEditBookView = false;
+  bookId?: number;
+
   constructor(private formBuilder: FormBuilder,
               private route: ActivatedRoute,
               private router: Router, private userBookService : UserBookService,
@@ -78,7 +82,40 @@ export class AddBookComponent implements OnInit {
     } else {
       this.router.navigate(['/login']).then(() => this.reloadPage());
     }
+    this.checkIfEditBookView();
   }
+
+  checkIfEditBookView(){
+    this.route.params
+      .subscribe(
+        params => {
+          console.log(params);
+          if (params.id){
+            this.isEditBookView = true;
+            this.bookId = params.id;
+            this.formTitle = "Edycja książki";
+            this.getBook(params.id)
+          }
+        }
+      );
+  }
+
+  getBook(id: number) {
+    this.userBookService.getBook(this.bookId!).subscribe(
+      data => {
+        console.log(data)
+      }, err => {
+        Swal.fire({
+          position: 'top-end',
+          title: 'Pobranie danych książki nie powiodło się',
+          text: err.error.message,
+          icon: 'error',
+          showConfirmButton: false
+        })
+      }
+    )
+  }
+
 
   add(event: MatChipInputEvent): void {
     const value = (event.value || '').trim();

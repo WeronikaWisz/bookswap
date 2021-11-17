@@ -3,6 +3,7 @@ import {MatDialogRef, MAT_DIALOG_DATA} from '@angular/material/dialog';
 import {BookInfo} from "../../../../models/user-books/BookInfo";
 import {EBookStatus} from "../../../../enums/EBookStatus";
 import {EBookLabel} from "../../../../enums/EBookLabel";
+import {Router} from "@angular/router";
 
 @Component({
   selector: 'app-book-details-dialog',
@@ -14,6 +15,7 @@ export class BookDetailsDialogComponent implements OnInit {
   constructor(
     public dialogRef: MatDialogRef<BookDetailsDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: BookInfo,
+    private router: Router
   ) {}
 
   ngOnInit(): void {
@@ -46,6 +48,10 @@ export class BookDetailsDialogComponent implements OnInit {
       return 'Tymczasowa'
     }
     return ''
+  }
+
+  goToEditBook(): void {
+    this.router.navigate(['/edit-book', this.data.bookBasics.id]).then(r => this.onNoClick());
   }
 
 }

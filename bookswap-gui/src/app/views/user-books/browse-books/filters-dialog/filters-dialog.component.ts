@@ -24,6 +24,7 @@ const moment = _rollupMoment || _moment;
 
 import {MY_FORMATS} from "../../../../helpers/data-picker.header";
 import {DataPickerHeader} from "../../../../helpers/data-picker.header";
+import {FilterDialogData} from "../../../../models/user-books/FilterDialogData";
 
 @Component({
   selector: 'app-filters-dialog',
@@ -46,22 +47,22 @@ export class FiltersDialogComponent implements OnInit {
   categoriesCtrl = new FormControl();
   filteredCategories: Observable<string[]>;
   categories: string[] = [];
-  allCategories: string[] = ['Przygodowa', 'Obyczajowa'];
+  allCategories: string[] = [];
 
   titlesCtrl = new FormControl();
   filteredTitles: Observable<string[]>;
   titles: string[] = [];
-  allTitles: string[] = ['Tytul 1', 'Tytul 2'];
+  allTitles: string[] = [];
 
   authorsCtrl = new FormControl();
   filteredAuthors: Observable<string[]>;
   authors: string[] = [];
-  allAuthors: string[] = ['Autor 1', 'Autor 2'];
+  allAuthors: string[] = [];
 
   publishersCtrl = new FormControl();
   filteredPublishers: Observable<string[]>;
   publishers: string[] = [];
-  allPublishers: string[] = ['Wydawnictwo 1', 'Wydawnictwo 2'];
+  allPublishers: string[] = [];
 
   dateFrom : FormControl;
   dateTo : FormControl;
@@ -78,7 +79,7 @@ export class FiltersDialogComponent implements OnInit {
 
   constructor(
     public dialogRef: MatDialogRef<FiltersDialogComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: BookFilter,
+    @Inject(MAT_DIALOG_DATA) public data: FilterDialogData,
   ) {
 
     this.filteredCategories = this.categoriesCtrl.valueChanges.pipe(
@@ -101,21 +102,33 @@ export class FiltersDialogComponent implements OnInit {
     const currentYear = moment();
     this.maxDate = new Date(currentYear.year(), 11, 31);
 
-    this.categories = data.categories ? data.categories : []
-    this.titles = data.titles ? data.titles : []
-    this.authors = data.authors ? data.authors : []
-    this.publishers = data.publishers ? data.publishers : []
+    this.categories = data.bookFilter.categories ? data.bookFilter.categories : []
+    this.titles = data.bookFilter.titles ? data.bookFilter.titles : []
+    this.authors = data.bookFilter.authors ? data.bookFilter.authors : []
+    this.publishers = data.bookFilter.publishers ? data.bookFilter.publishers : []
 
     console.log(data)
-    if (data.yearOfPublicationFrom) {
-      this.dateFrom = new FormControl(moment('31/12/'+data.yearOfPublicationFrom, "DD/MM/YYYY"));
+    if (data.bookFilter.yearOfPublicationFrom) {
+      this.dateFrom = new FormControl(moment('31/12/'+data.bookFilter.yearOfPublicationFrom, "DD/MM/YYYY"));
     } else {
       this.dateFrom = new FormControl();
     }
-    if (data.yearOfPublicationTo) {
-      this.dateTo = new FormControl(moment('31/12/'+data.yearOfPublicationTo, "DD/MM/YYYY"));
+    if (data.bookFilter.yearOfPublicationTo) {
+      this.dateTo = new FormControl(moment('31/12/'+data.bookFilter.yearOfPublicationTo, "DD/MM/YYYY"));
     } else {
       this.dateTo = new FormControl();
+    }
+
+    this.setHints()
+
+  }
+
+  setHints(){
+    if(this.data.filterHints){
+      this.allCategories = this.data.filterHints.categories;
+      this.allTitles = this.data.filterHints.titles;
+      this.allAuthors = this.data.filterHints.authors;
+      this.allPublishers = this.data.filterHints.publishers;
     }
   }
 
@@ -251,10 +264,10 @@ export class FiltersDialogComponent implements OnInit {
   }
 
   sendData(): BookFilter {
-    this.data.yearOfPublicationFrom = this.dateFrom.value?.year();
-    this.data.yearOfPublicationTo = this.dateTo.value?.year();
-    this.data.categories = this.categories;
-    return this.data
+    this.data.bookFilter.yearOfPublicationFrom = this.dateFrom.value?.year();
+    this.data.bookFilter.yearOfPublicationTo = this.dateTo.value?.year();
+    this.data.bookFilter.categories = this.categories;
+    return this.data.bookFilter
   }
 
 }

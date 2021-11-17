@@ -9,6 +9,7 @@ import {EBookStatus} from "../../../enums/EBookStatus";
 import Swal from "sweetalert2";
 import {BookListItem} from "../../../models/user-books/BookListItem";
 import {BookDetailsDialogComponent} from "./book-details-dialog/book-details-dialog.component";
+import {FilterHints} from "../../../models/user-books/FilterHints";
 
 @Component({
   selector: 'app-browse-books',
@@ -25,11 +26,14 @@ export class BrowseBooksComponent implements OnInit {
     yearOfPublicationFrom: string = '';
     yearOfPublicationTo: string = '';
     label = undefined;
-    status = undefined;
+    status = 0;
   }
   isLoggedIn = false;
   books: BookListItem[] = [];
   bookCount: number = 0;
+
+  filterHintsLoaded = false;
+  hints?: FilterHints;
 
   constructor(public dialog: MatDialog, private router: Router,
               private userBookService : UserBookService, private tokenStorage: TokenStorageService) { }
@@ -45,7 +49,7 @@ export class BrowseBooksComponent implements OnInit {
 
   public onCardClick(idx: number){
     console.log(idx);
-    this.userBookService.getBook(idx)
+    this.userBookService.getBookDetail(idx)
       .subscribe(
         data => {
           console.log(data);
@@ -71,34 +75,67 @@ export class BrowseBooksComponent implements OnInit {
       )
   }
 
-  openFilter(): void {
+  openFilter(){
+    if(!this.filterHintsLoaded){
+      this.userBookService.loadHintsForFilter(EBookStatus.AVAILABLE)
+        .subscribe(
+          data => {
+            console.log(data);
+            this.hints = data;
+            this.filterHintsLoaded = true;
+            this.openFilterDialog();
+          })
+    } else {
+      this.openFilterDialog();
+    }
+  }
+
+  openFilterDialog(): void {
     const dialogRef = this.dialog.open(FiltersDialogComponent, {
-      data: this.bookFilter
+      data: {
+        filterHints: this.hints,
+        bookFilter: this.bookFilter
+      }
     });
 
     dialogRef.afterClosed().subscribe(result => {
       console.log(result);
       if(result) {
         this.bookFilter = result;
-        this.userBookService.loadFilteredBook(this.bookFilter)
-          .subscribe(
-            data => {
-              console.log(data);
-              this.books = data;
-              this.bookCount = this.books.length;
-            },
-            err => {
-              Swal.fire({
-                position: 'top-end',
-                title: 'Nie można załadować książek',
-                text: err.error.message,
-                icon: 'error',
-                showConfirmButton: false
-              })
-            }
-          )
+        this.loadFilterBooks();
       }
     });
+  }
+
+  loadFilterBooks(){
+    this.userBookService.loadFilteredBook({
+      authors: this.bookFilter.authors,
+      categories: this.bookFilter.categories,
+      publishers: this.bookFilter.publishers,
+      titles: this.bookFilter.titles,
+      yearOfPublicationFrom: this.bookFilter.yearOfPublicationFrom ?
+        this.bookFilter.yearOfPublicationFrom : null!,
+      yearOfPublicationTo: this.bookFilter.yearOfPublicationTo ?
+        this.bookFilter.yearOfPublicationTo : null!,
+      label: null!,
+      status: this.bookFilter.status
+    })
+      .subscribe(
+        data => {
+          console.log(data);
+          this.books = data;
+          this.bookCount = this.books.length;
+        },
+        err => {
+          Swal.fire({
+            position: 'top-end',
+            title: 'Nie można załadować książek',
+            text: err.error.message,
+            icon: 'error',
+            showConfirmButton: false
+          })
+        }
+      )
   }
 
   loadBooks(status: EBookStatus){
@@ -123,6 +160,18 @@ export class BrowseBooksComponent implements OnInit {
 
   reloadPage(): void {
     window.location.reload();
+  }
+
+  onTabChange(event: any){
+    console.log(event);
+    if(event.index === 1){
+      this.bookFilter.status = 2;
+    } else if (event.index === 2){
+      this.bookFilter.status = 1;
+    } else {
+      this.bookFilter.status = 0;
+    }
+    this.loadFilterBooks();
   }
 
 }

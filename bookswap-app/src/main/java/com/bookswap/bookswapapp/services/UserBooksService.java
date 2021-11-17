@@ -1,6 +1,8 @@
 package com.bookswap.bookswapapp.services;
 
+import com.bookswap.bookswapapp.dtos.userbooks.BookFilter;
 import com.bookswap.bookswapapp.dtos.userbooks.BookListItem;
+import com.bookswap.bookswapapp.dtos.userbooks.FilterHints;
 import com.bookswap.bookswapapp.enums.EBookLabel;
 import com.bookswap.bookswapapp.enums.EBookStatus;
 import com.bookswap.bookswapapp.models.Book;
@@ -24,10 +26,8 @@ import org.springframework.web.server.ResponseStatusException;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
 import java.util.zip.DataFormatException;
 import java.util.zip.Deflater;
 import java.util.zip.Inflater;
@@ -72,23 +72,10 @@ public class UserBooksService {
         }
     }
 
-    public List<Category> getCategories(){
-        return categoryRepository.findAll();
-    }
-
     public List<BookListItem> loadBooks(EBookStatus status){
         List<Book> bookList = bookRepository
                 .findBookByStatusAndUser(status, getCurrentUser()).orElse(Collections.emptyList());
-        List<BookListItem> bookListItems = new ArrayList<>();
-        for(Book book: bookList){
-            BookListItem bookListItem = new BookListItem(book.getId(), book.getTitle(),
-                    book.getAuthor(), book.getLabel());
-            if(book.getImage() != null) {
-                bookListItem.setImage(decompressBytes(book.getImage()));
-            }
-            bookListItems.add(bookListItem);
-        }
-        return bookListItems;
+        return bookListToBookListItem(bookList);
     }
 
     public Book getBook(Long id){
@@ -97,8 +84,72 @@ public class UserBooksService {
         );
     }
 
+    public List<BookListItem> filterBooks(BookFilter bookFilter){
+        boolean isLabelNull = (bookFilter.getLabel() == null);
+        boolean isStatusNull = (bookFilter.getStatus() == null);
+        List<Book> bookList;
+        if(!isLabelNull && !isStatusNull){
+            bookList = bookRepository.findBookByStatusAndLabelAndUser(bookFilter.getStatus(),
+                    bookFilter.getLabel(), getCurrentUser()).orElse(Collections.emptyList());
+        } else if(!isLabelNull) {
+            bookList = bookRepository.findBookByLabelAndUser(bookFilter.getLabel(), getCurrentUser())
+                    .orElse(Collections.emptyList());
+        } else if(!isStatusNull) {
+            bookList = bookRepository.findBookByStatusAndUser(bookFilter.getStatus(), getCurrentUser())
+                    .orElse(Collections.emptyList());
+        } else {
+            bookList = bookRepository.findBookByUser(getCurrentUser()).orElse(Collections.emptyList());
+        }
+        if(!bookFilter.getAuthors().isEmpty()){
+            bookList = bookList.stream().filter(book -> containsIgnoreCaseAndTrim(bookFilter.getAuthors(), book.getAuthor()))
+                    .collect(Collectors.toList());
+        }
+        if(!bookFilter.getTitles().isEmpty()){
+            bookList = bookList.stream().filter(book -> containsIgnoreCaseAndTrim(bookFilter.getTitles(), book.getTitle()))
+                    .collect(Collectors.toList());
+        }
+        if(!bookFilter.getPublishers().isEmpty()){
+            bookList = bookList.stream().filter(book -> containsIgnoreCaseAndTrim(bookFilter.getPublishers(), book.getPublisher()))
+                    .collect(Collectors.toList());
+        }
+        if(!bookFilter.getCategories().isEmpty()){
+            bookList = bookList.stream().filter(book -> !Collections.disjoint(
+                    bookFilter.getCategories().stream()
+                            .map(cat -> cat.trim().toLowerCase(Locale.ROOT)).collect(Collectors.toList()),
+                            book.getCategories().stream()
+                                    .map(cat -> cat.getName().trim().toLowerCase(Locale.ROOT)).collect(Collectors.toList())))
+                    .collect(Collectors.toList());
+        }
+        if(bookFilter.getYearOfPublicationFrom() != null && !bookFilter.getYearOfPublicationFrom().equals("")){
+            bookList = bookList.stream().filter(book -> book.getYearOfPublication() >= Integer.parseInt(bookFilter.getYearOfPublicationFrom()))
+                    .collect(Collectors.toList());
+        }
+        if(bookFilter.getYearOfPublicationTo() != null && !bookFilter.getYearOfPublicationTo().equals("")){
+            bookList = bookList.stream().filter(book -> book.getYearOfPublication() <= Integer.parseInt(bookFilter.getYearOfPublicationTo()))
+                    .collect(Collectors.toList());
+        }
+        return bookListToBookListItem(bookList);
+    }
+
+    public FilterHints loadFilterHints(EBookStatus status){
+        List<Book> bookList = bookRepository
+                .findBookByStatusAndUser(status, getCurrentUser()).orElse(Collections.emptyList());
+        FilterHints filterHints = new FilterHints();
+        filterHints.setTitles(bookList.stream().map(Book::getTitle).distinct().collect(Collectors.toList()));
+        filterHints.setAuthors(bookList.stream().map(Book::getAuthor).distinct().collect(Collectors.toList()));
+        filterHints.setPublishers(bookList.stream().map(Book::getPublisher).distinct().collect(Collectors.toList()));
+        List<String> categories= new ArrayList<>();
+        for(Book book: bookList){
+            categories.addAll(book.getCategories().stream()
+                    .map(Category::getName).collect(Collectors.toList()));
+        }
+        filterHints.setCategories(categories.stream().distinct().collect(Collectors.toList()));
+        return filterHints;
+    }
+
     private Category getCategory(String name){
-        Optional<Category> categoryOpt = categoryRepository.findCategoryByName(name);
+        Optional<Category> categoryOpt = categoryRepository
+                .findCategoryByName(name.trim().toLowerCase(Locale.ROOT));
         if(categoryOpt.isPresent()){
             return categoryOpt.get();
         } else {
@@ -152,5 +203,27 @@ public class UserBooksService {
         String username = userDetails.getUsername();
         return userRepository.findByUsername(username).orElseThrow(
                 () -> new UsernameNotFoundException("Cannot found user"));
+    }
+
+    private List<BookListItem> bookListToBookListItem(List<Book> bookList){
+        List<BookListItem> bookListItems = new ArrayList<>();
+        for(Book book: bookList){
+            BookListItem bookListItem = new BookListItem(book.getId(), book.getTitle(),
+                    book.getAuthor(), book.getLabel());
+            if(book.getImage() != null) {
+                bookListItem.setImage(decompressBytes(book.getImage()));
+            }
+            bookListItems.add(bookListItem);
+        }
+        return bookListItems;
+    }
+
+    private boolean containsIgnoreCaseAndTrim(List<String> list, String value) {
+        for (String item : list) {
+            if (item.trim().equalsIgnoreCase(value.trim())) {
+                return true;
+            }
+        }
+        return false;
     }
 }

@@ -1,7 +1,7 @@
 <mat-card class="example-card mat-elevation-z8">
   <mat-card-content>
     <form *ngIf="isLoggedIn" [formGroup]="form">
-      <h2>Dodawanie książki</h2>
+      <h2>{{formTitle}}</h2>
       <mat-form-field class="full-width-input smaller-input" appearance="outline">
         <mat-label>Tytuł</mat-label>
         <input matInput formControlName="title" required>

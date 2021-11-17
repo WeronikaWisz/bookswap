@@ -6,28 +6,56 @@
     </button>
   </div>
   <p>Liczba książek: {{bookCount}}</p>
-  <hr>
-  <br/>
+<!--  <hr>-->
+<!--  <br/>-->
+  <mat-tab-group (selectedTabChange)="onTabChange($event)">
+    <mat-tab label="Dostępne">
+      <ng-template *ngTemplateOutlet="bookListTemplate; context: {$implicit: books}"></ng-template>
+    </mat-tab>
+    <mat-tab label="Wypożyczone">
+      <ng-template *ngTemplateOutlet="bookListTemplate; context: {$implicit: books}"></ng-template>
+    </mat-tab>
+    <mat-tab label="Wymienione">
+      <ng-template *ngTemplateOutlet="bookListTemplate; context: {$implicit: books}"></ng-template>
+    </mat-tab>
+  </mat-tab-group>
+<!--  <div class="book-list">-->
+<!--  <div fxLayout="row wrap" fxLayoutGap="16px grid">-->
+<!--    <div fxFlex="20%" fxFlex.xs="100%" fxFlex.sm="50%" fxFlex.md="25%" fxFlex.gt-lg="16.6%" *ngFor="let book of books">-->
+<!--      <mat-card class="clickable mat-elevation-z4" (click)="onCardClick(book.id)" matRipple>-->
+<!--        <mat-card-header>-->
+<!--          <mat-card-title>{{book.title}}</mat-card-title>-->
+<!--          <mat-card-subtitle>{{book.author}}</mat-card-subtitle>-->
+<!--        </mat-card-header>-->
+<!--        <img *ngIf="book.image != null" mat-card-image [src]="'data:image/jpeg;base64,'+book.image" alt="Zdjęcie okładki">-->
+<!--        <img *ngIf="book.image == null" mat-card-image src="./../../../../assets/images/brak_obrazka.png" alt="Zdjęcie okładki">-->
+<!--&lt;!&ndash;        <mat-card-content>&ndash;&gt;-->
+<!--&lt;!&ndash;          <p>&ndash;&gt;-->
+<!--&lt;!&ndash;            {{book.label}}&ndash;&gt;-->
+<!--&lt;!&ndash;          </p>&ndash;&gt;-->
+<!--&lt;!&ndash;        </mat-card-content>&ndash;&gt;-->
+<!--&lt;!&ndash;        <mat-card-actions>&ndash;&gt;-->
+<!--&lt;!&ndash;          <button mat-button><mat-icon>info_outline</mat-icon>SZCZEGÓŁY</button>&ndash;&gt;-->
+<!--&lt;!&ndash;        </mat-card-actions>&ndash;&gt;-->
+<!--      </mat-card>-->
+<!--    </div>-->
+<!--  </div>-->
+<!--  </div>-->
+</div>
+
+<ng-template #bookListTemplate let-books>
   <div class="book-list">
-  <div fxLayout="row wrap" fxLayoutGap="16px grid">
-    <div fxFlex="20%" fxFlex.xs="100%" fxFlex.sm="50%" fxFlex.md="25%" fxFlex.gt-lg="16.6%" *ngFor="let book of books">
-      <mat-card class="clickable mat-elevation-z4" (click)="onCardClick(book.id)" matRipple>
-        <mat-card-header>
-          <mat-card-title>{{book.title}}</mat-card-title>
-          <mat-card-subtitle>{{book.author}}</mat-card-subtitle>
-        </mat-card-header>
-        <img *ngIf="book.image != null" mat-card-image [src]="'data:image/jpeg;base64,'+book.image" alt="Zdjęcie okładki">
-        <img *ngIf="book.image == null" mat-card-image src="./../../../../assets/images/brak_obrazka.png" alt="Zdjęcie okładki">
-<!--        <mat-card-content>-->
-<!--          <p>-->
-<!--            {{book.label}}-->
-<!--          </p>-->
-<!--        </mat-card-content>-->
-<!--        <mat-card-actions>-->
-<!--          <button mat-button><mat-icon>info_outline</mat-icon>SZCZEGÓŁY</button>-->
-<!--        </mat-card-actions>-->
-      </mat-card>
+    <div fxLayout="row wrap" fxLayoutGap="16px grid">
+      <div fxFlex="20%" fxFlex.xs="100%" fxFlex.sm="50%" fxFlex.md="25%" fxFlex.gt-lg="16.6%" *ngFor="let book of books">
+        <mat-card class="clickable mat-elevation-z4" (click)="onCardClick(book.id)" matRipple>
+          <mat-card-header>
+            <mat-card-title>{{book.title}}</mat-card-title>
+            <mat-card-subtitle>{{book.author}}</mat-card-subtitle>
+          </mat-card-header>
+          <img *ngIf="book.image != null" mat-card-image [src]="'data:image/jpeg;base64,'+book.image" alt="Zdjęcie okładki">
+          <img *ngIf="book.image == null" mat-card-image src="./../../../../assets/images/brak_obrazka.png" alt="Zdjęcie okładki">
+        </mat-card>
+      </div>
     </div>
   </div>
-  </div>
-</div>
+</ng-template>
