@@ -120,6 +120,28 @@ public class UserBooksController {
         return ResponseEntity.ok(categories);
     }
 
+    @PutMapping(path = "/book/{id}", consumes = {
+            MediaType.APPLICATION_JSON_VALUE,
+            MediaType.MULTIPART_FORM_DATA_VALUE
+    })
+    @PreAuthorize("hasRole('USER')")
+    public ResponseEntity<?> updateBook(@RequestPart(name="image", required=false) MultipartFile image, @RequestPart("info") BookData bookData,
+                                        @PathVariable(value = "id") Long bookId) {
+        if(image!=null) {
+            try {
+                this.userBooksService.updateBook(bookId, image, bookData, bookData.getCategories(), bookData.getLabel());
+            } catch (IOException e) {
+                logger.error("Error getting bytes from file: ", e.getMessage());
+                return ResponseEntity
+                        .status(HttpStatus.EXPECTATION_FAILED)
+                        .body(new MessageResponse("Nie można zapisać pliku"));
+            }
+        } else {
+            this.userBooksService.updateBook(bookId, bookData, bookData.getCategories(), bookData.getLabel());
+        }
+        return ResponseEntity.ok(new MessageResponse("Pomyśnie zaktualizowano książkę"));
+    }
+
 
     private Book mapBookDataToBook(BookData bookData){
         return this.modelMapper.map(bookData, Book.class);

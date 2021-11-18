@@ -60,4 +60,14 @@ export class UserBookService {
     return this.http.get<string[]>(USER_BOOK_API + 'categories');
   }
 
+  updateBook(updateBook: BookData, image: any, id: number): Observable<any> {
+    const formData = new FormData();
+    formData.append("image", image);
+    const blobNewBook = new Blob([JSON.stringify(updateBook)], {
+      type: 'application/json'
+    })
+    formData.append('info', blobNewBook);
+    return this.http.put(USER_BOOK_API + `book/${id}`, formData);
+  }
+
 }

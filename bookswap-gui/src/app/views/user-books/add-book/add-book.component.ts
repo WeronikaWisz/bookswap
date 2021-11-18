@@ -22,6 +22,11 @@ import {EBookLabel} from "../../../enums/EBookLabel";
 
 const moment = _rollupMoment || _moment;
 
+export interface Label{
+  label: EBookLabel,
+  name: string
+}
+
 @Component({
   selector: 'app-add-book',
   templateUrl: './add-book.component.html',
@@ -52,11 +57,15 @@ export class AddBookComponent implements OnInit {
   fileName: string = '';
   imageUrl = '';
 
+  labels: Label[] = [{label: EBookLabel.PERMANENT_SWAP, name: "Wymiana stała"},
+    {label: EBookLabel.TEMPORARY_SWAP, name: "Wymiana tymczasowa"}]
+
   @ViewChild('categoryInput') categoryInput!: ElementRef<HTMLInputElement>;
 
   formTitle = "Dodawanie książki";
   isEditBookView = false;
   bookId?: number;
+  checkEditImage = false;
 
   constructor(private formBuilder: FormBuilder,
               private route: ActivatedRoute,
@@ -77,7 +86,7 @@ export class AddBookComponent implements OnInit {
       author: ['', Validators.required],
       publisher: ['', Validators.required],
       yearOfPublication: ['', Validators.required],
-      label: [EBookLabel.PERMANENT_SWAP],
+      label: [null, Validators.required],
       description: ['']
     });
     if (this.tokenStorage.getToken()) {
@@ -212,6 +221,7 @@ export class AddBookComponent implements OnInit {
           icon: 'success',
           showConfirmButton: false
         })
+        this.clearFields();
       },
       err => {
         Swal.fire({
@@ -223,6 +233,45 @@ export class AddBookComponent implements OnInit {
         })
       }
     );
+  }
+
+  updateBook(){
+    this.userBookService.updateBook({
+      "title": this.form.get('title')?.value,
+      "author": this.form.get('author')?.value,
+      "publisher": this.form.get('publisher')?.value,
+      "yearOfPublication": this.form.get('yearOfPublication')?.value.year(),
+      "description": this.form.get('description')?.value,
+      "categories": this.categories,
+      "label": this.form.get('label')?.value
+    }, this.file, this.bookId!).subscribe(
+      data => {
+        console.log(data);
+        Swal.fire({
+          position: 'top-end',
+          title: 'Pomyśnie zaktualizowano książkę',
+          icon: 'success',
+          showConfirmButton: false
+        })
+      },
+      err => {
+        Swal.fire({
+          position: 'top-end',
+          title: 'Aktualizacja nie powiodła się',
+          text: err.error.message,
+          icon: 'error',
+          showConfirmButton: false
+        })
+      }
+    );
+  }
+
+  clearFields(){
+    this.file = null;
+    this.fileName = '';
+    this.categories = []
+    this.form.reset();
+    this.form.markAsUntouched();
   }
 
   onFileSelected(event: any) {

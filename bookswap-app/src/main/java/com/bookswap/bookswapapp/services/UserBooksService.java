@@ -1,5 +1,6 @@
 package com.bookswap.bookswapapp.services;
 
+import com.bookswap.bookswapapp.dtos.userbooks.BookData;
 import com.bookswap.bookswapapp.dtos.userbooks.BookFilter;
 import com.bookswap.bookswapapp.dtos.userbooks.BookListItem;
 import com.bookswap.bookswapapp.dtos.userbooks.FilterHints;
@@ -16,14 +17,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -75,6 +72,63 @@ public class UserBooksService {
             book.addCategory(category);
         }
     }
+
+    @Transactional
+    public void updateBook(Long id, MultipartFile image, BookData bookData, List<String> categories, EBookLabel label) throws IOException {
+        Book book = updateBookInfo(id, bookData, categories, label);
+        book.setImage(compressBytes(image.getBytes()));
+    }
+
+    @Transactional
+    public void updateBook(Long id, BookData bookData, List<String> categories, EBookLabel label){
+        updateBookInfo(id, bookData, categories, label);
+    }
+
+    private Book updateBookInfo(Long id, BookData bookData, List<String> categories, EBookLabel label){
+        Book book = getBook(id);
+
+        User user = getCurrentUser();
+
+        if(!book.getUser().getUsername().equals(user.getUsername())){
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Book does not belong to user");
+        }
+
+        if(!book.getStatus().equals(EBookStatus.AVAILABLE)){
+            throw new ResponseStatusException(HttpStatus.EXPECTATION_FAILED, "Cannot edit book that is not available");
+        }
+
+        book.setUpdateDate(LocalDateTime.now());
+        if(!Objects.equals(book.getTitle(), bookData.getTitle())){
+            book.setTitle(bookData.getTitle());
+        }
+        if(!Objects.equals(book.getAuthor(), bookData.getAuthor())){
+            book.setAuthor(bookData.getAuthor());
+        }
+        if(!Objects.equals(book.getPublisher(), bookData.getPublisher())){
+            book.setPublisher(bookData.getPublisher());
+        }
+        if(!Objects.equals(book.getYearOfPublication(), bookData.getYearOfPublication())){
+            book.setYearOfPublication(bookData.getYearOfPublication());
+        }
+        if(bookData.getDescription() != null && !Objects.equals(book.getDescription(), bookData.getDescription())){
+            book.setDescription(bookData.getDescription());
+        }
+        if(book.getLabel() != label) {
+            book.setLabel(label);
+        }
+        book.getCategories().forEach(category -> {
+            if (!containsIgnoreCaseAndTrim(categories, category.getName())) {
+                book.removeCategory(category);
+        }});
+        for(String name: categories){
+            Category category = getCategory(name);
+            if(!containsIgnoreCaseAndTrim(book.getCategories().stream().map(Category::getName).collect(Collectors.toList()), name)) {
+                book.addCategory(category);
+            }
+        }
+        return book;
+    }
+
 
     public List<BookListItem> loadBooks(EBookStatus status){
         List<Book> bookList = bookRepository

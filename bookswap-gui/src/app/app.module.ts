@@ -36,6 +36,7 @@ import { AddBookComponent } from './views/user-books/add-book/add-book.component
 import {DataPickerHeader} from "./helpers/data-picker.header";
 import { BookDetailsDialogComponent } from './views/user-books/browse-books/book-details-dialog/book-details-dialog.component';
 import {MatTabsModule} from "@angular/material/tabs";
+import {MatCheckboxModule} from "@angular/material/checkbox";
 
 @NgModule({
   declarations: [
@@ -75,7 +76,8 @@ import {MatTabsModule} from "@angular/material/tabs";
         MatChipsModule,
         MatAutocompleteModule,
         MatDatepickerModule,
-        MatTabsModule
+        MatTabsModule,
+        MatCheckboxModule
     ],
   providers: [authInterceptorProviders],
   bootstrap: [AppComponent]
