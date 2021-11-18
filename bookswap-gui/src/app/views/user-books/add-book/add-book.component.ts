@@ -17,6 +17,8 @@ import {MatChipInputEvent} from "@angular/material/chips";
 import {MatAutocompleteSelectedEvent} from "@angular/material/autocomplete";
 import {COMMA, ENTER} from "@angular/cdk/keycodes";
 import {UserBookService} from "../../../services/user-book.service";
+import {BookData} from "../../../models/user-books/BookData";
+import {EBookLabel} from "../../../enums/EBookLabel";
 
 const moment = _rollupMoment || _moment;
 
@@ -45,7 +47,7 @@ export class AddBookComponent implements OnInit {
   categoriesCtrl = new FormControl();
   filteredCategories: Observable<string[]>;
   categories: string[] = [];
-  allCategories: string[] = ['przygodowa', 'obyczajowa'];
+  allCategories: string[] = [];
   file: File | null = null;
   fileName: string = '';
   imageUrl = '';
@@ -62,6 +64,7 @@ export class AddBookComponent implements OnInit {
               private authService: AuthService, private tokenStorage: TokenStorageService) {
     const currentYear = moment();
     this.maxDate = new Date(currentYear.year(), 11, 31);
+    this.loadAllCategoryNames();
     this.filteredCategories = this.categoriesCtrl.valueChanges.pipe(
       startWith(null),
       map((category: string | null) => (category ? this._filter(category) : this.allCategories.slice())),
@@ -74,7 +77,7 @@ export class AddBookComponent implements OnInit {
       author: ['', Validators.required],
       publisher: ['', Validators.required],
       yearOfPublication: ['', Validators.required],
-      label: ['PERMANENT_SWAP'],
+      label: [EBookLabel.PERMANENT_SWAP],
       description: ['']
     });
     if (this.tokenStorage.getToken()) {
@@ -83,6 +86,15 @@ export class AddBookComponent implements OnInit {
       this.router.navigate(['/login']).then(() => this.reloadPage());
     }
     this.checkIfEditBookView();
+  }
+
+  loadAllCategoryNames(){
+    this.userBookService.loadAllCategoryNames().subscribe(
+      data => {
+        console.log(data)
+        this.allCategories = data;
+      }
+    )
   }
 
   checkIfEditBookView(){
@@ -104,6 +116,7 @@ export class AddBookComponent implements OnInit {
     this.userBookService.getBook(this.bookId!).subscribe(
       data => {
         console.log(data)
+        this.fillFormWithEditedBook(data);
       }, err => {
         Swal.fire({
           position: 'top-end',
@@ -116,12 +129,34 @@ export class AddBookComponent implements OnInit {
     )
   }
 
+  fillFormWithEditedBook(data: BookData){
+    this.form.get('title')?.setValue(data.title);
+    this.form.get('author')?.setValue(data.author);
+    this.form.get('publisher')?.setValue(data.publisher);
+    this.form.get('yearOfPublication')?.setValue(moment('31/12/'+data.yearOfPublication, "DD/MM/YYYY"));
+    this.form.get('description')?.setValue(data.description);
+    this.form.get('label')?.setValue(this.getLabel(data.label));
+    console.log(this.form.get('label')?.value)
+    this.categories = data.categories;
+  }
+
+  getLabel(label: any): EBookLabel{
+    label = label.valueOf() as unknown as string;
+    if(label === EBookLabel[EBookLabel.PERMANENT_SWAP]){
+      return EBookLabel.PERMANENT_SWAP;
+    } else {
+      return EBookLabel.TEMPORARY_SWAP;
+    }
+  }
+
 
   add(event: MatChipInputEvent): void {
     const value = (event.value || '').trim();
 
     if (value) {
-      this.categories.push(value);
+      if(!this.categories.find(c => c === value)) {
+        this.categories.push(value);
+      }
     }
 
     event.chipInput!.clear();
@@ -138,7 +173,9 @@ export class AddBookComponent implements OnInit {
   }
 
   selected(event: MatAutocompleteSelectedEvent): void {
-    this.categories.push(event.option.viewValue);
+    if(!this.categories.find(c => c === event.option.viewValue)) {
+      this.categories.push(event.option.viewValue);
+    }
     this.categoryInput.nativeElement.value = '';
     this.categoriesCtrl.setValue(null);
   }

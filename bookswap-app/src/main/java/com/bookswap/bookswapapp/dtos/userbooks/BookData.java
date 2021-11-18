@@ -1,5 +1,6 @@
 package com.bookswap.bookswapapp.dtos.userbooks;
 
+import com.bookswap.bookswapapp.enums.EBookLabel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -17,5 +18,5 @@ public class BookData {
     private Integer yearOfPublication;
     private String description;
     private List<String> categories = new ArrayList<>();
-    private String label;
+    private EBookLabel label;
 }

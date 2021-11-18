@@ -113,6 +113,13 @@ public class UserBooksController {
         return ResponseEntity.ok(filterHints);
     }
 
+    @GetMapping(path = "/categories")
+    @PreAuthorize("hasRole('USER')")
+    public ResponseEntity<?> loadCategoriesNames() {
+        List<String> categories = userBooksService.loadCategoriesNames();
+        return ResponseEntity.ok(categories);
+    }
+
 
     private Book mapBookDataToBook(BookData bookData){
         return this.modelMapper.map(bookData, Book.class);

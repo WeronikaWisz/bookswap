@@ -56,4 +56,8 @@ export class UserBookService {
     });
   }
 
+  loadAllCategoryNames(): Observable<string[]>{
+    return this.http.get<string[]>(USER_BOOK_API + 'categories');
+  }
+
 }

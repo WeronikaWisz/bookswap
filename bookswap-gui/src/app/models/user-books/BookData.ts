@@ -1,3 +1,5 @@
+import {EBookLabel} from "../../enums/EBookLabel";
+
 export interface BookData {
   title: string;
   author: string;
@@ -5,5 +7,5 @@ export interface BookData {
   yearOfPublication: string;
   description: string;
   categories: string[];
-  label: string;
+  label: EBookLabel;
 }

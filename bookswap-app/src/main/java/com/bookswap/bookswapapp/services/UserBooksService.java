@@ -16,10 +16,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -49,19 +53,19 @@ public class UserBooksService {
     }
 
     @Transactional
-    public void addBook(MultipartFile image, Book book, List<String> categories, String label) throws IOException {
+    public void addBook(MultipartFile image, Book book, List<String> categories, EBookLabel label) throws IOException {
         book.setImage(compressBytes(image.getBytes()));
         addBookInfo(book, categories, label);
     }
 
     @Transactional
-    public void addBook(Book book, List<String> categories, String label){
+    public void addBook(Book book, List<String> categories, EBookLabel label){
         addBookInfo(book, categories, label);
     }
 
-    private void addBookInfo(Book book, List<String> categories, String label){
+    private void addBookInfo(Book book, List<String> categories, EBookLabel label){
         book.setCreationDate(LocalDateTime.now());
-        book.setLabel(EBookLabel.valueOf(label));
+        book.setLabel(label);
         book.setStatus(EBookStatus.AVAILABLE);
         User user = getCurrentUser();
         book.setUser(user);
@@ -147,6 +151,11 @@ public class UserBooksService {
         return filterHints;
     }
 
+    public List<String> loadCategoriesNames(){
+        List<Category> categories = categoryRepository.findAll();
+        return categories.stream().map(Category::getName).collect(Collectors.toList());
+    }
+
     private Category getCategory(String name){
         Optional<Category> categoryOpt = categoryRepository
                 .findCategoryByName(name.trim().toLowerCase(Locale.ROOT));
@@ -178,7 +187,7 @@ public class UserBooksService {
         return outputStream.toByteArray();
     }
 
-    public static byte[] decompressBytes(byte[] data) {
+    private static byte[] decompressBytes(byte[] data) {
         Inflater inflater = new Inflater();
         inflater.setInput(data);
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream(data.length);

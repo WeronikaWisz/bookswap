@@ -87,7 +87,8 @@
 <!--      <div class="book-photo">-->
 <!--        <img [src]="imageUrl" height="200">-->
 <!--      </div>-->
-      <button mat-raised-button color="primary" [disabled]="form.invalid" (click)="onSubmit()"><mat-icon>add_circle_outline</mat-icon><span class="add-button">Dodaj książkę</span></button>
+      <button mat-raised-button color="primary" *ngIf="!isEditBookView" [disabled]="form.invalid" (click)="onSubmit()"><mat-icon>add_circle_outline</mat-icon><span class="add-button">Dodaj książkę</span></button>
+      <button mat-raised-button color="primary" *ngIf="isEditBookView" [disabled]="form.invalid"><mat-icon>update</mat-icon><span class="add-button">Aktualizuj książkę</span></button>
     </form>
   </mat-card-content>
 </mat-card>
