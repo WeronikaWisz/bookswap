@@ -1,7 +1,6 @@
 import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
 import {FormBuilder, FormControl, FormGroup, Validators} from "@angular/forms";
 import {ActivatedRoute, Router} from "@angular/router";
-import {AuthService} from "../../../services/auth.service";
 import {TokenStorageService} from "../../../services/token-storage.service";
 import Swal from "sweetalert2";
 import {DataPickerHeader, MY_FORMATS} from "../../../helpers/data-picker.header";
@@ -70,7 +69,7 @@ export class AddBookComponent implements OnInit {
   constructor(private formBuilder: FormBuilder,
               private route: ActivatedRoute,
               private router: Router, private userBookService : UserBookService,
-              private authService: AuthService, private tokenStorage: TokenStorageService) {
+              private tokenStorage: TokenStorageService) {
     const currentYear = moment();
     this.maxDate = new Date(currentYear.year(), 11, 31);
     this.loadAllCategoryNames();

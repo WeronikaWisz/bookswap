@@ -1,4 +1,4 @@
-package com.bookswap.bookswapapp.controllers;
+package com.bookswap.bookswapapp.controllers.manageusers;
 
 import com.bookswap.bookswapapp.dtos.auth.JwtResponse;
 import com.bookswap.bookswapapp.dtos.auth.LoginRequest;

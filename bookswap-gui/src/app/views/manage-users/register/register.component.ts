@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { AuthService } from '../../../services/auth.service';
+import { AuthService } from '../../../services/manage-users/auth.service';
 import { AbstractControl, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import Validation from '../../../helpers/validation';
 import {STEPPER_GLOBAL_OPTIONS} from '@angular/cdk/stepper';
