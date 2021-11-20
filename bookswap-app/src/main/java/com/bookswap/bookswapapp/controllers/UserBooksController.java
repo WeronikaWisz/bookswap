@@ -108,8 +108,8 @@ public class UserBooksController {
 
     @GetMapping(path = "/filter-hints")
     @PreAuthorize("hasRole('USER')")
-    public ResponseEntity<?> loadFilterHints(@RequestParam EBookStatus status) {
-        FilterHints filterHints = userBooksService.loadFilterHints(status);
+    public ResponseEntity<?> loadFilterHints() {
+        FilterHints filterHints = userBooksService.loadFilterHints();
         return ResponseEntity.ok(filterHints);
     }
 

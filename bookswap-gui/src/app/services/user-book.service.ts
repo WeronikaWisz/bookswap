@@ -50,10 +50,8 @@ export class UserBookService {
     return this.http.post<BookListItem[]>(USER_BOOK_API + 'books/filter', JSON.stringify(bookFilter), httpOptions);
   }
 
-  loadHintsForFilter(status: EBookStatus): Observable<FilterHints>{
-    return this.http.get<FilterHints>(USER_BOOK_API + 'filter-hints', {
-      params: new HttpParams().set('status', EBookStatus[status])
-    });
+  loadHintsForFilter(): Observable<FilterHints>{
+    return this.http.get<FilterHints>(USER_BOOK_API + 'filter-hints');
   }
 
   loadAllCategoryNames(): Observable<string[]>{

@@ -6,6 +6,8 @@ import com.bookswap.bookswapapp.dtos.userbooks.BookListItem;
 import com.bookswap.bookswapapp.dtos.userbooks.FilterHints;
 import com.bookswap.bookswapapp.enums.EBookLabel;
 import com.bookswap.bookswapapp.enums.EBookStatus;
+import com.bookswap.bookswapapp.helpers.FilterHelper;
+import com.bookswap.bookswapapp.helpers.ImageHelper;
 import com.bookswap.bookswapapp.models.Book;
 import com.bookswap.bookswapapp.models.Category;
 import com.bookswap.bookswapapp.models.User;
@@ -51,7 +53,7 @@ public class UserBooksService {
 
     @Transactional
     public void addBook(MultipartFile image, Book book, List<String> categories, EBookLabel label) throws IOException {
-        book.setImage(compressBytes(image.getBytes()));
+        book.setImage(ImageHelper.compressBytes(image.getBytes()));
         addBookInfo(book, categories, label);
     }
 
@@ -76,7 +78,7 @@ public class UserBooksService {
     @Transactional
     public void updateBook(Long id, MultipartFile image, BookData bookData, List<String> categories, EBookLabel label) throws IOException {
         Book book = updateBookInfo(id, bookData, categories, label);
-        book.setImage(compressBytes(image.getBytes()));
+        book.setImage(ImageHelper.compressBytes(image.getBytes()));
     }
 
     @Transactional
@@ -117,12 +119,12 @@ public class UserBooksService {
             book.setLabel(label);
         }
         book.getCategories().forEach(category -> {
-            if (!containsIgnoreCaseAndTrim(categories, category.getName())) {
+            if (!FilterHelper.containsIgnoreCaseAndTrim(categories, category.getName())) {
                 book.removeCategory(category);
         }});
         for(String name: categories){
             Category category = getCategory(name);
-            if(!containsIgnoreCaseAndTrim(book.getCategories().stream().map(Category::getName).collect(Collectors.toList()), name)) {
+            if(!FilterHelper.containsIgnoreCaseAndTrim(book.getCategories().stream().map(Category::getName).collect(Collectors.toList()), name)) {
                 book.addCategory(category);
             }
         }
@@ -159,23 +161,19 @@ public class UserBooksService {
             bookList = bookRepository.findBookByUser(getCurrentUser()).orElse(Collections.emptyList());
         }
         if(!bookFilter.getAuthors().isEmpty()){
-            bookList = bookList.stream().filter(book -> containsIgnoreCaseAndTrim(bookFilter.getAuthors(), book.getAuthor()))
+            bookList = bookList.stream().filter(book -> FilterHelper.containsIgnoreCaseAndTrim(bookFilter.getAuthors(), book.getAuthor()))
                     .collect(Collectors.toList());
         }
         if(!bookFilter.getTitles().isEmpty()){
-            bookList = bookList.stream().filter(book -> containsIgnoreCaseAndTrim(bookFilter.getTitles(), book.getTitle()))
+            bookList = bookList.stream().filter(book -> FilterHelper.containsIgnoreCaseAndTrim(bookFilter.getTitles(), book.getTitle()))
                     .collect(Collectors.toList());
         }
         if(!bookFilter.getPublishers().isEmpty()){
-            bookList = bookList.stream().filter(book -> containsIgnoreCaseAndTrim(bookFilter.getPublishers(), book.getPublisher()))
+            bookList = bookList.stream().filter(book -> FilterHelper.containsIgnoreCaseAndTrim(bookFilter.getPublishers(), book.getPublisher()))
                     .collect(Collectors.toList());
         }
         if(!bookFilter.getCategories().isEmpty()){
-            bookList = bookList.stream().filter(book -> !Collections.disjoint(
-                    bookFilter.getCategories().stream()
-                            .map(cat -> cat.trim().toLowerCase(Locale.ROOT)).collect(Collectors.toList()),
-                            book.getCategories().stream()
-                                    .map(cat -> cat.getName().trim().toLowerCase(Locale.ROOT)).collect(Collectors.toList())))
+            bookList = bookList.stream().filter(book -> FilterHelper.categoriesMatches(bookFilter.getCategories(), book))
                     .collect(Collectors.toList());
         }
         if(bookFilter.getYearOfPublicationFrom() != null && !bookFilter.getYearOfPublicationFrom().equals("")){
@@ -189,19 +187,14 @@ public class UserBooksService {
         return bookListToBookListItem(bookList);
     }
 
-    public FilterHints loadFilterHints(EBookStatus status){
+    public FilterHints loadFilterHints(){
         List<Book> bookList = bookRepository
-                .findBookByStatusAndUser(status, getCurrentUser()).orElse(Collections.emptyList());
+                .findBookByUser(getCurrentUser()).orElse(Collections.emptyList());
         FilterHints filterHints = new FilterHints();
         filterHints.setTitles(bookList.stream().map(Book::getTitle).distinct().collect(Collectors.toList()));
         filterHints.setAuthors(bookList.stream().map(Book::getAuthor).distinct().collect(Collectors.toList()));
         filterHints.setPublishers(bookList.stream().map(Book::getPublisher).distinct().collect(Collectors.toList()));
-        List<String> categories= new ArrayList<>();
-        for(Book book: bookList){
-            categories.addAll(book.getCategories().stream()
-                    .map(Category::getName).collect(Collectors.toList()));
-        }
-        filterHints.setCategories(categories.stream().distinct().collect(Collectors.toList()));
+        filterHints.setCategories(FilterHelper.getCategoriesFromBooks(bookList));
         return filterHints;
     }
 
@@ -223,43 +216,6 @@ public class UserBooksService {
         }
     }
 
-    private byte[] compressBytes(byte[] data) {
-        Deflater deflater = new Deflater();
-        deflater.setInput(data);
-        deflater.finish();
-        ByteArrayOutputStream outputStream = new ByteArrayOutputStream(data.length);
-        byte[] buffer = new byte[1024];
-        while (!deflater.finished()) {
-            int count = deflater.deflate(buffer);
-            outputStream.write(buffer, 0, count);
-        }
-        try {
-            outputStream.close();
-        } catch (IOException e) {
-            logger.error("Error compressing the image: ", e.getMessage());
-        }
-        return outputStream.toByteArray();
-    }
-
-    private static byte[] decompressBytes(byte[] data) {
-        Inflater inflater = new Inflater();
-        inflater.setInput(data);
-        ByteArrayOutputStream outputStream = new ByteArrayOutputStream(data.length);
-        byte[] buffer = new byte[1024];
-        try {
-            while (!inflater.finished()) {
-                int count = inflater.inflate(buffer);
-                outputStream.write(buffer, 0, count);
-            }
-            outputStream.close();
-        } catch (IOException ioe) {
-            logger.error("Error compressing the image: ", ioe.getMessage());
-        } catch ( DataFormatException e) {
-            logger.error("Error formatting the image: ", e.getMessage());
-        }
-        return outputStream.toByteArray();
-    }
-
     private User getCurrentUser(){
         UserDetailsI userDetails = (UserDetailsI) SecurityContextHolder.getContext().getAuthentication()
                 .getPrincipal();
@@ -274,19 +230,11 @@ public class UserBooksService {
             BookListItem bookListItem = new BookListItem(book.getId(), book.getTitle(),
                     book.getAuthor(), book.getLabel());
             if(book.getImage() != null) {
-                bookListItem.setImage(decompressBytes(book.getImage()));
+                bookListItem.setImage(ImageHelper.decompressBytes(book.getImage()));
             }
             bookListItems.add(bookListItem);
         }
         return bookListItems;
     }
 
-    private boolean containsIgnoreCaseAndTrim(List<String> list, String value) {
-        for (String item : list) {
-            if (item.trim().equalsIgnoreCase(value.trim())) {
-                return true;
-            }
-        }
-        return false;
-    }
 }

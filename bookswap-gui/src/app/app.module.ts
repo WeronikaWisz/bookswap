@@ -37,6 +37,9 @@ import {DataPickerHeader} from "./helpers/data-picker.header";
 import { BookDetailsDialogComponent } from './views/user-books/browse-books/book-details-dialog/book-details-dialog.component';
 import {MatTabsModule} from "@angular/material/tabs";
 import {MatCheckboxModule} from "@angular/material/checkbox";
+import { BrowseOffersComponent } from './views/book-offers/browse-offers/browse-offers.component';
+import { ReceivedOffersComponent } from './views/book-offers/received-offers/received-offers.component';
+import { SentOffersComponent } from './views/book-offers/sent-offers/sent-offers.component';
 
 @NgModule({
   declarations: [
@@ -49,7 +52,10 @@ import {MatCheckboxModule} from "@angular/material/checkbox";
     FiltersDialogComponent,
     DataPickerHeader,
     AddBookComponent,
-    BookDetailsDialogComponent
+    BookDetailsDialogComponent,
+    BrowseOffersComponent,
+    ReceivedOffersComponent,
+    SentOffersComponent
   ],
     imports: [
         BrowserModule,

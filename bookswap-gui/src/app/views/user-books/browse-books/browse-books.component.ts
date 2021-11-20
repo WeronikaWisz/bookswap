@@ -18,15 +18,15 @@ import {FilterHints} from "../../../models/user-books/FilterHints";
 })
 export class BrowseBooksComponent implements OnInit {
 
-  bookFilter: BookFilter = new class implements BookFilter {
-    authors: string[] = [];
-    categories: string[] = [];
-    publishers: string[] = [];
-    titles: string[] = [];
-    yearOfPublicationFrom: string = '';
-    yearOfPublicationTo: string = '';
-    label = undefined;
-    status = 0;
+  bookFilter: BookFilter = {
+    authors: [],
+    categories: [],
+    publishers: [],
+    titles: [],
+    yearOfPublicationFrom: '',
+    yearOfPublicationTo: '',
+    label: undefined,
+    status: 0
   }
   isLoggedIn = false;
   books: BookListItem[] = [];
@@ -77,7 +77,7 @@ export class BrowseBooksComponent implements OnInit {
 
   openFilter(){
     if(!this.filterHintsLoaded){
-      this.userBookService.loadHintsForFilter(EBookStatus.AVAILABLE)
+      this.userBookService.loadHintsForFilter()
         .subscribe(
           data => {
             console.log(data);
