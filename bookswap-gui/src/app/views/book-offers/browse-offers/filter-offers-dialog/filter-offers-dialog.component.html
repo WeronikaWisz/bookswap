@@ -1,0 +1,199 @@
+<h2 mat-dialog-title>Filtry</h2>
+<div mat-dialog-content>
+  <mat-form-field class="full-width-input wider-inputs" appearance="outline">
+    <mat-label>Tytuł</mat-label>
+    <mat-chip-list #chipListTitle aria-label="Title selection">
+      <mat-chip
+        *ngFor="let title of titles"
+        [selectable]="true"
+        [removable]="true"
+        (removed)="remove(title, 'title')">
+        {{title}}
+        <button matChipRemove>
+          <mat-icon>cancel</mat-icon>
+        </button>
+      </mat-chip>
+      <input
+        placeholder="Wybierz tytuł..."
+        #titleInput
+        [formControl]="titlesCtrl"
+        [matAutocomplete]="autoTitle"
+        [matChipInputFor]="chipListTitle"
+        [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+        (matChipInputTokenEnd)="add($event, 'title')">
+    </mat-chip-list>
+    <mat-autocomplete #autoTitle="matAutocomplete" (optionSelected)="selected($event, 'title')">
+      <mat-option *ngFor="let title of filteredTitles | async" [value]="title">
+        {{title}}
+      </mat-option>
+    </mat-autocomplete>
+  </mat-form-field>
+  <br/>
+  <mat-form-field class="full-width-input left-mat-field" appearance="outline">
+    <mat-label>Autor</mat-label>
+    <mat-chip-list #chipListAuthor aria-label="Author selection">
+      <mat-chip
+        *ngFor="let author of authors"
+        [selectable]="true"
+        [removable]="true"
+        (removed)="remove(author, 'author')">
+        {{author}}
+        <button matChipRemove>
+          <mat-icon>cancel</mat-icon>
+        </button>
+      </mat-chip>
+      <input
+        placeholder="Wybierz autora..."
+        #authorInput
+        [formControl]="authorsCtrl"
+        [matAutocomplete]="autoAuthor"
+        [matChipInputFor]="chipListAuthor"
+        [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+        (matChipInputTokenEnd)="add($event, 'author')">
+    </mat-chip-list>
+    <mat-autocomplete #autoAuthor="matAutocomplete" (optionSelected)="selected($event, 'author')">
+      <mat-option *ngFor="let author of filteredAuthors | async" [value]="author">
+        {{author}}
+      </mat-option>
+    </mat-autocomplete>
+  </mat-form-field>
+  <mat-form-field class="full-width-input left-mat-field" appearance="outline">
+    <mat-label>Wydawnictwo</mat-label>
+    <mat-chip-list #chipListPublisher aria-label="Publisher selection">
+      <mat-chip
+        *ngFor="let publisher of publishers"
+        [selectable]="true"
+        [removable]="true"
+        (removed)="remove(publisher, 'publisher')">
+        {{publisher}}
+        <button matChipRemove>
+          <mat-icon>cancel</mat-icon>
+        </button>
+      </mat-chip>
+      <input
+        placeholder="Wybierz wydawnictwo..."
+        #publisherInput
+        [formControl]="publishersCtrl"
+        [matAutocomplete]="autoPublisher"
+        [matChipInputFor]="chipListPublisher"
+        [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+        (matChipInputTokenEnd)="add($event, 'publisher')">
+    </mat-chip-list>
+    <mat-autocomplete #autoPublisher="matAutocomplete" (optionSelected)="selected($event, 'publisher')">
+      <mat-option *ngFor="let publisher of filteredPublishers | async" [value]="publisher">
+        {{publisher}}
+      </mat-option>
+    </mat-autocomplete>
+  </mat-form-field>
+  <br/>
+  <mat-form-field class="full-width-input left-mat-field" appearance="outline">
+    <mat-label>Lokalizacja</mat-label>
+    <mat-chip-list #chipListLocalization aria-label="Localization selection">
+      <mat-chip
+        *ngFor="let loc of localization"
+        [selectable]="true"
+        [removable]="true"
+        (removed)="remove(loc, 'localization')">
+        {{loc}}
+        <button matChipRemove>
+          <mat-icon>cancel</mat-icon>
+        </button>
+      </mat-chip>
+      <input
+        placeholder="Wybierz lokalizację..."
+        #localizationInput
+        [formControl]="localizationCtrl"
+        [matAutocomplete]="autoLocalization"
+        [matChipInputFor]="chipListLocalization"
+        [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+        (matChipInputTokenEnd)="add($event, 'localization')">
+    </mat-chip-list>
+    <mat-autocomplete #autoLocalization="matAutocomplete" (optionSelected)="selected($event, 'localization')">
+      <mat-option *ngFor="let loc of filteredLocalization | async" [value]="loc">
+        {{loc}}
+      </mat-option>
+    </mat-autocomplete>
+  </mat-form-field>
+  <mat-form-field class="full-width-input left-mat-field" appearance="outline">
+    <mat-label>Właściciele</mat-label>
+    <mat-chip-list #chipListOwner aria-label="Owner selection">
+      <mat-chip
+        *ngFor="let owner of owners"
+        [selectable]="true"
+        [removable]="true"
+        (removed)="remove(owner, 'owner')">
+        {{owner}}
+        <button matChipRemove>
+          <mat-icon>cancel</mat-icon>
+        </button>
+      </mat-chip>
+      <input
+        placeholder="Wybierz użytkownika..."
+        #ownerInput
+        [formControl]="ownersCtrl"
+        [matAutocomplete]="autoOwner"
+        [matChipInputFor]="chipListOwner"
+        [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+        (matChipInputTokenEnd)="add($event, 'owner')">
+    </mat-chip-list>
+    <mat-autocomplete #autoOwner="matAutocomplete" (optionSelected)="selected($event, 'owner')">
+      <mat-option *ngFor="let owner of filteredOwners | async" [value]="owner">
+        {{owner}}
+      </mat-option>
+    </mat-autocomplete>
+  </mat-form-field>
+  <br/>
+  <mat-form-field class="left-mat-field" appearance="outline">
+    <mat-label>Rok publikacji od</mat-label>
+    <input matInput [max]="maxDate" [matDatepicker]="dp" [formControl]="dateFrom">
+    <mat-datepicker-toggle matSuffix [for]="dp"></mat-datepicker-toggle>
+    <mat-datepicker [calendarHeaderComponent]="exampleHeaderFrom" #dp
+                    startView="multi-year"
+                    (yearSelected)="chosenYearHandler($event, dp, 'from')"
+                    panelClass="example-month-picker">
+    </mat-datepicker>
+  </mat-form-field>
+  <mat-form-field class="left-mat-field" appearance="outline">
+    <mat-label>Rok publikacji do</mat-label>
+    <input matInput [max]="maxDate" [matDatepicker]="dp2" [formControl]="dateTo">
+    <mat-datepicker-toggle matSuffix [for]="dp2"></mat-datepicker-toggle>
+    <mat-datepicker [calendarHeaderComponent]="exampleHeaderTo" #dp2
+                    startView="multi-year"
+                    (yearSelected)="chosenYearHandler($event, dp2, 'to')"
+                    panelClass="example-month-picker">
+    </mat-datepicker>
+  </mat-form-field>
+  <br/>
+  <mat-form-field class="example-chip-list wider-inputs" appearance="outline">
+    <mat-label>Kategorie</mat-label>
+    <mat-chip-list #chipList aria-label="Category selection">
+      <mat-chip
+        *ngFor="let category of categories"
+        [selectable]="true"
+        [removable]="true"
+        (removed)="remove(category, 'category')">
+        {{category}}
+        <button matChipRemove>
+          <mat-icon>cancel</mat-icon>
+        </button>
+      </mat-chip>
+      <input
+        placeholder="Wybierz kategorię..."
+        #categoryInput
+        [formControl]="categoriesCtrl"
+        [matAutocomplete]="auto"
+        [matChipInputFor]="chipList"
+        [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+        (matChipInputTokenEnd)="add($event, 'category')">
+    </mat-chip-list>
+    <mat-autocomplete #auto="matAutocomplete" (optionSelected)="selected($event, 'category')">
+      <mat-option *ngFor="let category of filteredCategories | async" [value]="category">
+        {{category}}
+      </mat-option>
+    </mat-autocomplete>
+  </mat-form-field>
+</div>
+<div mat-dialog-actions align="end">
+  <button mat-button (click)="onNoClick()">Zamknij</button>
+  <button mat-raised-button color="primary" [mat-dialog-close]="sendData()" [disabled]="dateTo.invalid">Zastosuj</button>
+</div>

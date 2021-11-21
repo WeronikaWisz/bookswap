@@ -40,6 +40,8 @@ import {MatCheckboxModule} from "@angular/material/checkbox";
 import { BrowseOffersComponent } from './views/book-offers/browse-offers/browse-offers.component';
 import { ReceivedOffersComponent } from './views/book-offers/received-offers/received-offers.component';
 import { SentOffersComponent } from './views/book-offers/sent-offers/sent-offers.component';
+import { OfferDetailsDialogComponent } from './views/book-offers/browse-offers/offer-details-dialog/offer-details-dialog.component';
+import { FilterOffersDialogComponent } from './views/book-offers/browse-offers/filter-offers-dialog/filter-offers-dialog.component';
 
 @NgModule({
   declarations: [
@@ -55,7 +57,9 @@ import { SentOffersComponent } from './views/book-offers/sent-offers/sent-offers
     BookDetailsDialogComponent,
     BrowseOffersComponent,
     ReceivedOffersComponent,
-    SentOffersComponent
+    SentOffersComponent,
+    OfferDetailsDialogComponent,
+    FilterOffersDialogComponent
   ],
     imports: [
         BrowserModule,

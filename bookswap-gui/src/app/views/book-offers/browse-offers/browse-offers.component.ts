@@ -8,6 +8,7 @@ import {OfferListItem} from "../../../models/book-offers/OfferListItem";
 import {FilterHints} from "../../../models/book-offers/FilterHints";
 import {BookOffersService} from "../../../services/book-offers.service";
 import {EBookLabel} from "../../../enums/EBookLabel";
+import {FilterOffersDialogComponent} from "./filter-offers-dialog/filter-offers-dialog.component";
 
 @Component({
   selector: 'app-browse-offers',
@@ -75,36 +76,36 @@ export class BrowseOffersComponent implements OnInit {
   }
 
   openFilter(){
-    // if(!this.filterHintsLoaded){
-    //   this.userBookService.loadHintsForFilter(EBookStatus.AVAILABLE)
-    //     .subscribe(
-    //       data => {
-    //         console.log(data);
-    //         this.hints = data;
-    //         this.filterHintsLoaded = true;
-    //         this.openFilterDialog();
-    //       })
-    // } else {
-    //   this.openFilterDialog();
-    // }
+    if(!this.filterHintsLoaded){
+      this.bookOffersService.loadHintsForFilter()
+        .subscribe(
+          data => {
+            console.log(data);
+            this.hints = data;
+            this.filterHintsLoaded = true;
+            this.openFilterDialog();
+          })
+    } else {
+      this.openFilterDialog();
+    }
   }
 
-  // openFilterDialog(): void {
-  //   const dialogRef = this.dialog.open(FiltersDialogComponent, {
-  //     data: {
-  //       filterHints: this.hints,
-  //       bookFilter: this.bookFilter
-  //     }
-  //   });
-  //
-  //   dialogRef.afterClosed().subscribe(result => {
-  //     console.log(result);
-  //     if(result) {
-  //       this.bookFilter = result;
-  //       this.loadFilterBooks();
-  //     }
-  //   });
-  // }
+  openFilterDialog(): void {
+    const dialogRef = this.dialog.open(FilterOffersDialogComponent, {
+      data: {
+        filterHints: this.hints,
+        bookFilter: this.offerFilter
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      console.log(result);
+      if(result) {
+        this.offerFilter = result;
+        this.loadFilterOffers();
+      }
+    });
+  }
 
   loadFilterOffers(){
     this.bookOffersService.loadFilteredOffers({
