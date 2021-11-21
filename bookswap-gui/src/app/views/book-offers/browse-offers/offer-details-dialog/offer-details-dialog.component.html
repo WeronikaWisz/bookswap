@@ -1,1 +1,78 @@
-<p>offer-details-dialog works!</p>
+<div class="header-small-width">
+  <h2 mat-dialog-title>{{data.offerBasics.title}}</h2>
+</div>
+<div mat-dialog-content>
+  <div class="book-basic">
+    <div class="book-image">
+      <img *ngIf="data.offerBasics.image != null" [src]="'data:image/jpeg;base64,'+data.offerBasics.image" alt="Zdjęcie okładki">
+      <img *ngIf="data.offerBasics.image == null" src="./../../../../../assets/images/brak_obrazka.png" alt="Zdjęcie okładki">
+    </div>
+    <div class="book-info">
+      <h2 id="book-title">{{data.offerBasics.title}}</h2>
+      <div class="book-info-no-title">
+        <div>
+          <p><span class="description-titles">Autor:</span> {{data.offerBasics.author}}</p>
+          <p><span class="description-titles">Wydawnictwo:</span> {{data.offerDetails.publisher}}</p>
+          <p><span class="description-titles">Rok wydania:</span> {{data.offerDetails.yearOfPublication}}</p>
+        </div>
+        <br/>
+        <div>
+          <p>
+            <span class="description-titles">Status:</span>
+            <span> {{getStatus()}}</span>
+          </p>
+          <p><span class="description-titles">Typ wymiany:</span>
+            <span> {{getLabel()}}</span>
+          </p>
+        </div>
+      </div>
+    </div>
+    <div class="swap-button">
+      <ng-template *ngTemplateOutlet="swapButtonsTemplate; context: {$implicit: data}"></ng-template>
+    </div>
+  </div>
+  <div class="book-details">
+    <p class="description-titles">Opis:</p>
+    {{data.offerDetails.description}}
+    <br/><br/>
+    <p class="description-titles">Kategorie: </p>
+    <mat-chip-list>
+      <mat-chip *ngFor="let category of data.offerDetails.categories" [selectable]="true">
+        {{category}}
+      </mat-chip>
+    </mat-chip-list>
+  </div>
+  <div class="swap-button-small-width">
+    <ng-template *ngTemplateOutlet="swapButtonsTemplate; context: {$implicit: data}"></ng-template>
+  </div>
+</div>
+<div mat-dialog-actions align="end">
+  <button mat-button (click)="onNoClick()">Zamknij</button>
+</div>
+
+<ng-template #swapButtonsTemplate let-data>
+  <span *ngIf="data.offerDetails.hasOfferFromUser">
+        <button mat-raised-button color="primary" [disabled]="getStatus() !== 'Dostępna'" (click)="sendSwap()">
+          <mat-icon>swap_horiz</mat-icon> WYMIEŃ
+        </button>
+        <button mat-icon-button color="accent" matTooltip="Masz oferty od tego użytkownika, możesz od razu wymienić książkę!">
+        <mat-icon>info</mat-icon>
+      </button>
+        <br/><br/>
+      <form [formGroup]="form">
+        <mat-form-field appearance="outline" >
+          <mat-label>Wybierz książkę do wymiany</mat-label>
+          <mat-select formControlName="requestedBooksCtrl">
+            <mat-option *ngFor="let book of data.offerDetails.requestedBooks" [value]="book.id" class="multiline-mat-option">
+              <div>{{book.title}}, </div>
+              <div>{{book.author}}</div>
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+      </form>
+      </span>
+  <button mat-raised-button color="primary" *ngIf="!data.offerDetails.hasOfferFromUser" [disabled]="getStatus() !== 'Dostępna'"
+          (click)="sendSwapRequest()">
+    <mat-icon>send</mat-icon> ZŁÓŻ OFERTĘ
+  </button>
+</ng-template>

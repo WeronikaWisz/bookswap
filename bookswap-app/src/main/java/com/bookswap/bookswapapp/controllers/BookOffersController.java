@@ -1,10 +1,7 @@
 package com.bookswap.bookswapapp.controllers;
 
 import com.bookswap.bookswapapp.dtos.auth.MessageResponse;
-import com.bookswap.bookswapapp.dtos.bookoffers.FilterHints;
-import com.bookswap.bookswapapp.dtos.bookoffers.OfferDetails;
-import com.bookswap.bookswapapp.dtos.bookoffers.OfferFilter;
-import com.bookswap.bookswapapp.dtos.bookoffers.OffersResponse;
+import com.bookswap.bookswapapp.dtos.bookoffers.*;
 import com.bookswap.bookswapapp.enums.EBookLabel;
 import com.bookswap.bookswapapp.services.BookOffersService;
 import org.modelmapper.ModelMapper;
@@ -47,7 +44,7 @@ public class BookOffersController {
     @GetMapping(path = "/offer-details/{offerId}")
     @PreAuthorize("hasRole('USER')")
     public ResponseEntity<?> getOfferDetails(@PathVariable("offerId") Long id) {
-        OfferDetails offerDetails = new OfferDetails();
+        OfferDetails offerDetails = bookOffersService.getOffer(id);
         return ResponseEntity.ok(offerDetails);
     }
 
@@ -65,5 +62,12 @@ public class BookOffersController {
         return ResponseEntity.ok(filterHints);
     }
 
+    @PostMapping(path = "/swap-request")
+    @PreAuthorize("hasRole('USER')")
+    public ResponseEntity<?> sendSwapRequest(@RequestBody BooksForSwap booksForSwap) {
+        logger.info("hello");
+        bookOffersService.sendSwapRequest(booksForSwap);
+        return ResponseEntity.ok(new MessageResponse("Pomyśnie złożono propozycję"));
+    }
 
 }

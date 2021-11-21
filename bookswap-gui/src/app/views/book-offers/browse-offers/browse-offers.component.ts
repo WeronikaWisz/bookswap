@@ -9,6 +9,7 @@ import {FilterHints} from "../../../models/book-offers/FilterHints";
 import {BookOffersService} from "../../../services/book-offers.service";
 import {EBookLabel} from "../../../enums/EBookLabel";
 import {FilterOffersDialogComponent} from "./filter-offers-dialog/filter-offers-dialog.component";
+import {OfferDetailsDialogComponent} from "./offer-details-dialog/offer-details-dialog.component";
 
 @Component({
   selector: 'app-browse-offers',
@@ -48,31 +49,31 @@ export class BrowseOffersComponent implements OnInit {
   }
 
   public onCardClick(idx: number){
-    // console.log(idx);
-    // this.userBookService.getBookDetail(idx)
-    //   .subscribe(
-    //     data => {
-    //       console.log(data);
-    //       const dialogRef = this.dialog.open(BookDetailsDialogComponent, {
-    //         data: {
-    //           bookBasics: this.books.find(element => element.id == idx),
-    //           bookDetails: data
-    //         }
-    //       });
-    //       dialogRef.afterClosed().subscribe(result => {
-    //         console.log(result);
-    //       });
-    //     },
-    //     err => {
-    //       Swal.fire({
-    //         position: 'top-end',
-    //         title: 'Nie można załadować informacji o książce',
-    //         text: err.error.message,
-    //         icon: 'error',
-    //         showConfirmButton: false
-    //       })
-    //     }
-    //   )
+    console.log(idx);
+    this.bookOffersService.getOfferDetail(idx)
+      .subscribe(
+        data => {
+          console.log(data);
+          const dialogRef = this.dialog.open(OfferDetailsDialogComponent, {
+            data: {
+              offerBasics: this.offers.find(element => element.id == idx),
+              offerDetails: data
+            }
+          });
+          dialogRef.afterClosed().subscribe(result => {
+            console.log(result);
+          });
+        },
+        err => {
+          Swal.fire({
+            position: 'top-end',
+            title: 'Nie można załadować informacji o książce',
+            text: err.error.message,
+            icon: 'error',
+            showConfirmButton: false
+          })
+        }
+      )
   }
 
   openFilter(){

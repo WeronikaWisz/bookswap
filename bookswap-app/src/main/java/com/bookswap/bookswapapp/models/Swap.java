@@ -28,4 +28,7 @@ public class Swap {
     private ESwapStatus status;
     private LocalDateTime creationDate;
     private LocalDateTime updateDate;
+    @OneToOne
+    @JoinColumn(name="swap_request_id")
+    private SwapRequest swapRequest;
 }

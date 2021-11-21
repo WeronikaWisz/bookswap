@@ -6,6 +6,7 @@ import {OfferDetails} from "../models/book-offers/OfferDetails";
 import {OfferFilter} from "../models/book-offers/OfferFilter";
 import {FilterHints} from "../models/book-offers/FilterHints";
 import {OffersResponse} from "../models/book-offers/OffersResponse";
+import {BooksForSwap} from "../models/book-offers/BooksForSwap";
 
 const BOOK_OFFERS_API = 'http://localhost:8080/book-offers/';
 
@@ -36,6 +37,10 @@ export class BookOffersService {
 
   loadHintsForFilter(): Observable<FilterHints>{
     return this.http.get<FilterHints>(BOOK_OFFERS_API + 'filter-hints');
+  }
+
+  sendSwapRequest(bookForSwap: BooksForSwap): Observable<any>{
+    return this.http.post(BOOK_OFFERS_API + 'swap-request', JSON.stringify(bookForSwap), httpOptions);
   }
 
 }

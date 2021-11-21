@@ -42,6 +42,7 @@ import { ReceivedOffersComponent } from './views/book-offers/received-offers/rec
 import { SentOffersComponent } from './views/book-offers/sent-offers/sent-offers.component';
 import { OfferDetailsDialogComponent } from './views/book-offers/browse-offers/offer-details-dialog/offer-details-dialog.component';
 import { FilterOffersDialogComponent } from './views/book-offers/browse-offers/filter-offers-dialog/filter-offers-dialog.component';
+import {MatTooltipModule} from "@angular/material/tooltip";
 
 @NgModule({
   declarations: [
@@ -87,7 +88,8 @@ import { FilterOffersDialogComponent } from './views/book-offers/browse-offers/f
         MatAutocompleteModule,
         MatDatepickerModule,
         MatTabsModule,
-        MatCheckboxModule
+        MatCheckboxModule,
+        MatTooltipModule
     ],
   providers: [authInterceptorProviders],
   bootstrap: [AppComponent]
