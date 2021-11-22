@@ -57,11 +57,17 @@ export class BrowseOffersComponent implements OnInit {
           const dialogRef = this.dialog.open(OfferDetailsDialogComponent, {
             data: {
               offerBasics: this.offers.find(element => element.id == idx),
-              offerDetails: data
+              offerDetails: data,
+              hasBooksForSwap: this.availableOffersCount
             }
           });
           dialogRef.afterClosed().subscribe(result => {
             console.log(result);
+            if(result){
+              let index = this.offers.findIndex(offer => offer.id === idx);
+              this.offers.splice(index, 1);
+              this.availableOffersCount -= 1;
+            }
           });
         },
         err => {

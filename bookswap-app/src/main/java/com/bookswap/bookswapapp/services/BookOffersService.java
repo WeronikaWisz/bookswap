@@ -204,6 +204,17 @@ public class BookOffersService {
             existedSwapRequest.get().setUpdateDate(LocalDateTime.now());
             existedSwapRequest.get().setStatus(ERequestStatus.ACCEPTED);
 
+            book.setUpdateDate(LocalDateTime.now());
+            bookForSwap.setUpdateDate(LocalDateTime.now());
+
+            if(book.getLabel().equals(EBookLabel.PERMANENT_SWAP)){
+                book.setStatus(EBookStatus.PERMANENT_SWAP);
+                bookForSwap.setStatus(EBookStatus.PERMANENT_SWAP);
+            } else {
+                book.setStatus(EBookStatus.TEMPORARY_SWAP);
+                bookForSwap.setStatus(EBookStatus.TEMPORARY_SWAP);
+            }
+
             List<Book> swapBooks = new ArrayList<>();
             swapBooks.add(book);
             swapBooks.add(bookForSwap);

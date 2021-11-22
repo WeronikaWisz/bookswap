@@ -16,36 +16,30 @@ import {FormBuilder, FormGroup} from "@angular/forms";
 export class OfferDetailsDialogComponent implements OnInit {
 
   form!: FormGroup;
+  requestAlreadySend = false;
 
   constructor(
     public dialogRef: MatDialogRef<OfferDetailsDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: OfferInfo, private formBuilder: FormBuilder,
     private router: Router, private bookOffersService : BookOffersService
-  ) {}
+  ) {
+    dialogRef.disableClose = true;
+  }
 
   ngOnInit(): void {
     this.form = this.formBuilder.group({
       requestedBooksCtrl: [[]]
     });
-    console.log("aa")
-    console.log(this.data.offerDetails.requestedBooks[0])
     if(this.data.offerDetails.hasOfferFromUser){
       this.form.get("requestedBooksCtrl")?.setValue(this.data.offerDetails.requestedBooks[0].id);
       this.form.get("requestedBooksCtrl")?.updateValueAndValidity();
     }
-    if(this.getStatus() !== 'Dostępna'){
-      Swal.fire({
-        position: 'top-end',
-        title: 'Książka przed chwilą została wymieniona',
-        text: 'Nie jest możliwe złożenie oferty',
-        icon: 'info',
-        showConfirmButton: false
-      })
-    }
+    this.checkIfAvailable();
   }
 
-  onNoClick(): void {
-    this.dialogRef.close();
+  onNoClick(): boolean {
+    return (this.getStatus() !== 'Dostępna' || this.requestAlreadySend);
+    // this.dialogRef.close();
   }
 
   getStatus(): string{
@@ -82,6 +76,14 @@ export class OfferDetailsDialogComponent implements OnInit {
     }).subscribe(
       data => {
         console.log(data);
+        this.requestAlreadySend = true;
+        this.disableSelect();
+        Swal.fire({
+          position: 'top-end',
+          title: 'Pomyśnie wysłano propozycję',
+          icon: 'success',
+          showConfirmButton: false
+        })
       },
       err => {
         Swal.fire({
@@ -104,6 +106,15 @@ export class OfferDetailsDialogComponent implements OnInit {
     }).subscribe(
       data => {
         console.log(data);
+        this.requestAlreadySend = true;
+        this.disableSelect()
+        Swal.fire({
+          position: 'top-end',
+          title: 'Pomyśnie wymieniono książki',
+          text: 'Przejdź do strony z wymianami, żeby zobaczyć',
+          icon: 'success',
+          showConfirmButton: false
+        })
       },
       err => {
         Swal.fire({
@@ -123,6 +134,7 @@ export class OfferDetailsDialogComponent implements OnInit {
       .subscribe(
         data => {
           this.data.offerDetails = data
+          this.checkIfAvailable();
         },
         err => {
           Swal.fire({
@@ -134,6 +146,22 @@ export class OfferDetailsDialogComponent implements OnInit {
           })
         }
       )
+  }
+
+  checkIfAvailable(){
+    if(this.getStatus() !== 'Dostępna'){
+      Swal.fire({
+        position: 'top-end',
+        title: 'Książka przed chwilą została wymieniona',
+        text: 'Nie jest możliwe złożenie oferty',
+        icon: 'info',
+        showConfirmButton: false
+      })
+    }
+  }
+
+  disableSelect(){
+    this.form.get("requestedBooksCtrl")?.disable();
   }
 
 }
