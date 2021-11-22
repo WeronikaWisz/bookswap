@@ -272,6 +272,13 @@ public class BookOffersService {
         SwapRequest swapRequest = swapRequestRepository.findById(id)
                 .orElseThrow(() ->
                         new ResponseStatusException(HttpStatus.NOT_FOUND, "Swap request does not exist"));
+        if(swapRequest.getStatus() != ERequestStatus.WAITING){
+            throw new ResponseStatusException(HttpStatus.EXPECTATION_FAILED, "Swap request is not waiting");
+        }
+        if(swapRequest.getUser() != getCurrentUser()){
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN,
+                    "Swap request can only be cancel by user who send it");
+        }
         swapRequest.setUpdateDate(LocalDateTime.now());
         swapRequest.setStatus(ERequestStatus.CANCELED);
     }
