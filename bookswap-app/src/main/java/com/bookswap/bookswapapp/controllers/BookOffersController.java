@@ -65,9 +65,29 @@ public class BookOffersController {
     @PostMapping(path = "/swap-request")
     @PreAuthorize("hasRole('USER')")
     public ResponseEntity<?> sendSwapRequest(@RequestBody BooksForSwap booksForSwap) {
-        logger.info("hello");
         bookOffersService.sendSwapRequest(booksForSwap);
-        return ResponseEntity.ok(new MessageResponse("Pomyśnie złożono propozycję"));
+        return ResponseEntity.ok(new MessageResponse("Pomyśnie złożono ofertę"));
+    }
+
+    @PostMapping(path = "/sent-requests")
+    @PreAuthorize("hasRole('USER')")
+    public ResponseEntity<?> getSentRequests(@RequestBody SwapRequestFilter swapRequestFilter) {
+        List<SwapRequestListItem> swapRequestListItems = bookOffersService.getSentRequests(swapRequestFilter);
+        return ResponseEntity.ok(swapRequestListItems);
+    }
+
+    @PostMapping(path = "/received-requests")
+    @PreAuthorize("hasRole('USER')")
+    public ResponseEntity<?> getReceivedRequests(@RequestBody SwapRequestFilter swapRequestFilter) {
+        List<SwapRequestListItem> swapRequestListItems = bookOffersService.getReceivedRequests(swapRequestFilter);
+        return ResponseEntity.ok(swapRequestListItems);
+    }
+
+    @DeleteMapping(path = "/swap-request/{swapRequestId}")
+    @PreAuthorize("hasRole('USER')")
+    public ResponseEntity<?> cancelSwapRequest(@PathVariable("swapRequestId") Long id) {
+        bookOffersService.cancelSwapRequest(id);
+        return ResponseEntity.ok(new MessageResponse("Pomyśnie odwołano ofertę"));
     }
 
 }

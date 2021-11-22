@@ -7,6 +7,8 @@ import {OfferFilter} from "../models/book-offers/OfferFilter";
 import {FilterHints} from "../models/book-offers/FilterHints";
 import {OffersResponse} from "../models/book-offers/OffersResponse";
 import {BooksForSwap} from "../models/book-offers/BooksForSwap";
+import {SwapRequestListItem} from "../models/book-offers/SwapRequestListItem";
+import {SwapRequestFilter} from "../models/book-offers/SwapRequestFilter";
 
 const BOOK_OFFERS_API = 'http://localhost:8080/book-offers/';
 
@@ -41,6 +43,18 @@ export class BookOffersService {
 
   sendSwapRequest(bookForSwap: BooksForSwap): Observable<any>{
     return this.http.post(BOOK_OFFERS_API + 'swap-request', JSON.stringify(bookForSwap), httpOptions);
+  }
+
+  getSentRequests(swapRequestFilter: SwapRequestFilter): Observable<SwapRequestListItem[]>{
+    return this.http.post<SwapRequestListItem[]>(BOOK_OFFERS_API + 'sent-requests', JSON.stringify(swapRequestFilter), httpOptions);
+  }
+
+  getReceivedRequests(swapRequestFilter: SwapRequestFilter): Observable<SwapRequestListItem[]>{
+    return this.http.post<SwapRequestListItem[]>(BOOK_OFFERS_API + 'received-requests', JSON.stringify(swapRequestFilter), httpOptions);
+  }
+
+  cancelSwapRequest(swapRequestId: number): Observable<any>{
+    return this.http.delete(BOOK_OFFERS_API + 'swap-request/' + swapRequestId);
   }
 
 }

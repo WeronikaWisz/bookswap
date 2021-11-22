@@ -241,6 +241,41 @@ public class BookOffersService {
         }
     }
 
+    @Transactional
+    public List<SwapRequestListItem> getSentRequests(SwapRequestFilter swapRequestFilter){
+        List<SwapRequest> swapRequests = swapRequestRepository.findByUserAndStatusIn(
+                getCurrentUser(), swapRequestFilter.getRequestStatus()
+        ).orElse(Collections.emptyList());
+        if(swapRequestFilter.getBookLabel() != null){
+            swapRequests = swapRequests.stream().filter(
+                    swapRequest -> swapRequest.getBook().getLabel().equals(swapRequestFilter.getBookLabel()))
+                    .collect(Collectors.toList());
+        }
+        return getRequestListItems(swapRequests);
+    }
+
+    @Transactional
+    public List<SwapRequestListItem> getReceivedRequests(SwapRequestFilter swapRequestFilter){
+        List<SwapRequest> swapRequests = swapRequestRepository.findByBook_UserAndStatusIn(
+                getCurrentUser(), swapRequestFilter.getRequestStatus()
+        ).orElse(Collections.emptyList());
+        if(swapRequestFilter.getBookLabel() != null){
+            swapRequests = swapRequests.stream().filter(
+                            swapRequest -> swapRequest.getBook().getLabel().equals(swapRequestFilter.getBookLabel()))
+                    .collect(Collectors.toList());
+        }
+        return getRequestListItems(swapRequests);
+    }
+
+    @Transactional
+    public void cancelSwapRequest(Long id){
+        SwapRequest swapRequest = swapRequestRepository.findById(id)
+                .orElseThrow(() ->
+                        new ResponseStatusException(HttpStatus.NOT_FOUND, "Swap request does not exist"));
+        swapRequest.setUpdateDate(LocalDateTime.now());
+        swapRequest.setStatus(ERequestStatus.CANCELED);
+    }
+
     private User getCurrentUser(){
         UserDetailsI userDetails = (UserDetailsI) SecurityContextHolder.getContext().getAuthentication()
                 .getPrincipal();
@@ -282,5 +317,21 @@ public class BookOffersService {
         if(swapRequests.isPresent() && !swapRequests.get().isEmpty()){
             swapRequests.get().forEach(swapRequest -> swapRequest.setStatus(ERequestStatus.DENIED));
         }
+    }
+
+    private List<SwapRequestListItem> getRequestListItems(List<SwapRequest> swapRequests){
+        List<SwapRequestListItem> swapRequestListItems = new ArrayList<>();
+        for(SwapRequest swapRequest: swapRequests){
+            SwapRequestListItem swapRequestListItem = new SwapRequestListItem(swapRequest.getId(),
+                    swapRequest.getBook().getTitle(), swapRequest.getBook().getAuthor(),
+                    swapRequest.getBook().getLabel(), swapRequest.getBook().getStatus(),
+                    swapRequest.getUser().getUsername(), swapRequest.getBook().getUser().getUsername(),
+                    swapRequest.getStatus());
+            if (swapRequest.getBook().getImage() != null) {
+                swapRequestListItem.setBookImage(ImageHelper.decompressBytes(swapRequest.getBook().getImage()));
+            }
+            swapRequestListItems.add(swapRequestListItem);
+        }
+        return swapRequestListItems;
     }
 }

@@ -1,6 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, OnInit, ViewChild} from '@angular/core';
 import {MatDialog} from "@angular/material/dialog";
-import {Router} from "@angular/router";
+import {ActivatedRoute, Router} from "@angular/router";
 import {TokenStorageService} from "../../../services/token-storage.service";
 import Swal from "sweetalert2";
 import {OfferFilter} from "../../../models/book-offers/OfferFilter";
@@ -10,6 +10,7 @@ import {BookOffersService} from "../../../services/book-offers.service";
 import {EBookLabel} from "../../../enums/EBookLabel";
 import {FilterOffersDialogComponent} from "./filter-offers-dialog/filter-offers-dialog.component";
 import {OfferDetailsDialogComponent} from "./offer-details-dialog/offer-details-dialog.component";
+import {MatTabGroup} from "@angular/material/tabs";
 
 @Component({
   selector: 'app-browse-offers',
@@ -36,7 +37,11 @@ export class BrowseOffersComponent implements OnInit {
   filterHintsLoaded = false;
   hints?: FilterHints;
 
-  constructor(public dialog: MatDialog, private router: Router,
+  selectedTabIndex = 0;
+
+  // @ViewChild("tab") tab!: MatTabGroup;
+
+  constructor(public dialog: MatDialog, private router: Router, private route: ActivatedRoute,
               private bookOffersService : BookOffersService, private tokenStorage: TokenStorageService) { }
 
   ngOnInit(): void {
@@ -45,7 +50,25 @@ export class BrowseOffersComponent implements OnInit {
     } else {
       this.router.navigate(['/login']).then(() => this.reloadPage());
     }
-    this.loadOffers(EBookLabel.PERMANENT_SWAP);
+    // this.loadOffers(EBookLabel.PERMANENT_SWAP);
+    this.checkIfFromSwapRequestView();
+  }
+
+  checkIfFromSwapRequestView(){
+    this.route.params
+      .subscribe(
+        params => {
+          console.log(params);
+          if (params.username){
+            this.offerFilter.owners = [params.username]
+          }
+          if(params.label){
+            this.offerFilter.label = params.label
+            this.selectedTabIndex = params.label
+          }
+          this.loadFilterOffers();
+        }
+      );
   }
 
   public onCardClick(idx: number){

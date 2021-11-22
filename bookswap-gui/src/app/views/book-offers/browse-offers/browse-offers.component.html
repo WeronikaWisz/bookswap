@@ -6,7 +6,7 @@
     </button>
   </div>
   <p>Liczba ofert, które możesz złożyć: {{availableOffersCount}}</p>
-  <mat-tab-group (selectedTabChange)="onTabChange($event)">
+  <mat-tab-group [selectedIndex]="selectedTabIndex" (selectedTabChange)="onTabChange($event)">
     <mat-tab label="Wymiana stała">
       <ng-template *ngTemplateOutlet="bookListTemplate; context: {$implicit: offers}"></ng-template>
     </mat-tab>

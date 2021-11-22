@@ -8,6 +8,7 @@ import com.bookswap.bookswapapp.models.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -31,5 +32,9 @@ public interface SwapRequestRepository extends JpaRepository<SwapRequest, Long> 
     Optional<List<Long>> userSendRequestsBooks(EBookLabel label, User user);
 
     Optional<List<SwapRequest>> findByBookInAndStatusAndBook_Label(List<Book> books, ERequestStatus status, EBookLabel label);
+
+    Optional<List<SwapRequest>> findByUserAndStatusIn(User user, List<ERequestStatus> statuses);
+
+    Optional<List<SwapRequest>> findByBook_UserAndStatusIn(User user, List<ERequestStatus> statuses);
 
 }

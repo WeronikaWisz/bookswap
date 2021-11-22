@@ -1,20 +1,20 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { SentOffersComponent } from './sent-offers.component';
+import { BrowseSwapRequestsComponent } from './browse-swap-requests.component';
 
-describe('SentOffersComponent', () => {
-  let component: SentOffersComponent;
-  let fixture: ComponentFixture<SentOffersComponent>;
+describe('BrowseSwapRequestsComponent', () => {
+  let component: BrowseSwapRequestsComponent;
+  let fixture: ComponentFixture<BrowseSwapRequestsComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ SentOffersComponent ]
+      declarations: [ BrowseSwapRequestsComponent ]
     })
     .compileComponents();
   });
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(SentOffersComponent);
+    fixture = TestBed.createComponent(BrowseSwapRequestsComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

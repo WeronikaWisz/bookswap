@@ -1,0 +1,66 @@
+@import 'node_modules/@angular/material/theming'
+@import 'src/custom-theme'
+
+.content
+  padding: 50px
+  width: 100%
+
+.content > mat-card
+  margin-bottom: 16px
+
+.mat-card
+  background-color: #f8f8f8
+  height: 100%
+  display: flex
+  flex-direction: column
+  justify-content: space-between
+
+@media (min-width: 800px)
+  .request-info
+    display: flex
+    flex-direction: row
+    justify-content: space-between
+  .book-image
+    padding-top: 10px
+    max-width: 30%
+
+@media (max-width: 800px)
+  .request-info
+    display: flex
+    flex-direction: column
+    justify-content: space-between
+  .book-image
+    padding-top: 10px
+    max-width: 50%
+
+@media (max-width: 500px)
+  .book-image
+    max-width: 100%
+
+.mat-card-actions
+  text-align: end
+
+.mat-card-image
+  padding: 0 10px 0 10px
+
+.mat-icon-button
+  margin-bottom: 16px
+
+.offer-list
+  padding: 10px
+  height: 810px
+  overflow-y: scroll
+
+.book-image
+  margin: 10px 10px 10px 10px
+  text-align: end
+
+.swap-description > p
+  margin: 5px 16px
+
+.description-titles
+  color: rgba(0, 0, 0, 0.54)
+  font-size: 14px
+
+img
+  max-height: 150px

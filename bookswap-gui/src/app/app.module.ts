@@ -38,8 +38,7 @@ import { BookDetailsDialogComponent } from './views/user-books/browse-books/book
 import {MatTabsModule} from "@angular/material/tabs";
 import {MatCheckboxModule} from "@angular/material/checkbox";
 import { BrowseOffersComponent } from './views/book-offers/browse-offers/browse-offers.component';
-import { ReceivedOffersComponent } from './views/book-offers/received-offers/received-offers.component';
-import { SentOffersComponent } from './views/book-offers/sent-offers/sent-offers.component';
+import { BrowseSwapRequestsComponent } from './views/book-offers/browse-swap-requests/browse-swap-requests.component';
 import { OfferDetailsDialogComponent } from './views/book-offers/browse-offers/offer-details-dialog/offer-details-dialog.component';
 import { FilterOffersDialogComponent } from './views/book-offers/browse-offers/filter-offers-dialog/filter-offers-dialog.component';
 import {MatTooltipModule} from "@angular/material/tooltip";
@@ -57,8 +56,7 @@ import {MatTooltipModule} from "@angular/material/tooltip";
     AddBookComponent,
     BookDetailsDialogComponent,
     BrowseOffersComponent,
-    ReceivedOffersComponent,
-    SentOffersComponent,
+    BrowseSwapRequestsComponent,
     OfferDetailsDialogComponent,
     FilterOffersDialogComponent
   ],
