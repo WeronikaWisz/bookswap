@@ -46,15 +46,21 @@ export class BookOffersService {
   }
 
   getSentRequests(swapRequestFilter: SwapRequestFilter): Observable<SwapRequestListItem[]>{
+    console.log(swapRequestFilter)
     return this.http.post<SwapRequestListItem[]>(BOOK_OFFERS_API + 'sent-requests', JSON.stringify(swapRequestFilter), httpOptions);
   }
 
   getReceivedRequests(swapRequestFilter: SwapRequestFilter): Observable<SwapRequestListItem[]>{
+    console.log(swapRequestFilter)
     return this.http.post<SwapRequestListItem[]>(BOOK_OFFERS_API + 'received-requests', JSON.stringify(swapRequestFilter), httpOptions);
   }
 
   cancelSwapRequest(swapRequestId: number): Observable<any>{
-    return this.http.delete(BOOK_OFFERS_API + 'swap-request/' + swapRequestId);
+    return this.http.delete(BOOK_OFFERS_API + 'swap-request/cancel/' + swapRequestId);
+  }
+
+  denySwapRequest(swapRequestId: number): Observable<any>{
+    return this.http.delete(BOOK_OFFERS_API + 'swap-request/deny/' + swapRequestId);
   }
 
 }

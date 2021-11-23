@@ -1,9 +1,26 @@
 <div class="content mat-elevation-z8">
   <div fxLayout="row" fxLayoutAlign="space-between center" *ngIf="isLoggedIn">
     <h2>{{title}}</h2>
-<!--    <button mat-raised-button color="white" (click)="openFilter()">-->
-<!--      <mat-icon>filter_list</mat-icon> Filtry-->
-<!--    </button>-->
+    <div>
+      <mat-form-field appearance="outline" *ngIf="currentTab === 1" class="request-status-select">
+        <mat-label>Status oferty</mat-label>
+        <mat-select [(ngModel)]="selectedRequestStatus" (selectionChange)="changeSelectedRequestStatus()">
+          <mat-option>--</mat-option>
+          <mat-option *ngFor="let status of statuses" [value]="status.status">
+            {{status.name}}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+      <mat-form-field appearance="outline">
+        <mat-label>Typ wymiany</mat-label>
+        <mat-select [(ngModel)]="bookLabel" (selectionChange)="changeBookLabel()">
+          <mat-option>--</mat-option>
+          <mat-option *ngFor="let label of labels" [value]="label.label">
+            {{label.name}}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
   </div>
   <p>Liczba ofert: {{offersCount}}</p>
   <mat-tab-group (selectedTabChange)="onTabChange($event)">
@@ -39,7 +56,8 @@
             </div>
           </div>
           <mat-card-actions *ngIf="isRequestWaiting(swapRequest.requestStatus)">
-            <button mat-button *ngIf="!isSentOffers" (click)="goToBrowseBooks(swapRequest.sender, swapRequest.bookLabel)">WYMIEŃ</button>
+            <button mat-button *ngIf="!isSentOffers" (click)="denySwapRequest(swapRequest.id)">ODRZUĆ</button>
+            <button mat-raised-button color="primary" *ngIf="!isSentOffers" (click)="goToBrowseBooks(swapRequest.sender, swapRequest.bookLabel)">WYMIEŃ</button>
             <button mat-button *ngIf="isSentOffers" (click)="cancelSwapRequest(swapRequest.id)">REZYGNIUJ</button>
           </mat-card-actions>
         </mat-card>

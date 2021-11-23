@@ -269,18 +269,34 @@ public class BookOffersService {
 
     @Transactional
     public void cancelSwapRequest(Long id){
-        SwapRequest swapRequest = swapRequestRepository.findById(id)
-                .orElseThrow(() ->
-                        new ResponseStatusException(HttpStatus.NOT_FOUND, "Swap request does not exist"));
-        if(swapRequest.getStatus() != ERequestStatus.WAITING){
-            throw new ResponseStatusException(HttpStatus.EXPECTATION_FAILED, "Swap request is not waiting");
-        }
+        SwapRequest swapRequest = getWaitingSwapRequest(id);
         if(swapRequest.getUser() != getCurrentUser()){
             throw new ResponseStatusException(HttpStatus.FORBIDDEN,
                     "Swap request can only be cancel by user who send it");
         }
         swapRequest.setUpdateDate(LocalDateTime.now());
         swapRequest.setStatus(ERequestStatus.CANCELED);
+    }
+
+    @Transactional
+    public void denySwapRequest(Long id){
+        SwapRequest swapRequest = getWaitingSwapRequest(id);
+        if(swapRequest.getBook().getUser() != getCurrentUser()){
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN,
+                    "Swap request can only be denied by user whose book was requested");
+        }
+        swapRequest.setUpdateDate(LocalDateTime.now());
+        swapRequest.setStatus(ERequestStatus.DENIED);
+    }
+
+    private SwapRequest getWaitingSwapRequest(Long id){
+        SwapRequest swapRequest = swapRequestRepository.findById(id)
+                .orElseThrow(() ->
+                        new ResponseStatusException(HttpStatus.NOT_FOUND, "Swap request does not exist"));
+        if(swapRequest.getStatus() != ERequestStatus.WAITING){
+            throw new ResponseStatusException(HttpStatus.EXPECTATION_FAILED, "Swap request is not waiting");
+        }
+        return swapRequest;
     }
 
     private User getCurrentUser(){

@@ -83,10 +83,17 @@ public class BookOffersController {
         return ResponseEntity.ok(swapRequestListItems);
     }
 
-    @DeleteMapping(path = "/swap-request/{swapRequestId}")
+    @DeleteMapping(path = "/swap-request/cancel/{swapRequestId}")
     @PreAuthorize("hasRole('USER')")
     public ResponseEntity<?> cancelSwapRequest(@PathVariable("swapRequestId") Long id) {
         bookOffersService.cancelSwapRequest(id);
+        return ResponseEntity.ok(new MessageResponse("Pomyśnie odwołano ofertę"));
+    }
+
+    @DeleteMapping(path = "/swap-request/deny/{swapRequestId}")
+    @PreAuthorize("hasRole('USER')")
+    public ResponseEntity<?> denySwapRequest(@PathVariable("swapRequestId") Long id) {
+        bookOffersService.denySwapRequest(id);
         return ResponseEntity.ok(new MessageResponse("Pomyśnie odwołano ofertę"));
     }
 

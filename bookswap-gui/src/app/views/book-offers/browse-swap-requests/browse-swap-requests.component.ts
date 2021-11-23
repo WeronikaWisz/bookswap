@@ -7,6 +7,12 @@ import {EBookLabel} from "../../../enums/EBookLabel";
 import {SwapRequestListItem} from "../../../models/book-offers/SwapRequestListItem";
 import Swal from "sweetalert2";
 import {EBookStatus} from "../../../enums/EBookStatus";
+import {Label} from "../../user-books/add-book/add-book.component";
+
+export interface RequestStatus{
+  status: ERequestStatus,
+  name: string
+}
 
 @Component({
   selector: 'app-sent-offers',
@@ -19,10 +25,21 @@ export class BrowseSwapRequestsComponent implements OnInit {
   offersCount: number = 0;
   swapRequests: SwapRequestListItem[] = [];
   requestStatus: ERequestStatus[] = [ERequestStatus.WAITING];
+
   bookLabel?: EBookLabel;
+  selectedRequestStatus?: ERequestStatus;
+
+  currentTab = 0;
 
   isSentOffers = true;
   title = "Wysłane ofery wymiany";
+
+  statuses: RequestStatus[] = [{status: ERequestStatus.ACCEPTED, name: "Zaakceptowana"},
+    {status: ERequestStatus.DENIED, name: "Odrzucona"},
+    {status: ERequestStatus.CANCELED, name: "Odwołana"}]
+
+  labels: Label[] = [{label: EBookLabel.PERMANENT_SWAP, name: "Wymiana stała"},
+    {label: EBookLabel.TEMPORARY_SWAP, name: "Wymiana tymczasowa"}]
 
   constructor(private router: Router, private tokenStorage: TokenStorageService,
               private bookOffersService : BookOffersService, private route: ActivatedRoute,) { }
@@ -54,6 +71,7 @@ export class BrowseSwapRequestsComponent implements OnInit {
 
   onTabChange(event: any){
     console.log(event);
+    this.currentTab = event.index;
     if(event.index === 0){
       this.requestStatus = [ERequestStatus.WAITING];
     } else {
@@ -72,7 +90,7 @@ export class BrowseSwapRequestsComponent implements OnInit {
     if (this.isSentOffers) {
       this.bookOffersService.getSentRequests({
         requestStatus: this.requestStatus,
-        bookLabel: this.bookLabel ? this.bookLabel : null!
+        bookLabel: this.bookLabel != undefined ? this.bookLabel : null!
       }).subscribe(data => {
           console.log(data)
           this.swapRequests = data
@@ -91,7 +109,7 @@ export class BrowseSwapRequestsComponent implements OnInit {
     } else {
       this.bookOffersService.getReceivedRequests({
         requestStatus: this.requestStatus,
-        bookLabel: this.bookLabel ? this.bookLabel : null!
+        bookLabel: this.bookLabel != undefined ? this.bookLabel : null!
       }).subscribe(data => {
           console.log(data)
           this.swapRequests = data
@@ -185,6 +203,34 @@ export class BrowseSwapRequestsComponent implements OnInit {
       )
   }
 
+  denySwapRequest(swapRequestId: number){
+    this.bookOffersService.denySwapRequest(swapRequestId)
+      .subscribe(
+        data => {
+          console.log(data);
+          Swal.fire({
+            position: 'top-end',
+            title: 'Pomyśnie odrzucono ofertę',
+            text: 'Możesz znaleźć ją w ofertach historycznych',
+            icon: 'success',
+            showConfirmButton: false
+          })
+          let index = this.swapRequests.findIndex(swapRequest => swapRequest.id === swapRequestId);
+          this.swapRequests.splice(index, 1);
+          this.offersCount -= 1;
+        },
+        err => {
+          Swal.fire({
+            position: 'top-end',
+            title: 'Nie można odrzucić oferty',
+            text: err.error.message,
+            icon: 'error',
+            showConfirmButton: false
+          })
+        }
+      )
+  }
+
   goToBrowseBooks(username: string, label: EBookLabel){
     let labelS = label.valueOf() as unknown as string;
     if(labelS === EBookLabel[EBookLabel.PERMANENT_SWAP]){
@@ -192,6 +238,21 @@ export class BrowseSwapRequestsComponent implements OnInit {
     } else {
       this.router.navigate(['/browse-offers', username, 1]);
     }
+  }
+
+  changeSelectedRequestStatus(){
+    if(this.currentTab === 1) {
+      if (this.selectedRequestStatus) {
+        this.requestStatus = [this.selectedRequestStatus]
+      } else {
+        this.requestStatus = [ERequestStatus.ACCEPTED, ERequestStatus.DENIED, ERequestStatus.CANCELED];
+      }
+      this.getRequests()
+    }
+  }
+
+  changeBookLabel(){
+    this.getRequests()
   }
 
 }
