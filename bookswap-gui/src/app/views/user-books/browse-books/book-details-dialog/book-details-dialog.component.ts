@@ -16,7 +16,9 @@ export class BookDetailsDialogComponent implements OnInit {
     public dialogRef: MatDialogRef<BookDetailsDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: BookInfo,
     private router: Router
-  ) {}
+  ) {
+    dialogRef.disableClose = true;
+  }
 
   ngOnInit(): void {
   }

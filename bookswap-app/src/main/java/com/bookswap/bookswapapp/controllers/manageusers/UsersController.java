@@ -1,8 +1,9 @@
 package com.bookswap.bookswapapp.controllers.manageusers;
 
 import com.bookswap.bookswapapp.controllers.UserBooksController;
-import com.bookswap.bookswapapp.dtos.auth.ProfileData;
-import com.bookswap.bookswapapp.dtos.userbooks.BookDetails;
+import com.bookswap.bookswapapp.dtos.auth.MessageResponse;
+import com.bookswap.bookswapapp.dtos.manageusers.ProfileData;
+import com.bookswap.bookswapapp.dtos.manageusers.UpdateUserData;
 import com.bookswap.bookswapapp.models.User;
 import com.bookswap.bookswapapp.services.UsersService;
 import org.modelmapper.ModelMapper;
@@ -33,6 +34,19 @@ public class UsersController {
     public ResponseEntity<?> getUserProfileData() {
         ProfileData profileData = mapUserToProfileData(usersService.getUserProfileData());
         return ResponseEntity.ok(profileData);
+    }
+
+    @PutMapping(path = "/user")
+    @PreAuthorize("hasRole('USER')")
+    public ResponseEntity<?> updateUserProfileData(@RequestBody UpdateUserData updateUserData) {
+        boolean dataChanged = usersService.updateUserProfileData(updateUserData);
+        String message;
+        if(dataChanged) {
+            message = "Pomyśnie zaktualizowano profil użytkownika";
+        } else {
+            message = "Profil użytkownika zawierał już takie same dane";
+        }
+        return ResponseEntity.ok(new MessageResponse(message));
     }
 
     private ProfileData mapUserToProfileData(User user){

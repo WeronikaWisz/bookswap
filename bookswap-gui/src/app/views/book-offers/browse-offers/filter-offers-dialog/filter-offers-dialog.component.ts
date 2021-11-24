@@ -93,7 +93,7 @@ export class FilterOffersDialogComponent implements OnInit {
     public dialogRef: MatDialogRef<FilterOffersDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: FilterDialogData,
   ) {
-
+    dialogRef.disableClose = true;
     this.filteredTitles = this.titlesCtrl.valueChanges.pipe(
       startWith(null),
       map((title: string | null) => (title ? this._filter(title, 'title') : this.allTitles.slice())),

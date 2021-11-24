@@ -1,4 +1,4 @@
-package com.bookswap.bookswapapp.dtos.auth;
+package com.bookswap.bookswapapp.dtos.manageusers;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -7,8 +7,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
-public class ProfileData {
-    private String username;
+public class UpdateUserData {
     private String email;
     private String name;
     private String surname;

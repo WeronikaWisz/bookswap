@@ -82,6 +82,8 @@ export class FiltersDialogComponent implements OnInit {
     @Inject(MAT_DIALOG_DATA) public data: FilterDialogData,
   ) {
 
+    dialogRef.disableClose = true;
+
     this.filteredCategories = this.categoriesCtrl.valueChanges.pipe(
       startWith(null),
       map((category: string | null) => (category ? this._filter(category, 'category') : this.allCategories.slice())),
