@@ -1,0 +1,94 @@
+<h2 mat-dialog-title>Edytuj profil</h2>
+<div mat-dialog-content>
+  <form [formGroup]="form">
+    <mat-vertical-stepper formArrayName="formArray" [linear]="false" #stepper>
+      <mat-step formGroupName="0" [stepControl]="formArray?.get([0])!">
+        <ng-template matStepLabel>Dane osobowe</ng-template>
+        <mat-form-field class="full-width-input left-mat-field" appearance="outline">
+          <mat-label>Imię</mat-label>
+          <input matInput formControlName="name" required>
+          <mat-error>
+            Podaj imię
+          </mat-error>
+        </mat-form-field>
+        <mat-form-field class="full-width-input" appearance="outline">
+          <mat-label>Nazwisko</mat-label>
+          <input matInput formControlName="surname" required>
+          <mat-error>
+            Podaj nazwisko
+          </mat-error>
+        </mat-form-field>
+        <mat-form-field class="full-width-input left-mat-field" appearance="outline">
+          <mat-label>Email</mat-label>
+          <input matInput formControlName="email" required>
+          <mat-error>
+            Podaj poprawny adres email
+          </mat-error>
+        </mat-form-field>
+        <mat-form-field class="full-width-input" appearance="outline">
+          <mat-label>Numer telefonu</mat-label>
+          <input matInput placeholder="(+48) 123 456 789" formControlName="phone">
+          <mat-error>
+            Podaj poprawny numer telefonu
+          </mat-error>
+        </mat-form-field>
+        <div class="buttons-section">
+          <button mat-button matStepperNext>Dalej</button>
+        </div>
+      </mat-step>
+      <mat-step formGroupName="1" [stepControl]="formArray?.get([1])!">
+        <ng-template matStepLabel>Dane adresowe</ng-template>
+        <mat-form-field class="full-width-input left-mat-field" appearance="outline">
+          <mat-label>Kod pocztowy</mat-label>
+          <input matInput placeholder="12-345" formControlName="postalCode" required>
+          <mat-error>
+            Podaj poprawny kod pocztowy
+          </mat-error>
+        </mat-form-field>
+        <mat-form-field class="full-width-input" appearance="outline">
+          <mat-label>Poczta</mat-label>
+          <input matInput formControlName="post" required>
+          <mat-error>
+            Podaj miejscowość poczty
+          </mat-error>
+        </mat-form-field>
+        <mat-form-field class="full-width-input left-mat-field" appearance="outline">
+          <mat-label>Miejscowość</mat-label>
+          <input matInput formControlName="city" required>
+          <mat-error>
+            Podaj miejsce zamieszkania
+          </mat-error>
+        </mat-form-field>
+        <mat-form-field class="full-width-input" appearance="outline">
+          <mat-label>Ulica</mat-label>
+          <input matInput formControlName="street" required>
+          <mat-error>
+            Podaj nazwę ulicy
+          </mat-error>
+        </mat-form-field>
+        <mat-form-field class="full-width-input left-mat-field" appearance="outline">
+          <mat-label>Numer domu</mat-label>
+          <input matInput formControlName="buildingNumber" required>
+          <mat-error>
+            Podaj numer domu
+          </mat-error>
+        </mat-form-field>
+        <mat-form-field class="full-width-input" appearance="outline">
+          <mat-label>Numer lokalu</mat-label>
+          <input matInput formControlName="doorNumber">
+          <mat-error>
+            Podaj numer lokalu
+          </mat-error>
+        </mat-form-field>
+        <div class="buttons-section">
+          <button mat-button matStepperPrevious>Wstecz</button>
+        </div>
+      </mat-step>
+    </mat-vertical-stepper>
+  </form>
+</div>
+<div mat-dialog-actions align="end">
+  <button mat-button [mat-dialog-close]="dataChanged">Zamknij</button>
+  <button mat-raised-button color="primary" (click)="saveData()" [disabled]="form.invalid || !form.dirty">Zapisz</button>
+</div>
+
