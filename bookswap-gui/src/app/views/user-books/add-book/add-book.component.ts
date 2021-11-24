@@ -85,7 +85,8 @@ export class AddBookComponent implements OnInit {
       author: ['', Validators.required],
       publisher: ['', Validators.required],
       yearOfPublication: ['', Validators.required],
-      label: [null, Validators.required],
+      // label: [null, Validators.required],
+      label: [EBookLabel.PERMANENT_SWAP],
       description: ['']
     });
     if (this.tokenStorage.getToken()) {
