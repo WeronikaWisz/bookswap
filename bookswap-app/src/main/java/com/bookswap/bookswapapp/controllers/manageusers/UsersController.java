@@ -2,6 +2,8 @@ package com.bookswap.bookswapapp.controllers.manageusers;
 
 import com.bookswap.bookswapapp.controllers.UserBooksController;
 import com.bookswap.bookswapapp.dtos.auth.MessageResponse;
+import com.bookswap.bookswapapp.dtos.manageusers.ChangePassword;
+import com.bookswap.bookswapapp.dtos.manageusers.CheckChangePassword;
 import com.bookswap.bookswapapp.dtos.manageusers.ProfileData;
 import com.bookswap.bookswapapp.dtos.manageusers.UpdateUserData;
 import com.bookswap.bookswapapp.models.User;
@@ -47,6 +49,19 @@ public class UsersController {
             message = "Profil użytkownika zawierał już takie same dane";
         }
         return ResponseEntity.ok(new MessageResponse(message));
+    }
+
+    @PutMapping(path = "/user/password")
+    @PreAuthorize("hasRole('USER')")
+    public ResponseEntity<?> changePassword(@RequestBody ChangePassword changePassword) {
+        CheckChangePassword checkChangePassword = usersService.changePassword(changePassword);
+        if(checkChangePassword.isChangedSuccessfully()){
+            return ResponseEntity.ok(new MessageResponse(checkChangePassword.getMessage()));
+        } else {
+            return ResponseEntity
+                    .badRequest()
+                    .body(new MessageResponse(checkChangePassword.getMessage()));
+        }
     }
 
     private ProfileData mapUserToProfileData(User user){

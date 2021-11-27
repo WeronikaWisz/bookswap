@@ -30,16 +30,20 @@ export class OfferDetailsDialogComponent implements OnInit {
     this.form = this.formBuilder.group({
       requestedBooksCtrl: [[]]
     });
-    if(this.data.offerDetails.hasOfferFromUser){
-      this.form.get("requestedBooksCtrl")?.setValue(this.data.offerDetails.requestedBooks[0].id);
-      this.form.get("requestedBooksCtrl")?.updateValueAndValidity();
-    }
+    this.setBookToSwap();
     this.checkIfAvailable();
   }
 
   onNoClick(): boolean {
     return (this.getStatus() !== 'Dostępna' || this.requestAlreadySend);
     // this.dialogRef.close();
+  }
+
+  setBookToSwap(){
+    if(this.data.offerDetails.hasOfferFromUser){
+      this.form.get("requestedBooksCtrl")?.setValue(this.data.offerDetails.requestedBooks[0].id);
+      this.form.get("requestedBooksCtrl")?.updateValueAndValidity();
+    }
   }
 
   getStatus(): string{
@@ -134,6 +138,7 @@ export class OfferDetailsDialogComponent implements OnInit {
       .subscribe(
         data => {
           this.data.offerDetails = data
+          this.setBookToSwap();
           this.checkIfAvailable();
         },
         err => {
