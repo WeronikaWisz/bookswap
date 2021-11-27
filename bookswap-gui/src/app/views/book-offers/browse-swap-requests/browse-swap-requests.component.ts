@@ -42,7 +42,7 @@ export class BrowseSwapRequestsComponent implements OnInit {
     {label: EBookLabel.TEMPORARY_SWAP, name: "Wymiana tymczasowa"}]
 
   constructor(private router: Router, private tokenStorage: TokenStorageService,
-              private bookOffersService : BookOffersService, private route: ActivatedRoute,) { }
+              private bookOffersService : BookOffersService, private route: ActivatedRoute) { }
 
   ngOnInit(): void {
     if (this.tokenStorage.getToken()) {

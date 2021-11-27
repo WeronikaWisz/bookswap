@@ -7,6 +7,7 @@ import {BrowseBooksComponent} from "./views/user-books/browse-books/browse-books
 import {AddBookComponent} from "./views/user-books/add-book/add-book.component";
 import {BrowseOffersComponent} from "./views/book-offers/browse-offers/browse-offers.component";
 import {BrowseSwapRequestsComponent} from "./views/book-offers/browse-swap-requests/browse-swap-requests.component";
+import {BrowseSwapsComponent} from "./views/book-swaps/browse-swaps/browse-swaps.component";
 
 const routes: Routes = [
   { path: 'login', component: LoginComponent },
@@ -18,6 +19,7 @@ const routes: Routes = [
   { path: 'browse-offers', component: BrowseOffersComponent },
   { path: 'browse-offers/:username/:label', component: BrowseOffersComponent },
   { path: 'swap-requests/:direction', component: BrowseSwapRequestsComponent },
+  { path: 'browse-swaps/:label', component: BrowseSwapsComponent },
   { path: '', redirectTo: 'login', pathMatch: 'full' }
 ];
 

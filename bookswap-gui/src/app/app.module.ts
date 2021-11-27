@@ -44,6 +44,7 @@ import { FilterOffersDialogComponent } from './views/book-offers/browse-offers/f
 import {MatTooltipModule} from "@angular/material/tooltip";
 import { UpdateProfileDialogComponent } from './views/manage-users/profile/update-profile-dialog/update-profile-dialog.component';
 import { ChangePasswordDialogComponent } from './views/manage-users/profile/change-password-dialog/change-password-dialog.component';
+import { BrowseSwapsComponent } from './views/book-swaps/browse-swaps/browse-swaps.component';
 
 @NgModule({
   declarations: [
@@ -62,7 +63,8 @@ import { ChangePasswordDialogComponent } from './views/manage-users/profile/chan
     OfferDetailsDialogComponent,
     FilterOffersDialogComponent,
     UpdateProfileDialogComponent,
-    ChangePasswordDialogComponent
+    ChangePasswordDialogComponent,
+    BrowseSwapsComponent
   ],
     imports: [
         BrowserModule,
