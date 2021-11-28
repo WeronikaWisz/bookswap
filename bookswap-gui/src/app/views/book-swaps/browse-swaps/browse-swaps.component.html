@@ -1,56 +1,67 @@
 <div class="content mat-elevation-z8">
   <div fxLayout="row" fxLayoutAlign="space-between center" *ngIf="isLoggedIn">
     <h2>{{title}}</h2>
-    <div>
-      <mat-form-field appearance="outline" class="request-status-select">
-        <mat-label>Status wymiany</mat-label>
-        <mat-select [(ngModel)]="selectedSwapStatus" (selectionChange)="changeSelectedSwapStatus()">
-          <mat-option>--</mat-option>
-          <mat-option *ngFor="let status of statuses" [value]="status.status">
-            {{status.name}}
-          </mat-option>
-        </mat-select>
-      </mat-form-field>
-    </div>
+<!--    <div>-->
+<!--      <mat-form-field appearance="outline" class="request-status-select">-->
+<!--        <mat-label>Status wymiany</mat-label>-->
+<!--        <mat-select [(ngModel)]="selectedSwapStatus" (selectionChange)="changeSelectedSwapStatus()">-->
+<!--          <mat-option>&#45;&#45;</mat-option>-->
+<!--          <mat-option *ngFor="let status of statuses" [value]="status.status">-->
+<!--            {{status.name}}-->
+<!--          </mat-option>-->
+<!--        </mat-select>-->
+<!--      </mat-form-field>-->
+<!--    </div>-->
   </div>
   <p>Liczba wymian: {{swapsCount}}</p>
   <mat-tab-group (selectedTabChange)="onTabChange($event)">
     <mat-tab label="W trakcie realizacji">
-      <ng-template *ngTemplateOutlet="bookListTemplate; context: {$implicit: swaps}"></ng-template>
+      <ng-template *ngTemplateOutlet="swapListTemplate; context: {$implicit: swaps}"></ng-template>
     </mat-tab>
     <mat-tab label="Historyczne">
-      <ng-template *ngTemplateOutlet="bookListTemplate; context: {$implicit: swaps}"></ng-template>
+      <ng-template *ngTemplateOutlet="swapListTemplate; context: {$implicit: swaps}"></ng-template>
     </mat-tab>
   </mat-tab-group>
 </div>
 
-<ng-template #bookListTemplate let-swaps>
+<ng-template #swapListTemplate let-swaps>
   <div class="offer-list">
     <div fxLayout="column" fxLayoutGap="16px grid">
       <div *ngFor="let swap of swaps">
         <mat-card class="mat-elevation-z4">
-          <div class="request-info">
-            <div class="swap-description">
-              <mat-card-header>
-<!--                <mat-card-title>{{swapRequest.bookTitle}}</mat-card-title>-->
-<!--                <mat-card-subtitle>{{swapRequest.bookAuthor}}</mat-card-subtitle>-->
-              </mat-card-header>
-<!--              <p *ngIf="isSentOffers"> <span class="description-titles">Właściciel książki:</span> {{swapRequest.owner}}</p>-->
-<!--              <p *ngIf="!isSentOffers"> <span class="description-titles">Zgłaszający ofertę:</span> {{swapRequest.sender}}</p>-->
-<!--              <p> <span class="description-titles">Status oferty:</span> {{getRequestStatus(swapRequest.requestStatus)}}</p>-->
-<!--              <p> <span class="description-titles">Typ wymiany:</span> {{getBookLabel(swapRequest.bookLabel)}}</p>-->
-<!--              <p> <span class="description-titles">Status książki:</span> {{getBookStatus(swapRequest.bookStatus)}}</p>-->
+          <div class="swap-info">
+            <div>
+              <div class="book-image">
+                <img *ngIf="swap.currentUserBookImage != null" mat-card-image [src]="'data:image/jpeg;base64,'+swap.currentUserBookImage" alt="Zdjęcie okładki" >
+                <img *ngIf="swap.currentUserBookImage == null" mat-card-image src="./../../../../assets/images/brak_obrazka.png" alt="Zdjęcie okładki">
+              </div>
+              <div class="swap-description">
+                <h2> {{swap.currentUserBookTitle}}</h2>
+                <p> <span class="description-titles">{{swap.currentUserBookAuthor}}</span> </p>
+                <p> <span class="description-titles">Typ wymiany:</span> {{getBookLabel(swap.currentUserBookLabel)}}</p>
+                <p> <span class="description-titles">Status wymiany:</span>
+                  {{getSwapStatus(swap.swapStatus, swap.ifCurrentUserConfirmed, true, swap.currentUserBookLabel)}}</p>
+              </div>
             </div>
-            <div class="book-image">
-<!--              <img *ngIf="swapRequest.bookImage != null" mat-card-image [src]="'data:image/jpeg;base64,'+swapRequest.bookImage" alt="Zdjęcie okładki" >-->
-<!--              <img *ngIf="swapRequest.bookImage == null" mat-card-image src="./../../../../assets/images/brak_obrazka.png" alt="Zdjęcie okładki">-->
+            <div>
+              <div class="book-image">
+                <img *ngIf="swap.otherUserBookImage != null" mat-card-image [src]="'data:image/jpeg;base64,'+swap.otherUserBookImage" alt="Zdjęcie okładki" >
+                <img *ngIf="swap.otherUserBookImage == null" mat-card-image src="./../../../../assets/images/brak_obrazka.png" alt="Zdjęcie okładki">
+              </div>
+              <div class="swap-description">
+                <h2> {{swap.otherUserBookTitle}}</h2>
+                <p> <span class="description-titles">{{swap.otherUserBookAuthor}}</span> </p>
+                <p> <span class="description-titles">Typ wymiany:</span> {{getBookLabel(swap.otherUserBookLabel)}}</p>
+                <p> <span class="description-titles">Właściciel książki:</span> {{swap.otherUsername}}</p>
+                <p> <span class="description-titles">Status wymiany:</span>
+                  {{getSwapStatus(swap.swapStatus, swap.ifCurrentUserConfirmed, false, swap.otherUserBookLabel)}}</p>
+              </div>
             </div>
           </div>
-<!--          <mat-card-actions *ngIf="isRequestWaiting(swapRequest.requestStatus)">-->
-<!--            <button mat-button *ngIf="!isSentOffers" (click)="denySwapRequest(swapRequest.id)">ODRZUĆ</button>-->
-<!--            <button mat-raised-button color="primary" *ngIf="!isSentOffers" (click)="goToBrowseBooks(swapRequest.sender, swapRequest.bookLabel)">WYMIEŃ</button>-->
-<!--            <button mat-button *ngIf="isSentOffers" (click)="cancelSwapRequest(swapRequest.id)">REZYGNIUJ</button>-->
-<!--          </mat-card-actions>-->
+          <mat-card-actions *ngIf="isSwapNotCompleted(swap.swapStatus)">
+            <button mat-button>SPRAWDŹ ADRES</button>
+            <button mat-raised-button color="primary" *ngIf="!swap.ifCurrentUserConfirmed">POTWIERDŹ ODBIÓR</button>
+          </mat-card-actions>
         </mat-card>
       </div>
     </div>
