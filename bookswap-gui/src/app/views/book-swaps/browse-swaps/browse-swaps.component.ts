@@ -5,6 +5,7 @@ import {BookSwapsService} from "../../../services/book-swaps.service";
 import {ESwapStatus} from "../../../enums/ESwapStatus";
 import {SwapListItem} from "../../../models/book-swaps/SwapListItem";
 import {EBookLabel} from "../../../enums/EBookLabel";
+import Swal from "sweetalert2";
 
 // export interface SwapStatus{
 //   status: ESwapStatus,
@@ -26,6 +27,7 @@ export class BrowseSwapsComponent implements OnInit {
   // selectedSwapStatus?: ESwapStatus;
   currentTab = 0;
   swapStatus: ESwapStatus[] = [ESwapStatus.IN_PROGRESS, ESwapStatus.BOOK_1_CONFIRMED, ESwapStatus.BOOK_2_CONFIRMED]
+  label: EBookLabel = EBookLabel.PERMANENT_SWAP;
 
   // statuses: SwapStatus[] = [
   //   {status: ESwapStatus.BOOK_1_CONFIRMED, name: "Wysłane przeze mnie"},
@@ -51,8 +53,10 @@ export class BrowseSwapsComponent implements OnInit {
           this.isPermanentSwaps = params.direction === 'permanent';
           if(!this.isPermanentSwaps){
             this.title = "Wymiany tymczasowe"
+            this.label = EBookLabel.TEMPORARY_SWAP
           } else {
             this.title = "Wymiany stałe"
+            this.label = EBookLabel.PERMANENT_SWAP
           }
           this.getSwaps();
         }
@@ -148,7 +152,26 @@ export class BrowseSwapsComponent implements OnInit {
   // }
 
   getSwaps(){
-
+    this.bookSwapsService.getSwaps({
+      swapStatus: this.swapStatus,
+      bookLabel: this.label
+    })
+      .subscribe(
+        data => {
+          console.log(data)
+          this.swaps = data
+          this.swapsCount = data.length;
+        },
+        err => {
+          Swal.fire({
+            position: 'top-end',
+            title: 'Nie można załadować wymian',
+            text: err.error.message,
+            icon: 'error',
+            showConfirmButton: false
+          })
+        }
+      )
   }
 
 }
