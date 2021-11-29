@@ -9,6 +9,8 @@ import Swal from "sweetalert2";
 import {BookListItem} from "../../../models/user-books/BookListItem";
 import {BookDetailsDialogComponent} from "./book-details-dialog/book-details-dialog.component";
 import {FilterHints} from "../../../models/user-books/FilterHints";
+import {Label} from "../add-book/add-book.component";
+import {EBookLabel} from "../../../enums/EBookLabel";
 
 @Component({
   selector: 'app-browse-books',
@@ -33,6 +35,11 @@ export class BrowseBooksComponent implements OnInit {
 
   filterHintsLoaded = false;
   hints?: FilterHints;
+
+  bookLabel?: EBookLabel;
+
+  labels: Label[] = [{label: EBookLabel.PERMANENT_SWAP, name: "Wymiana stała"},
+    {label: EBookLabel.TEMPORARY_SWAP, name: "Wymiana tymczasowa"}]
 
   constructor(public dialog: MatDialog, private router: Router,
               private userBookService : UserBookService, private tokenStorage: TokenStorageService) { }
@@ -116,7 +123,7 @@ export class BrowseBooksComponent implements OnInit {
         this.bookFilter.yearOfPublicationFrom : null!,
       yearOfPublicationTo: this.bookFilter.yearOfPublicationTo ?
         this.bookFilter.yearOfPublicationTo : null!,
-      label: null!,
+      label: this.bookFilter.label != undefined ? this.bookFilter.label : null!,
       status: this.bookFilter.status
     })
       .subscribe(
@@ -151,6 +158,11 @@ export class BrowseBooksComponent implements OnInit {
       this.bookFilter.status = 0;
     }
     this.loadFilterBooks();
+  }
+
+  changeBookLabel(){
+    this.bookFilter.label = this.bookLabel;
+    this.loadFilterBooks()
   }
 
 }

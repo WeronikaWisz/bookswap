@@ -175,6 +175,7 @@ export class BrowseSwapsComponent implements OnInit {
           let index = this.swaps.findIndex(swap => swap.id === id);
           if(statusS === ESwapStatus[ESwapStatus.BOTH_CONFIRMED] || statusS === ESwapStatus[ESwapStatus.COMPLETED]){
             this.swaps.splice(index, 1);
+            this.swapsCount -= 1;
           } else {
             this.swaps.splice(index, 1, data);
           }

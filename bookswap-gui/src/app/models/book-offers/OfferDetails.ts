@@ -9,6 +9,7 @@ export interface OfferDetails{
   label: EBookLabel;
   status: EBookStatus;
   owner: string;
+  localization: string;
   categories: string[];
   hasOfferFromUser: boolean;
   requestedBooks: RequestBook[];

@@ -20,6 +20,7 @@ public class OfferDetails {
     private EBookLabel label;
     private EBookStatus status;
     private String owner;
+    private String localization;
     private List<String> categories = new ArrayList<>();
     @JsonProperty
     private boolean hasOfferFromUser;

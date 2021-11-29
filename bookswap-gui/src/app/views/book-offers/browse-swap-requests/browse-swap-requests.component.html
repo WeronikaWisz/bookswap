@@ -2,7 +2,7 @@
   <div fxLayout="row" fxLayoutAlign="space-between center" *ngIf="isLoggedIn">
     <h2>{{title}}</h2>
     <div>
-      <mat-form-field appearance="outline" *ngIf="currentTab === 1" class="request-status-select">
+      <mat-form-field appearance="outline" *ngIf="currentTab === 1" class="request-status-select field-filter">
         <mat-label>Status oferty</mat-label>
         <mat-select [(ngModel)]="selectedRequestStatus" (selectionChange)="changeSelectedRequestStatus()">
           <mat-option>--</mat-option>
@@ -11,7 +11,7 @@
           </mat-option>
         </mat-select>
       </mat-form-field>
-      <mat-form-field appearance="outline">
+      <mat-form-field appearance="outline" class="field-filter">
         <mat-label>Typ wymiany</mat-label>
         <mat-select [(ngModel)]="bookLabel" (selectionChange)="changeBookLabel()">
           <mat-option>--</mat-option>

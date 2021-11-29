@@ -1,9 +1,20 @@
 <div class="content mat-elevation-z8">
   <div fxLayout="row" fxLayoutAlign="space-between center" *ngIf="isLoggedIn">
     <h2>Moje książki</h2>
-    <button mat-raised-button color="white" (click)="openFilter()">
-      <mat-icon>filter_list</mat-icon> Filtry
-    </button>
+    <div>
+      <mat-form-field appearance="outline" class="label-filter">
+        <mat-label>Typ wymiany</mat-label>
+        <mat-select [(ngModel)]="bookLabel" (selectionChange)="changeBookLabel()">
+          <mat-option>--</mat-option>
+          <mat-option *ngFor="let label of labels" [value]="label.label">
+            {{label.name}}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+      <button mat-raised-button color="white" (click)="openFilter()">
+        <mat-icon>filter_list</mat-icon> Filtry
+      </button>
+    </div>
   </div>
   <p>Liczba książek: {{bookCount}}</p>
   <mat-tab-group (selectedTabChange)="onTabChange($event)">

@@ -134,6 +134,8 @@ public class BookOffersService {
         } else {
             offerDetails.setHasOfferFromUser(false);
         }
+        offerDetails.setLocalization(book.getUser().getCity() + ", " +
+                book.getUser().getPostalCode() + " " + book.getUser().getPost());
         return offerDetails;
     }
 
