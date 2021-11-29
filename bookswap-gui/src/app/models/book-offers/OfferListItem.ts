@@ -3,5 +3,4 @@ export interface OfferListItem {
   title: string;
   author: string;
   image: any;
-  hasOfferFromUser: boolean;
 }

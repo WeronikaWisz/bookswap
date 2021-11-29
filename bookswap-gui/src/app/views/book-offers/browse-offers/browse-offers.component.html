@@ -27,12 +27,6 @@
           </mat-card-header>
           <img *ngIf="offer.image != null" mat-card-image [src]="'data:image/jpeg;base64,'+offer.image" alt="Zdjęcie okładki">
           <img *ngIf="offer.image == null" mat-card-image src="./../../../../assets/images/brak_obrazka.png" alt="Zdjęcie okładki">
-<!--          <mat-card-content>-->
-<!--          </mat-card-content>-->
-<!--          <mat-card-actions>-->
-<!--            <button mat-button *ngIf="offer.hasOfferFromUser"><mat-icon>swap_horiz</mat-icon> WYMIEŃ</button>-->
-<!--            <button mat-button *ngIf="!offer.hasOfferFromUser"><mat-icon>send</mat-icon> ZŁÓŻ OFERTĘ</button>-->
-<!--          </mat-card-actions>-->
         </mat-card>
       </div>
     </div>

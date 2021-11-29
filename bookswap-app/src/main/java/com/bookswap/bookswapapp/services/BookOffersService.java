@@ -49,22 +49,6 @@ public class BookOffersService {
         this.swapRepository = swapRepository;
     }
 
-    public OffersResponse loadOffers(EBookLabel label){
-        User user = getCurrentUser();
-        List<Book> offerList = bookRepository
-                .findBookByStatusAndLabelAndUserIsNot(EBookStatus.AVAILABLE, label, user)
-                .orElse(Collections.emptyList());
-
-        offerList = filterListIfRequestAlreadySend(offerList, label, user);
-
-        OffersResponse offersResponse = new OffersResponse();
-        offersResponse.setOffersList(offerListToOfferListItem(offerList));
-        long requestsCount = swapRequestRepository.countUserOfferRequest(label, user);
-        long booksCount = bookRepository.countUserAvailableBooks(label, user);
-        offersResponse.setAvailableOffersCount(booksCount - requestsCount);
-        return offersResponse;
-    }
-
     public OffersResponse filterOffers(OfferFilter offerFilter){
         User user = getCurrentUser();
         List<Book> offerList = bookRepository
@@ -308,8 +292,6 @@ public class BookOffersService {
     }
 
     private List<OfferListItem> offerListToOfferListItem(List<Book> offerList) {
-        List<String> usersWhoSendOffer = swapRequestRepository.findUsersWhoSendOffers(getCurrentUser())
-                .orElse(Collections.emptyList());
         List<OfferListItem> offerListItems = new ArrayList<>();
         for (Book offer : offerList) {
             OfferListItem offerListItem = new OfferListItem(offer.getId(), offer.getTitle(),
@@ -317,7 +299,6 @@ public class BookOffersService {
             if (offer.getImage() != null) {
                 offerListItem.setImage(ImageHelper.decompressBytes(offer.getImage()));
             }
-            offerListItem.setHasOfferFromUser(usersWhoSendOffer.contains(offer.getUser().getUsername()));
             offerListItems.add(offerListItem);
         }
         return offerListItems;

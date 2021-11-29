@@ -78,13 +78,6 @@ public class UserBooksController {
         return ResponseEntity.ok(new MessageResponse("Pomyśnie dodano książkę"));
     }
 
-    @GetMapping(path = "/books")
-    @PreAuthorize("hasRole('USER')")
-    public ResponseEntity<?> loadBooks(@RequestParam EBookStatus status) {
-        List<BookListItem> bookItemList = userBooksService.loadBooks(status);
-        return ResponseEntity.ok(bookItemList);
-    }
-
     @GetMapping(path = "/book-details/{bookId}")
     @PreAuthorize("hasRole('USER')")
     public ResponseEntity<?> getBookDetails(@PathVariable("bookId") Long id) {

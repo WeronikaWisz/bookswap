@@ -29,13 +29,6 @@ public class BookOffersController {
         this.modelMapper = modelMapper;
     }
 
-    @GetMapping(path = "/offers")
-    @PreAuthorize("hasRole('USER')")
-    public ResponseEntity<?> loadOffers(@RequestParam EBookLabel label) {
-        OffersResponse offersResponse = bookOffersService.loadOffers(label);
-        return ResponseEntity.ok(offersResponse);
-    }
-
     @GetMapping(path = "/offer-details/{offerId}")
     @PreAuthorize("hasRole('USER')")
     public ResponseEntity<?> getOfferDetails(@PathVariable("offerId") Long id) {

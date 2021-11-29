@@ -5,7 +5,6 @@ import {BookFilter} from "../../../models/user-books/BookFilter";
 import {Router} from "@angular/router";
 import {UserBookService} from "../../../services/user-book.service";
 import {TokenStorageService} from "../../../services/token-storage.service";
-import {EBookStatus} from "../../../enums/EBookStatus";
 import Swal from "sweetalert2";
 import {BookListItem} from "../../../models/user-books/BookListItem";
 import {BookDetailsDialogComponent} from "./book-details-dialog/book-details-dialog.component";
@@ -44,7 +43,7 @@ export class BrowseBooksComponent implements OnInit {
     } else {
       this.router.navigate(['/login']).then(() => this.reloadPage());
     }
-    this.loadBooks(EBookStatus.AVAILABLE);
+    this.loadFilterBooks();
   }
 
   public onCardClick(idx: number){
@@ -136,26 +135,6 @@ export class BrowseBooksComponent implements OnInit {
           })
         }
       )
-  }
-
-  loadBooks(status: EBookStatus){
-    this.userBookService.loadBooks(status)
-      .subscribe(
-      data => {
-        console.log(data);
-        this.books = data;
-        this.bookCount = this.books.length;
-      },
-      err => {
-        Swal.fire({
-          position: 'top-end',
-          title: 'Nie można załadować książek',
-          text: err.error.message,
-          icon: 'error',
-          showConfirmButton: false
-        })
-      }
-    );
   }
 
   reloadPage(): void {

@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
-import {HttpClient, HttpHeaders, HttpParams} from "@angular/common/http";
+import {HttpClient, HttpHeaders} from "@angular/common/http";
 import {Observable} from "rxjs";
-import {EBookLabel} from "../enums/EBookLabel";
 import {OfferDetails} from "../models/book-offers/OfferDetails";
 import {OfferFilter} from "../models/book-offers/OfferFilter";
 import {FilterHints} from "../models/book-offers/FilterHints";
@@ -22,12 +21,6 @@ const httpOptions = {
 export class BookOffersService {
 
   constructor(private http: HttpClient) { }
-
-  loadOffers(label: EBookLabel): Observable<OffersResponse> {
-    return this.http.get<OffersResponse>(BOOK_OFFERS_API + 'offers', {
-      params: new HttpParams().set('label', EBookLabel[label])
-    });
-  }
 
   getOfferDetail(offerId: number): Observable<OfferDetails>{
     return this.http.get<OfferDetails>(BOOK_OFFERS_API + 'offer-details/' + offerId);

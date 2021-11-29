@@ -16,9 +16,6 @@ import java.util.Optional;
 @Repository
 public interface SwapRequestRepository extends JpaRepository<SwapRequest, Long> {
 
-    @Query("select sr.user.username from SwapRequest sr where sr.book.user = ?1")
-    Optional<List<String>> findUsersWhoSendOffers(User user);
-
     @Query("select count(sr) from SwapRequest sr where sr.status = 0 and sr.book.label = ?1 and sr.user = ?2")
     long countUserOfferRequest(EBookLabel label, User user);
 

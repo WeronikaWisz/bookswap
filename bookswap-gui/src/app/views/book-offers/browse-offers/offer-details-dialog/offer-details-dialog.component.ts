@@ -36,7 +36,6 @@ export class OfferDetailsDialogComponent implements OnInit {
 
   onNoClick(): boolean {
     return (this.getStatus() !== 'Dostępna' || this.requestAlreadySend);
-    // this.dialogRef.close();
   }
 
   setBookToSwap(){

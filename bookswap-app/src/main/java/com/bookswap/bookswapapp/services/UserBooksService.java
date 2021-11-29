@@ -127,13 +127,6 @@ public class UserBooksService {
         return book;
     }
 
-
-    public List<BookListItem> loadBooks(EBookStatus status){
-        List<Book> bookList = bookRepository
-                .findBookByStatusAndUser(status, getCurrentUser()).orElse(Collections.emptyList());
-        return bookListToBookListItem(bookList);
-    }
-
     public Book getBook(Long id){
         return bookRepository.findById(id).orElseThrow(
                 () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Book not found")

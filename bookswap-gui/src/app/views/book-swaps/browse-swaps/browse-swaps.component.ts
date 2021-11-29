@@ -8,7 +8,6 @@ import {EBookLabel} from "../../../enums/EBookLabel";
 import Swal from "sweetalert2";
 import {MatDialog} from "@angular/material/dialog";
 import {UserAddressDialogComponent} from "./user-address-dialog/user-address-dialog.component";
-import {EBookStatus} from "../../../enums/EBookStatus";
 
 @Component({
   selector: 'app-browse-swaps',
