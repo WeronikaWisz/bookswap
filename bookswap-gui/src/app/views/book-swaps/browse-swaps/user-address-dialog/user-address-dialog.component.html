@@ -1,0 +1,18 @@
+<h2 mat-dialog-title>Dane użytkownika {{data}}</h2>
+<div mat-dialog-content *ngIf="profileData">
+  <div>
+    <h2>{{profileData.name}} {{profileData.surname}}</h2>
+  </div>
+  <p class="description-titles">{{profileData.email}}</p>
+  <br/>
+  <hr>
+  <br/>
+  <h3>Dane adresowe:</h3>
+  <p><span class="description-titles">{{profileData.city}} <span *ngIf="profileData.street">ul. {{profileData.street}}</span>
+    {{profileData.buildingNumber}}<span *ngIf="profileData.doorNumber">/{{profileData.doorNumber}}</span> </span></p>
+  <p><span class="description-titles">{{profileData.postalCode}} {{profileData.post}}</span></p>
+  <p><span class="description-titles" *ngIf="profileData.phone">tel. {{profileData.phone}}</span></p>
+</div>
+<div mat-dialog-actions align="end">
+  <button mat-button (click)="onNoClick()">Zamknij</button>
+</div>

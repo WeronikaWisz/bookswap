@@ -46,9 +46,15 @@
               </mat-card-header>
               <p *ngIf="isSentOffers"> <span class="description-titles">Właściciel książki:</span> {{swapRequest.owner}}</p>
               <p *ngIf="!isSentOffers"> <span class="description-titles">Zgłaszający ofertę:</span> {{swapRequest.sender}}</p>
-              <p> <span class="description-titles">Status oferty:</span> {{getRequestStatus(swapRequest.requestStatus)}}</p>
               <p> <span class="description-titles">Typ wymiany:</span> {{getBookLabel(swapRequest.bookLabel)}}</p>
               <p> <span class="description-titles">Status książki:</span> {{getBookStatus(swapRequest.bookStatus)}}</p>
+              <p class="status-chip"> <span class="description-titles">Status oferty: </span>
+              <mat-chip-list>
+                <mat-chip>
+                  {{getRequestStatus(swapRequest.requestStatus)}}
+                </mat-chip>
+              </mat-chip-list>
+              </p>
             </div>
             <div class="book-image">
             <img *ngIf="swapRequest.bookImage != null" mat-card-image [src]="'data:image/jpeg;base64,'+swapRequest.bookImage" alt="Zdjęcie okładki" >

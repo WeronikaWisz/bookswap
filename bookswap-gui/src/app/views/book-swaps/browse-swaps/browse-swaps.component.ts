@@ -6,11 +6,9 @@ import {ESwapStatus} from "../../../enums/ESwapStatus";
 import {SwapListItem} from "../../../models/book-swaps/SwapListItem";
 import {EBookLabel} from "../../../enums/EBookLabel";
 import Swal from "sweetalert2";
-
-// export interface SwapStatus{
-//   status: ESwapStatus,
-//   name: string
-// }
+import {MatDialog} from "@angular/material/dialog";
+import {UserAddressDialogComponent} from "./user-address-dialog/user-address-dialog.component";
+import {EBookStatus} from "../../../enums/EBookStatus";
 
 @Component({
   selector: 'app-browse-swaps',
@@ -24,16 +22,11 @@ export class BrowseSwapsComponent implements OnInit {
   title = 'Wymiany stałe';
   swapsCount: number = 0;
   swaps: SwapListItem[] = [];
-  // selectedSwapStatus?: ESwapStatus;
   currentTab = 0;
   swapStatus: ESwapStatus[] = [ESwapStatus.IN_PROGRESS, ESwapStatus.BOOK_1_CONFIRMED, ESwapStatus.BOOK_2_CONFIRMED]
   label: EBookLabel = EBookLabel.PERMANENT_SWAP;
 
-  // statuses: SwapStatus[] = [
-  //   {status: ESwapStatus.BOOK_1_CONFIRMED, name: "Wysłane przeze mnie"},
-  //   {status: ESwapStatus.BOOK_2_CONFIRMED, name: "Otrzymane"}]
-
-  constructor(private router: Router, private tokenStorage: TokenStorageService,
+  constructor(private router: Router, private tokenStorage: TokenStorageService, public dialog: MatDialog,
               private bookSwapsService : BookSwapsService, private route: ActivatedRoute,) { }
 
   ngOnInit(): void {
@@ -50,7 +43,7 @@ export class BrowseSwapsComponent implements OnInit {
       .subscribe(
         params => {
           console.log(params);
-          this.isPermanentSwaps = params.direction === 'permanent';
+          this.isPermanentSwaps = params.label === 'permanent';
           if(!this.isPermanentSwaps){
             this.title = "Wymiany tymczasowe"
             this.label = EBookLabel.TEMPORARY_SWAP
@@ -72,6 +65,8 @@ export class BrowseSwapsComponent implements OnInit {
     this.currentTab = event.index;
     if(event.index === 0){
       this.swapStatus = [ESwapStatus.IN_PROGRESS, ESwapStatus.BOOK_1_CONFIRMED, ESwapStatus.BOOK_2_CONFIRMED];
+    } else if(!this.isPermanentSwaps && event.index === 1){
+      this.swapStatus = [ESwapStatus.BOTH_CONFIRMED, ESwapStatus.BOOK_1_RETURNED, ESwapStatus.BOOK_2_RETURNED];
     } else {
       this.swapStatus = [ESwapStatus.COMPLETED];
     }
@@ -96,15 +91,15 @@ export class BrowseSwapsComponent implements OnInit {
     } else if(statusS === ESwapStatus[ESwapStatus.BOOK_1_CONFIRMED] || statusS === ESwapStatus[ESwapStatus.BOOK_2_CONFIRMED]){
       if(statusForCurrentUserBook){
         if(ifCurrentUserConfirmed){
-          return 'Odebrana'
-        } else {
           return 'Oczekuje na odiór'
+        } else {
+          return 'Odebrana'
         }
       } else {
         if(ifCurrentUserConfirmed){
-          return 'Oczekuje na odiór'
-        } else {
           return 'Odebrana'
+        } else {
+          return 'Oczekuje na odiór'
         }
       }
     } else if(statusS === ESwapStatus[ESwapStatus.BOTH_CONFIRMED]){
@@ -135,23 +130,22 @@ export class BrowseSwapsComponent implements OnInit {
     }
   }
 
-  isSwapNotCompleted(status: ESwapStatus): boolean {
+  isSwapCompleted(status: ESwapStatus): boolean {
     let statusS = status.valueOf() as unknown as string;
     return statusS === ESwapStatus[ESwapStatus.COMPLETED];
   }
 
-  // changeSelectedSwapStatus(){
-  //   if(this.currentTab === 0) {
-  //     if (this.selectedSwapStatus) {
-  //       this.swapStatus = [this.selectedSwapStatus]
-  //     } else {
-  //       this.swapStatus = [ESwapStatus.IN_PROGRESS, ESwapStatus.BOOK_1_CONFIRMED, ESwapStatus.BOOK_2_CONFIRMED];
-  //     }
-  //     this.getSwaps()
-  //   }
-  // }
+  getOtherUserAddress(username: string){
+    this.dialog.open(UserAddressDialogComponent, {
+      maxWidth: '650px',
+      data: username
+    });
+  }
 
   getSwaps(){
+    console.log(this.label)
+    this.swaps = [];
+    this.swapsCount = 0;
     this.bookSwapsService.getSwaps({
       swapStatus: this.swapStatus,
       bookLabel: this.label
@@ -166,6 +160,30 @@ export class BrowseSwapsComponent implements OnInit {
           Swal.fire({
             position: 'top-end',
             title: 'Nie można załadować wymian',
+            text: err.error.message,
+            icon: 'error',
+            showConfirmButton: false
+          })
+        }
+      )
+  }
+
+  confirmBookDelivery(id: number){
+    this.bookSwapsService.confirmBookDelivery(id)
+      .subscribe(
+        data => {
+          let statusS = data.swapStatus.valueOf() as unknown as string;
+          let index = this.swaps.findIndex(swap => swap.id === id);
+          if(statusS === ESwapStatus[ESwapStatus.BOTH_CONFIRMED] || statusS === ESwapStatus[ESwapStatus.COMPLETED]){
+            this.swaps.splice(index, 1);
+          } else {
+            this.swaps.splice(index, 1, data);
+          }
+        },
+        err => {
+          Swal.fire({
+            position: 'top-end',
+            title: 'Nie można zatwierdzić odbioru',
             text: err.error.message,
             icon: 'error',
             showConfirmButton: false
