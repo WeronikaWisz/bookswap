@@ -2,7 +2,7 @@
   <div fxLayout="row" fxLayoutAlign="space-between center" *ngIf="isLoggedIn">
     <h2>Moje książki</h2>
     <div>
-      <mat-form-field appearance="outline" class="label-filter">
+      <mat-form-field appearance="outline" class="label-filter" *ngIf="currentTab === 0">
         <mat-label>Typ wymiany</mat-label>
         <mat-select [(ngModel)]="bookLabel" (selectionChange)="changeBookLabel()">
           <mat-option>--</mat-option>

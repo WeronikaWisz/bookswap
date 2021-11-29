@@ -41,6 +41,8 @@ export class BrowseBooksComponent implements OnInit {
   labels: Label[] = [{label: EBookLabel.PERMANENT_SWAP, name: "Wymiana stała"},
     {label: EBookLabel.TEMPORARY_SWAP, name: "Wymiana tymczasowa"}]
 
+  currentTab = 0;
+
   constructor(public dialog: MatDialog, private router: Router,
               private userBookService : UserBookService, private tokenStorage: TokenStorageService) { }
 
@@ -150,12 +152,16 @@ export class BrowseBooksComponent implements OnInit {
 
   onTabChange(event: any){
     console.log(event);
+    this.currentTab = event.index;
     if(event.index === 1){
       this.bookFilter.status = 2;
+      this.bookFilter.label = undefined;
     } else if (event.index === 2){
       this.bookFilter.status = 1;
+      this.bookFilter.label = undefined
     } else {
       this.bookFilter.status = 0;
+      this.bookFilter.label = this.bookLabel;
     }
     this.loadFilterBooks();
   }
