@@ -1,0 +1,5 @@
+export enum EBookStatus{
+  AVAILABLE,
+  PERMANENT_SWAP,
+  TEMPORARY_SWAP
+}

@@ -1,0 +1,45 @@
+@import 'node_modules/@angular/material/theming'
+@import 'src/custom-theme'
+
+.content
+  padding: 50px
+  width: 100%
+
+.content > mat-card
+  margin-bottom: 16px
+
+.mat-card
+  background-color: #f8f8f8
+  height: 100%
+  //display: flex
+  //flex-direction: column
+  //flex-shrink: 0
+
+//.mat-card-content
+//  display: flex
+//  flex: 1 1 auto
+
+.mat-card-actions
+  text-align: center
+
+.mat-card-image
+  padding: 0 10px 0 10px
+
+.mat-icon-button
+  margin-bottom: 16px
+
+.clickable
+  cursor: pointer
+  &:hover
+    @include mat-elevation(10)
+
+.offer-list
+  padding: 10px
+  height: 810px
+  overflow-y: scroll
+
+.content
+  max-width: 1500px
+  margin-left: auto
+  margin-right: auto
+  vertical-align: middle

@@ -1,0 +1,77 @@
+<div class="content mat-elevation-z8">
+  <div fxLayout="row" fxLayoutAlign="space-between center" *ngIf="isLoggedIn">
+    <h2>{{title}}</h2>
+  </div>
+  <p>Liczba wymian: {{swapsCount}}</p>
+  <mat-tab-group (selectedTabChange)="onTabChange($event)">
+    <mat-tab label="W trakcie realizacji">
+      <ng-template *ngTemplateOutlet="swapListTemplate; context: {$implicit: swaps}"></ng-template>
+    </mat-tab>
+    <mat-tab *ngIf="!isPermanentSwaps" label="Na wypożyczeniu">
+      <ng-template *ngTemplateOutlet="swapListTemplate; context: {$implicit: swaps}"></ng-template>
+    </mat-tab>
+    <mat-tab label="Historyczne">
+      <ng-template *ngTemplateOutlet="swapListTemplate; context: {$implicit: swaps}"></ng-template>
+    </mat-tab>
+  </mat-tab-group>
+</div>
+
+<ng-template #swapListTemplate let-swaps>
+  <div class="offer-list">
+    <div fxLayout="column" fxLayoutGap="16px grid">
+      <div *ngFor="let swap of swaps">
+        <mat-card class="mat-elevation-z4">
+          <div class="swap-info">
+            <div class="book-description">
+              <h2 class="book-title"> {{swap.currentUserBookTitle}}</h2>
+              <div class="image-description">
+                <div class="book-image">
+                  <img *ngIf="swap.currentUserBookImage != null" mat-card-image [src]="'data:image/jpeg;base64,'+swap.currentUserBookImage" alt="Zdjęcie okładki" >
+                  <img *ngIf="swap.currentUserBookImage == null" mat-card-image src="./../../../../assets/images/brak_obrazka.png" alt="Zdjęcie okładki">
+                </div>
+                <div class="swap-description">
+                  <p> <span class="description-titles">Autor:</span> {{swap.currentUserBookAuthor}}</p>
+                  <p> <span class="description-titles">Typ wymiany:</span> {{getBookLabel(swap.currentUserBookLabel)}}</p>
+                  <p class="status-chip"> <span class="description-titles">Status: </span>
+                    <mat-chip-list>
+                      <mat-chip>
+                        {{getSwapStatus(swap.swapStatus, swap.ifCurrentUserConfirmed, true, swap.currentUserBookLabel)}}
+                      </mat-chip>
+                    </mat-chip-list>
+                  </p>
+                </div>
+              </div>
+            </div>
+            <div class="swap-icon"><mat-icon>swap_horiz</mat-icon></div>
+            <div class="book-description">
+              <h2 class="book-title"> {{swap.otherUserBookTitle}}</h2>
+              <div class="image-description">
+                <div class="book-image">
+                  <img *ngIf="swap.otherUserBookImage != null" mat-card-image [src]="'data:image/jpeg;base64,'+swap.otherUserBookImage" alt="Zdjęcie okładki" >
+                  <img *ngIf="swap.otherUserBookImage == null" mat-card-image src="./../../../../assets/images/brak_obrazka.png" alt="Zdjęcie okładki">
+                </div>
+                <div class="swap-description">
+                  <p> <span class="description-titles">Autor:</span> {{swap.otherUserBookAuthor}}</p>
+                  <p> <span class="description-titles">Typ wymiany:</span> {{getBookLabel(swap.otherUserBookLabel)}}</p>
+                  <p> <span class="description-titles">Właściciel książki:</span> {{swap.otherUsername}}</p>
+                  <p class="status-chip"> <span class="description-titles">Status: </span>
+                    <mat-chip-list>
+                      <mat-chip>
+                        {{getSwapStatus(swap.swapStatus, swap.ifCurrentUserConfirmed, false, swap.otherUserBookLabel)}}
+                      </mat-chip>
+                    </mat-chip-list>
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+          <mat-card-actions *ngIf="!isSwapCompleted(swap.swapStatus)">
+            <button mat-button (click)="getOtherUserAddress(swap.otherUsername)">SPRAWDŹ ADRES</button>
+            <button mat-raised-button color="primary" *ngIf="!swap.ifCurrentUserConfirmed" (click)="confirmBookDelivery(swap.id)">POTWIERDŹ ODBIÓR</button>
+          </mat-card-actions>
+        </mat-card>
+      </div>
+    </div>
+  </div>
+</ng-template>
+

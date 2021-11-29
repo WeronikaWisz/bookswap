@@ -1,0 +1,70 @@
+<mat-sidenav-container class="sidenav-container">
+  <mat-sidenav #drawer class="sidenav" fixedInViewport (click)="drawer.toggle()"
+               [ngClass]="{hidden: (isHandset$ | async) === false}"
+               [attr.role]="'navigation'"
+               [mode]="'over'">
+    <mat-toolbar>Menu</mat-toolbar>
+    <mat-nav-list>
+      <h2 matSubheader>MOJE KSIĄŻKI</h2>
+      <a mat-list-item href routerLink="add-book"><mat-icon>add_circle_outline</mat-icon> <span class="button-text">Dodaj książkę</span></a>
+      <a mat-list-item href routerLink="my-books"><mat-icon>list_alt</mat-icon> <span class="button-text">Przeglądaj</span></a>
+      <h2 matSubheader>OFERTY</h2>
+      <a mat-list-item href routerLink="browse-offers"><mat-icon>search</mat-icon> <span class="button-text">Szukaj książek</span></a>
+      <a mat-list-item href routerLink="swap-requests/sent"><mat-icon>chevron_right</mat-icon> <span class="button-text">Złożone ofery</span></a>
+      <a mat-list-item href routerLink="swap-requests/received"><mat-icon>chevron_left</mat-icon> <span class="button-text">Otrzymane oferty</span></a>
+      <h2 matSubheader>WYMIANY</h2>
+      <a mat-list-item href routerLink="browse-swaps/permanent"><mat-icon>swap_horiz</mat-icon> <span class="button-text">Stałe</span></a>
+      <a mat-list-item href routerLink="browse-swaps/temporary"><mat-icon>access_time</mat-icon> <span class="button-text">Tymczasowe</span></a>
+      <h2 matSubheader>MOJE KONTO</h2>
+      <a mat-list-item href routerLink="profile"><mat-icon>person_outline</mat-icon> <span class="button-text">Mój profil</span></a>
+      <a mat-list-item href (click)="logout()"><mat-icon>logout</mat-icon> <span class="button-text">Wyloguj</span></a>
+    </mat-nav-list>
+  </mat-sidenav>
+  <mat-sidenav-content>
+    <mat-toolbar color="primary">
+      <button
+        type="button"
+        aria-label="Toggle sidenav"
+        mat-icon-button
+        (click)="drawer.toggle()"
+        *ngIf="(isHandset$ | async) && isLoggedIn">
+        <mat-icon aria-label="Side nav toggle icon">menu</mat-icon>
+      </button>
+      <span>Bookswap</span>
+      <span class="spacer"></span>
+      <span *ngIf="(isHandset$ | async) === false && isLoggedIn">
+        <button mat-button [matMenuTriggerFor]="books">Moje książki</button>
+        <mat-menu #books="matMenu">
+          <button mat-menu-item routerLink="add-book"><mat-icon>add_circle_outline</mat-icon> Dodaj książkę</button>
+          <button mat-menu-item routerLink="my-books"><mat-icon>list_alt</mat-icon> Przeglądaj</button>
+        </mat-menu>
+      </span>
+      <span *ngIf="(isHandset$ | async) === false && isLoggedIn">
+        <button mat-button [matMenuTriggerFor]="offers">Oferty</button>
+        <mat-menu #offers="matMenu">
+          <button mat-menu-item routerLink="browse-offers"><mat-icon>search</mat-icon> Szukaj książek</button>
+          <button mat-menu-item routerLink="swap-requests/sent"><mat-icon>chevron_right</mat-icon> Złożone ofery</button>
+          <button mat-menu-item routerLink="swap-requests/received"><mat-icon>chevron_left</mat-icon> Otrzymane oferty</button>
+        </mat-menu>
+      </span>
+      <span *ngIf="(isHandset$ | async) === false && isLoggedIn">
+        <button mat-button [matMenuTriggerFor]="swaps">Wymiany</button>
+        <mat-menu #swaps="matMenu">
+          <button mat-menu-item routerLink="browse-swaps/permanent"><mat-icon>swap_horiz</mat-icon> Stałe</button>
+          <button mat-menu-item routerLink="browse-swaps/temporary"><mat-icon>access_time</mat-icon> Tymczasowe</button>
+        </mat-menu>
+      </span>
+      <button mat-button [matMenuTriggerFor]="profile" *ngIf="isLoggedIn"><span class="user-info">{{username}}</span><mat-icon>person</mat-icon></button>
+      <mat-menu #profile="matMenu">
+        <button mat-menu-item routerLink="profile"><mat-icon>person_outline</mat-icon> Mój profil</button>
+        <button mat-menu-item (click)="logout()"><mat-icon>logout</mat-icon> Wyloguj</button>
+      </mat-menu>
+      <button mat-button *ngIf="!isLoggedIn" routerLink="login">Logowanie</button>
+      <button mat-button *ngIf="!isLoggedIn" routerLink="register">Rejestracja</button>
+    </mat-toolbar>
+    <ng-content></ng-content>
+    <div class="content">
+      <router-outlet></router-outlet>
+    </div>
+  </mat-sidenav-content>
+</mat-sidenav-container>
