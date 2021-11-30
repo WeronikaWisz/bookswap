@@ -26,7 +26,7 @@
             <mat-card-subtitle>{{offer.author}}</mat-card-subtitle>
           </mat-card-header>
           <img *ngIf="offer.image != null" mat-card-image [src]="'data:image/jpeg;base64,'+offer.image" alt="Zdjęcie okładki">
-          <img *ngIf="offer.image == null" mat-card-image src="./../../../../assets/images/brak_obrazka.png" alt="Zdjęcie okładki">
+          <img *ngIf="offer.image == null" mat-card-image src="../../../../assets/images/brak_obrazka.png" alt="Zdjęcie okładki">
         </mat-card>
       </div>
     </div>

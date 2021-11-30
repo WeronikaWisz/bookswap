@@ -27,7 +27,7 @@
               <div class="image-description">
                 <div class="book-image">
                   <img *ngIf="swap.currentUserBookImage != null" mat-card-image [src]="'data:image/jpeg;base64,'+swap.currentUserBookImage" alt="Zdjęcie okładki" >
-                  <img *ngIf="swap.currentUserBookImage == null" mat-card-image src="./../../../../assets/images/brak_obrazka.png" alt="Zdjęcie okładki">
+                  <img *ngIf="swap.currentUserBookImage == null" mat-card-image src="../../../../assets/images/brak_obrazka.png" alt="Zdjęcie okładki">
                 </div>
                 <div class="swap-description">
                   <p> <span class="description-titles">Autor:</span> {{swap.currentUserBookAuthor}}</p>
@@ -48,7 +48,7 @@
               <div class="image-description">
                 <div class="book-image">
                   <img *ngIf="swap.otherUserBookImage != null" mat-card-image [src]="'data:image/jpeg;base64,'+swap.otherUserBookImage" alt="Zdjęcie okładki" >
-                  <img *ngIf="swap.otherUserBookImage == null" mat-card-image src="./../../../../assets/images/brak_obrazka.png" alt="Zdjęcie okładki">
+                  <img *ngIf="swap.otherUserBookImage == null" mat-card-image src="../../../../assets/images/brak_obrazka.png" alt="Zdjęcie okładki">
                 </div>
                 <div class="swap-description">
                   <p> <span class="description-titles">Autor:</span> {{swap.otherUserBookAuthor}}</p>

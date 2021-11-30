@@ -5,7 +5,7 @@
   <div class="book-basic">
     <div class="book-image">
       <img *ngIf="data.offerBasics.image != null" [src]="'data:image/jpeg;base64,'+data.offerBasics.image" alt="Zdjęcie okładki">
-      <img *ngIf="data.offerBasics.image == null" src="./../../../../../assets/images/brak_obrazka.png" alt="Zdjęcie okładki">
+      <img *ngIf="data.offerBasics.image == null" src="../../../../../assets/images/brak_obrazka.png" alt="Zdjęcie okładki">
     </div>
     <div class="book-info">
       <h2 id="book-title">{{data.offerBasics.title}}</h2>

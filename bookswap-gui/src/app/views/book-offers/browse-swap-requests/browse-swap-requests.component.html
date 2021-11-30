@@ -58,7 +58,7 @@
             </div>
             <div class="book-image">
             <img *ngIf="swapRequest.bookImage != null" mat-card-image [src]="'data:image/jpeg;base64,'+swapRequest.bookImage" alt="Zdjęcie okładki" >
-            <img *ngIf="swapRequest.bookImage == null" mat-card-image src="./../../../../assets/images/brak_obrazka.png" alt="Zdjęcie okładki">
+            <img *ngIf="swapRequest.bookImage == null" mat-card-image src="../../../../assets/images/brak_obrazka.png" alt="Zdjęcie okładki">
             </div>
           </div>
           <mat-card-actions *ngIf="isRequestWaiting(swapRequest.requestStatus)">
