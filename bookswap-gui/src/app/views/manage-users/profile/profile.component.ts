@@ -6,6 +6,7 @@ import {ProfileData} from "../../../models/manage-users/ProfileData";
 import {UsersService} from "../../../services/manage-users/users.service";
 import {MatDialog} from "@angular/material/dialog";
 import {UpdateProfileDialogComponent} from "./update-profile-dialog/update-profile-dialog.component";
+import {ChangePasswordDialogComponent} from "./change-password-dialog/change-password-dialog.component";
 
 @Component({
   selector: 'app-profile',
@@ -73,7 +74,9 @@ export class ProfileComponent implements OnInit {
   }
 
   changePassword(){
-
+    this.dialog.open(ChangePasswordDialogComponent, {
+      maxWidth: '650px'
+    });
   }
 
   reloadPage(): void {

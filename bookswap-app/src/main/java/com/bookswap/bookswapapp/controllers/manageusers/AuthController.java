@@ -24,6 +24,7 @@ import org.springframework.web.bind.annotation.*;
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -83,9 +84,11 @@ public class AuthController {
         }
 
         String phoneNumber = signUpRequest.getPhone();
-        phoneNumber = phoneNumber.replaceAll("\\s+", "");
-        if(!phoneNumber.startsWith("+48")){
-            phoneNumber = "+48" + phoneNumber;
+        if(!Objects.equals(phoneNumber, "")) {
+            phoneNumber = phoneNumber.replaceAll("\\s+", "");
+            if (!phoneNumber.startsWith("+48")) {
+                phoneNumber = "+48" + phoneNumber;
+            }
         }
 
         User user = new User(signUpRequest.getName(), signUpRequest.getSurname(), signUpRequest.getUsername(),
