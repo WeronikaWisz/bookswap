@@ -37,6 +37,8 @@ export class BrowseOffersComponent implements OnInit {
 
   selectedTabIndex = 0;
 
+  emptySearchList = false;
+
   constructor(public dialog: MatDialog, private router: Router, private route: ActivatedRoute,
               private bookOffersService : BookOffersService, private tokenStorage: TokenStorageService) { }
 
@@ -133,6 +135,7 @@ export class BrowseOffersComponent implements OnInit {
   }
 
   loadFilterOffers(){
+    this.emptySearchList = false;
     this.bookOffersService.loadFilteredOffers({
       authors: this.offerFilter.authors,
       categories: this.offerFilter.categories,
@@ -151,6 +154,9 @@ export class BrowseOffersComponent implements OnInit {
           console.log(data);
           this.offers = data.offersList;
           this.availableOffersCount = data.availableOffersCount;
+          if(this.offers.length == 0){
+            this.emptySearchList = true;
+          }
         },
         err => {
           Swal.fire({

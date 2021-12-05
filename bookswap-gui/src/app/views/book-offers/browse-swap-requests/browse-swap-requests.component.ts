@@ -41,6 +41,8 @@ export class BrowseSwapRequestsComponent implements OnInit {
   labels: Label[] = [{label: EBookLabel.PERMANENT_SWAP, name: "Wymiana stała"},
     {label: EBookLabel.TEMPORARY_SWAP, name: "Wymiana tymczasowa"}]
 
+  emptySearchList = false;
+
   constructor(private router: Router, private tokenStorage: TokenStorageService,
               private bookOffersService : BookOffersService, private route: ActivatedRoute) { }
 
@@ -75,7 +77,11 @@ export class BrowseSwapRequestsComponent implements OnInit {
     if(event.index === 0){
       this.requestStatus = [ERequestStatus.WAITING];
     } else {
-      this.requestStatus = [ERequestStatus.ACCEPTED, ERequestStatus.DENIED, ERequestStatus.CANCELED];
+      if (this.selectedRequestStatus) {
+        this.requestStatus = [this.selectedRequestStatus]
+      } else {
+        this.requestStatus = [ERequestStatus.ACCEPTED, ERequestStatus.DENIED, ERequestStatus.CANCELED];
+      }
     }
     this.getRequests();
   }
@@ -85,6 +91,7 @@ export class BrowseSwapRequestsComponent implements OnInit {
   }
 
   getRequests() {
+    this.emptySearchList = false;
     this.swapRequests = [];
     this.offersCount = 0;
     if (this.isSentOffers) {
@@ -95,6 +102,7 @@ export class BrowseSwapRequestsComponent implements OnInit {
           console.log(data)
           this.swapRequests = data
           this.offersCount = data.length;
+          this.checkIfEmptyRequestList();
         },
         err => {
           Swal.fire({
@@ -114,6 +122,7 @@ export class BrowseSwapRequestsComponent implements OnInit {
           console.log(data)
           this.swapRequests = data
           this.offersCount = data.length;
+          this.checkIfEmptyRequestList();
         },
         err => {
           Swal.fire({
@@ -125,6 +134,12 @@ export class BrowseSwapRequestsComponent implements OnInit {
           })
         }
       )
+    }
+  }
+
+  checkIfEmptyRequestList(){
+    if(this.offersCount == 0){
+      this.emptySearchList = true;
     }
   }
 

@@ -17,7 +17,7 @@
 </div>
 
 <ng-template #swapListTemplate let-swaps>
-  <div class="offer-list">
+  <div class="offer-list" *ngIf="!emptySearchList">
     <div fxLayout="column" fxLayoutGap="16px grid">
       <div *ngFor="let swap of swaps">
         <mat-card class="mat-elevation-z4">
@@ -72,6 +72,10 @@
         </mat-card>
       </div>
     </div>
+  </div>
+  <div class="empty-list" *ngIf="emptySearchList">
+    <img src="../../../../assets/images/brak_wynikow.png" alt="Brak wyników">
+    <h3>Brak wyników wyszukiwania</h3>
   </div>
 </ng-template>
 

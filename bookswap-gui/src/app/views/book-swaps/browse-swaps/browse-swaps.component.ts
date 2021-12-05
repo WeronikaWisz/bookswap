@@ -25,6 +25,8 @@ export class BrowseSwapsComponent implements OnInit {
   swapStatus: ESwapStatus[] = [ESwapStatus.IN_PROGRESS, ESwapStatus.BOOK_1_CONFIRMED, ESwapStatus.BOOK_2_CONFIRMED]
   label: EBookLabel = EBookLabel.PERMANENT_SWAP;
 
+  emptySearchList = false;
+
   constructor(private router: Router, private tokenStorage: TokenStorageService, public dialog: MatDialog,
               private bookSwapsService : BookSwapsService, private route: ActivatedRoute,) { }
 
@@ -142,6 +144,7 @@ export class BrowseSwapsComponent implements OnInit {
   }
 
   getSwaps(){
+    this.emptySearchList = false;
     console.log(this.label)
     this.swaps = [];
     this.swapsCount = 0;
@@ -154,6 +157,9 @@ export class BrowseSwapsComponent implements OnInit {
           console.log(data)
           this.swaps = data
           this.swapsCount = data.length;
+          if(this.swapsCount == 0){
+            this.emptySearchList = true;
+          }
         },
         err => {
           Swal.fire({

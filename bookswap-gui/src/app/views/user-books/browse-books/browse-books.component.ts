@@ -43,6 +43,8 @@ export class BrowseBooksComponent implements OnInit {
 
   currentTab = 0;
 
+  emptySearchList = false;
+
   constructor(public dialog: MatDialog, private router: Router,
               private userBookService : UserBookService, private tokenStorage: TokenStorageService) { }
 
@@ -116,6 +118,7 @@ export class BrowseBooksComponent implements OnInit {
   }
 
   loadFilterBooks(){
+    this.emptySearchList = false;
     this.userBookService.loadFilteredBook({
       authors: this.bookFilter.authors,
       categories: this.bookFilter.categories,
@@ -133,6 +136,9 @@ export class BrowseBooksComponent implements OnInit {
           console.log(data);
           this.books = data;
           this.bookCount = this.books.length;
+          if(this.bookCount == 0){
+            this.emptySearchList = true;
+          }
         },
         err => {
           Swal.fire({
