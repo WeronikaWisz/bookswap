@@ -82,7 +82,7 @@ public class BookOffersController {
     @PreAuthorize("hasRole('USER')")
     public ResponseEntity<?> denySwapRequest(@PathVariable("swapRequestId") Long id) {
         bookOffersService.denySwapRequest(id);
-        return ResponseEntity.ok(new MessageResponse("Pomyśnie odwołano ofertę"));
+        return ResponseEntity.ok(new MessageResponse("Pomyśnie odrzucono ofertę"));
     }
 
 }
