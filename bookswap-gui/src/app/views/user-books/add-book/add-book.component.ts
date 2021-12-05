@@ -1,5 +1,5 @@
 import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
-import {FormBuilder, FormControl, FormGroup, Validators} from "@angular/forms";
+import {FormBuilder, FormControl, FormGroup, FormGroupDirective, Validators} from "@angular/forms";
 import {ActivatedRoute, Router} from "@angular/router";
 import {TokenStorageService} from "../../../services/token-storage.service";
 import Swal from "sweetalert2";
@@ -61,6 +61,8 @@ export class AddBookComponent implements OnInit {
 
   @ViewChild('categoryInput') categoryInput!: ElementRef<HTMLInputElement>;
 
+  @ViewChild(FormGroupDirective) formGroupDirective!: FormGroupDirective;
+
   formTitle = "Dodawanie książki";
   isEditBookView = false;
   bookId?: number;
@@ -86,7 +88,8 @@ export class AddBookComponent implements OnInit {
       publisher: ['', Validators.required],
       yearOfPublication: ['', Validators.required],
       label: [null, Validators.required],
-      description: ['']
+      description: [''],
+      image: ['']
     });
     if (this.tokenStorage.getToken()) {
       this.isLoggedIn = true;
@@ -164,6 +167,9 @@ export class AddBookComponent implements OnInit {
     if (value) {
       if(!this.categories.find(c => c === value)) {
         this.categories.push(value);
+        if(this.form.pristine){
+          this.form.markAsDirty();
+        }
       }
     }
 
@@ -177,12 +183,18 @@ export class AddBookComponent implements OnInit {
 
     if (index >= 0) {
       this.categories.splice(index, 1);
+      if(this.form.pristine){
+        this.form.markAsDirty();
+      }
     }
   }
 
   selected(event: MatAutocompleteSelectedEvent): void {
     if(!this.categories.find(c => c === event.option.viewValue)) {
       this.categories.push(event.option.viewValue);
+      if(this.form.pristine){
+        this.form.markAsDirty();
+      }
     }
     this.categoryInput.nativeElement.value = '';
     this.categoriesCtrl.setValue(null);
@@ -246,6 +258,7 @@ export class AddBookComponent implements OnInit {
     }, this.file, this.bookId!).subscribe(
       data => {
         console.log(data);
+        this.form.markAsPristine();
         Swal.fire({
           position: 'top-end',
           title: 'Pomyśnie zaktualizowano książkę',
@@ -266,11 +279,15 @@ export class AddBookComponent implements OnInit {
   }
 
   clearFields(){
+    console.log("cleaned")
     this.file = null;
     this.fileName = '';
-    this.categories = []
-    this.form.reset();
-    this.form.markAsUntouched();
+    this.categories = [];
+    this.clearFormGroupDirective();
+  }
+
+  clearFormGroupDirective() {
+    this.formGroupDirective.resetForm();
   }
 
   onFileSelected(event: any) {
