@@ -1,8 +1,8 @@
 package com.bookswap.bookswapapp.services;
 
 import com.bookswap.bookswapapp.dtos.manageusers.ChangePassword;
-import com.bookswap.bookswapapp.dtos.manageusers.CheckChangePassword;
 import com.bookswap.bookswapapp.dtos.manageusers.UpdateUserData;
+import com.bookswap.bookswapapp.exception.ApiBadRequestException;
 import com.bookswap.bookswapapp.models.User;
 import com.bookswap.bookswapapp.repositories.UserRepository;
 import com.bookswap.bookswapapp.security.userdetails.UserDetailsI;
@@ -37,20 +37,19 @@ public class UsersService {
     public User getUserProfileData(){
         String username = getCurrentUserUsername();
         return userRepository.findByUsername(username).orElseThrow(
-                () -> new UsernameNotFoundException("Cannot find user"));
+                () -> new UsernameNotFoundException("Cannot found user"));
     }
 
     @Transactional
     public boolean updateUserProfileData(UpdateUserData updateUserData){
         String username = getCurrentUserUsername();
         User user = userRepository.findByUsername(username).orElseThrow(
-                () -> new UsernameNotFoundException("Cannot find user"));
+                () -> new UsernameNotFoundException("Cannot found user"));
         boolean dataChanged = false;
         if(updateUserData.getEmail() != null && !Objects.equals(updateUserData.getEmail(), "")
                 && !updateUserData.getEmail().equals(user.getEmail())){
             if (userRepository.existsByEmail(updateUserData.getEmail())) {
-                throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
-                        "Email address is already taken");
+                throw new ApiBadRequestException("exception.emailUsed");
             }
             user.setEmail(updateUserData.getEmail());
             dataChanged = true;
@@ -116,25 +115,19 @@ public class UsersService {
     }
 
     @Transactional
-    public CheckChangePassword changePassword(ChangePassword changePassword){
-        CheckChangePassword checkChangePassword = new CheckChangePassword();
+    public void changePassword(ChangePassword changePassword){
         String username = getCurrentUserUsername();
         User user = userRepository.findByUsername(username).orElseThrow(
-                () -> new UsernameNotFoundException("Cannot find user"));
+                () -> new UsernameNotFoundException("Cannot found user"));
         if(encoder.matches(changePassword.getOldPassword(), user.getPassword())){
             if(encoder.matches(changePassword.getNewPassword(), user.getPassword())){
-                checkChangePassword.setChangedSuccessfully(false);
-                checkChangePassword.setMessage("Nowe hasło nie może być takie samo jak stare");
+                throw new ApiBadRequestException("exception.newPasswordSameAsOld");
             } else {
                 user.setPassword(encoder.encode(changePassword.getNewPassword()));
-                checkChangePassword.setChangedSuccessfully(true);
-                checkChangePassword.setMessage("Poprawnie zmieniono hasło");
             }
         } else {
-            checkChangePassword.setChangedSuccessfully(false);
-            checkChangePassword.setMessage("Błędne stare hasło");
+            throw new ApiBadRequestException("exception.wrongOldPassword");
         }
-        return checkChangePassword;
     }
 
     private String getCurrentUserUsername(){

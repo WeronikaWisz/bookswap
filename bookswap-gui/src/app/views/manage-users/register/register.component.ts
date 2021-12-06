@@ -97,7 +97,7 @@ export class RegisterComponent implements OnInit {
       err => {
         if(err.error.message.includes("e-mail")){
           this.form.controls['formArray'].get([0])?.get('email')?.setErrors({'incorrect': true})
-        } else if(err.error.message.includes("Nazwa")){
+        } else if(err.error.message.includes("Nazwa") || err.error.message.includes("Username")){
           this.form.controls['formArray'].get([2])?.get('username')?.setErrors({'incorrect': true})
         }
         Swal.fire({

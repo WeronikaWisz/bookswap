@@ -2,12 +2,13 @@ package com.bookswap.bookswapapp.controllers;
 
 import com.bookswap.bookswapapp.dtos.auth.MessageResponse;
 import com.bookswap.bookswapapp.dtos.bookoffers.*;
-import com.bookswap.bookswapapp.enums.EBookLabel;
 import com.bookswap.bookswapapp.services.BookOffersService;
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -22,11 +23,14 @@ public class BookOffersController {
     private final BookOffersService bookOffersService;
     private ModelMapper modelMapper;
     private static final Logger logger = LoggerFactory.getLogger(UserBooksController.class);
+    private MessageSource messageSource;
 
     @Autowired
-    public BookOffersController(BookOffersService bookOffersService, ModelMapper modelMapper) {
+    public BookOffersController(BookOffersService bookOffersService, ModelMapper modelMapper,
+                                MessageSource messageSource) {
         this.bookOffersService = bookOffersService;
         this.modelMapper = modelMapper;
+        this.messageSource = messageSource;
     }
 
     @GetMapping(path = "/offer-details/{offerId}")
@@ -54,7 +58,8 @@ public class BookOffersController {
     @PreAuthorize("hasRole('USER')")
     public ResponseEntity<?> sendSwapRequest(@RequestBody BooksForSwap booksForSwap) {
         bookOffersService.sendSwapRequest(booksForSwap);
-        return ResponseEntity.ok(new MessageResponse("Pomyśnie złożono ofertę"));
+        return ResponseEntity.ok(new MessageResponse(messageSource.getMessage(
+                "success.sendRequest", null, LocaleContextHolder.getLocale())));
     }
 
     @PostMapping(path = "/sent-requests")
@@ -75,14 +80,16 @@ public class BookOffersController {
     @PreAuthorize("hasRole('USER')")
     public ResponseEntity<?> cancelSwapRequest(@PathVariable("swapRequestId") Long id) {
         bookOffersService.cancelSwapRequest(id);
-        return ResponseEntity.ok(new MessageResponse("Pomyśnie odwołano ofertę"));
+        return ResponseEntity.ok(new MessageResponse(messageSource.getMessage(
+                "success.cancelRequest", null, LocaleContextHolder.getLocale())));
     }
 
     @DeleteMapping(path = "/swap-request/deny/{swapRequestId}")
     @PreAuthorize("hasRole('USER')")
     public ResponseEntity<?> denySwapRequest(@PathVariable("swapRequestId") Long id) {
         bookOffersService.denySwapRequest(id);
-        return ResponseEntity.ok(new MessageResponse("Pomyśnie odrzucono ofertę"));
+        return ResponseEntity.ok(new MessageResponse(messageSource.getMessage(
+                "success.denyRequest", null, LocaleContextHolder.getLocale())));
     }
 
 }

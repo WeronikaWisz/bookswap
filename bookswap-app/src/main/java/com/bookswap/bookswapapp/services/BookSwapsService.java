@@ -5,6 +5,7 @@ import com.bookswap.bookswapapp.dtos.bookswaps.SwapListItem;
 import com.bookswap.bookswapapp.enums.EBookLabel;
 import com.bookswap.bookswapapp.enums.EBookStatus;
 import com.bookswap.bookswapapp.enums.ESwapStatus;
+import com.bookswap.bookswapapp.exception.ApiNotFoundException;
 import com.bookswap.bookswapapp.helpers.ImageHelper;
 import com.bookswap.bookswapapp.models.Book;
 import com.bookswap.bookswapapp.models.Swap;
@@ -88,14 +89,14 @@ public class BookSwapsService {
 
     public User geUserAddressByUsername(String username){
         return userRepository.findByUsername(username).orElseThrow(
-                () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Username does not exist")
+                () -> new ApiNotFoundException("exception.usernameNotExists")
         );
     }
 
     @Transactional(isolation = Isolation.SERIALIZABLE)
     public SwapListItem confirmBookDelivery(Long swapId){
         Swap swap = swapRepository.findById(swapId).orElseThrow(
-                () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Swap does not exist")
+                () -> new ApiNotFoundException("exception.swapNotExists")
         );
         User user = getCurrentUser();
         ESwapStatus status = swap.getStatus();

@@ -5,6 +5,9 @@ import com.bookswap.bookswapapp.enums.EBookLabel;
 import com.bookswap.bookswapapp.enums.EBookStatus;
 import com.bookswap.bookswapapp.enums.ERequestStatus;
 import com.bookswap.bookswapapp.enums.ESwapStatus;
+import com.bookswap.bookswapapp.exception.ApiExpectationFailedException;
+import com.bookswap.bookswapapp.exception.ApiForbiddenException;
+import com.bookswap.bookswapapp.exception.ApiNotFoundException;
 import com.bookswap.bookswapapp.helpers.FilterHelper;
 import com.bookswap.bookswapapp.helpers.ImageHelper;
 import com.bookswap.bookswapapp.models.*;
@@ -16,13 +19,11 @@ import com.bookswap.bookswapapp.security.userdetails.UserDetailsI;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -118,7 +119,7 @@ public class BookOffersService {
     @Transactional
     public OfferDetails getOffer(Long id){
         Book book = bookRepository.findById(id).orElseThrow(
-                () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Book not found")
+                () -> new ApiNotFoundException("exception.bookNotFound")
         );
         OfferDetails offerDetails = new OfferDetails(book.getPublisher(), book.getYearOfPublication(), book.getDescription(),
                 book.getLabel(), book.getStatus(), book.getUser().getUsername(),
@@ -142,42 +143,34 @@ public class BookOffersService {
     @Transactional(isolation = Isolation.SERIALIZABLE)
     public void sendSwapRequest(BooksForSwap booksForSwap){
 
-        logger.info("start");
         Book book = bookRepository.findById(booksForSwap.getRequestedBookId()).orElseThrow(
-                () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Requested book not found")
+                () -> new ApiNotFoundException("exception.requestedBookNotFound")
         );
-        logger.info("founded book");
         if(book.getStatus() != EBookStatus.AVAILABLE){
-            throw new ResponseStatusException(HttpStatus.EXPECTATION_FAILED, "Requested book is not available");
+            throw new ApiExpectationFailedException("exception.requestedBookNotAvailable");
         }
-        logger.info("available");
         User user = getCurrentUser();
-        logger.info("founded current user");
         long requestsCount = swapRequestRepository.countUserOfferRequest(book.getLabel(), user);
-        logger.info("request count");
         long booksCount = bookRepository.countUserAvailableBooks(book.getLabel(), user);
-        logger.info("book count");
         if(booksCount - requestsCount == 0){
-            throw new ResponseStatusException(HttpStatus.EXPECTATION_FAILED, "User does not have books to swap");
+            throw new ApiExpectationFailedException("exception.noBookToSwap");
         }
-        logger.info("have books");
         if(booksForSwap.getUserBookIdForSwap() != null){
-            logger.info("can swap already");
             Book bookForSwap = bookRepository.findById(booksForSwap.getUserBookIdForSwap()).orElseThrow(
-                    () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Book for swap not found")
+                    () -> new ApiNotFoundException("exception.swapBookNotFound")
             );
             if(bookForSwap.getStatus() != EBookStatus.AVAILABLE){
-                throw new ResponseStatusException(HttpStatus.EXPECTATION_FAILED, "Book for swap is not available");
+                throw new ApiExpectationFailedException("exception.swapBookNotAvailable");
             }
 
             if(!book.getLabel().equals(bookForSwap.getLabel())){
-                throw new ResponseStatusException(HttpStatus.EXPECTATION_FAILED, "Book labels are not compatible");
+                throw new ApiExpectationFailedException("exception.labelIncompatible");
             }
 
             Optional<SwapRequest> existedSwapRequest = swapRequestRepository.findByBookAndUserAndStatus(bookForSwap,
                     book.getUser(), ERequestStatus.WAITING);
             if(existedSwapRequest.isEmpty()){
-                throw new ResponseStatusException(HttpStatus.EXPECTATION_FAILED, "Swap request for user is no longer waiting");
+                throw new ApiExpectationFailedException("exception.requestForUserNotWaiting");
             }
             Swap swap = new Swap();
             swap.setCreationDate(LocalDateTime.now());
@@ -208,14 +201,11 @@ public class BookOffersService {
             this.deniedWaitingRequestForBooks(swapBooks);
 
         } else {
-            logger.info("start sending request");
             Optional<SwapRequest> existedSwapRequest = swapRequestRepository
                     .findByBookAndUserAndStatus(book, user, ERequestStatus.WAITING);
-            logger.info("already exist that request");
             if(existedSwapRequest.isPresent()){
-                throw new ResponseStatusException(HttpStatus.EXPECTATION_FAILED, "Swap request is already send");
+                throw new ApiExpectationFailedException("exception.requestAlreadySend");
             }
-            logger.info("make a request");
             SwapRequest swapRequest = new SwapRequest();
             swapRequest.setCreationDate(LocalDateTime.now());
             swapRequest.setBook(book);
@@ -223,7 +213,6 @@ public class BookOffersService {
             swapRequest.setStatus(ERequestStatus.WAITING);
 
             swapRequestRepository.save(swapRequest);
-            logger.info("done");
         }
     }
 
@@ -257,8 +246,7 @@ public class BookOffersService {
     public void cancelSwapRequest(Long id){
         SwapRequest swapRequest = getWaitingSwapRequest(id);
         if(swapRequest.getUser() != getCurrentUser()){
-            throw new ResponseStatusException(HttpStatus.FORBIDDEN,
-                    "Swap request can only be cancel by user who send it");
+            throw new ApiForbiddenException("exception.cannotCancel");
         }
         swapRequest.setUpdateDate(LocalDateTime.now());
         swapRequest.setStatus(ERequestStatus.CANCELED);
@@ -268,8 +256,7 @@ public class BookOffersService {
     public void denySwapRequest(Long id){
         SwapRequest swapRequest = getWaitingSwapRequest(id);
         if(swapRequest.getBook().getUser() != getCurrentUser()){
-            throw new ResponseStatusException(HttpStatus.FORBIDDEN,
-                    "Swap request can only be denied by user whose book was requested");
+            throw new ApiForbiddenException("exception.cannotDeny");
         }
         swapRequest.setUpdateDate(LocalDateTime.now());
         swapRequest.setStatus(ERequestStatus.DENIED);
@@ -278,9 +265,9 @@ public class BookOffersService {
     private SwapRequest getWaitingSwapRequest(Long id){
         SwapRequest swapRequest = swapRequestRepository.findById(id)
                 .orElseThrow(() ->
-                        new ResponseStatusException(HttpStatus.NOT_FOUND, "Swap request does not exist"));
+                        new ApiNotFoundException("exception.requestNotExists"));
         if(swapRequest.getStatus() != ERequestStatus.WAITING){
-            throw new ResponseStatusException(HttpStatus.EXPECTATION_FAILED, "Swap request is not waiting");
+            throw new ApiExpectationFailedException("exception.requestNotWaiting");
         }
         return swapRequest;
     }
