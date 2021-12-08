@@ -23,13 +23,12 @@ public class UsersService {
 
     private final UserRepository userRepository;
     private static final Logger logger = LoggerFactory.getLogger(UsersService.class);
-
-    @Autowired
     PasswordEncoder encoder;
 
     @Autowired
-    public UsersService(UserRepository userRepository) {
+    public UsersService(UserRepository userRepository, PasswordEncoder encoder) {
         this.userRepository = userRepository;
+        this.encoder = encoder;
     }
 
     public User getUserProfileData(){

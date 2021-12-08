@@ -15,13 +15,11 @@ import com.bookswap.bookswapapp.security.userdetails.UserDetailsI;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -30,18 +28,13 @@ import java.util.List;
 @Service
 public class BookSwapsService {
 
-    private final BookRepository bookRepository;
     private final UserRepository userRepository;
-    private final SwapRequestRepository swapRequestRepository;
     private final SwapRepository swapRepository;
     private static final Logger logger = LoggerFactory.getLogger(BookSwapsService.class);
 
     @Autowired
-    public BookSwapsService(BookRepository bookRepository, UserRepository userRepository,
-                            SwapRequestRepository swapRequestRepository, SwapRepository swapRepository) {
-        this.bookRepository = bookRepository;
+    public BookSwapsService(UserRepository userRepository, SwapRepository swapRepository) {
         this.userRepository = userRepository;
-        this.swapRequestRepository = swapRequestRepository;
         this.swapRepository = swapRepository;
     }
 
