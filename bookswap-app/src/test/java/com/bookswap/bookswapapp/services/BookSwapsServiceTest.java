@@ -2,9 +2,7 @@ package com.bookswap.bookswapapp.services;
 
 import com.bookswap.bookswapapp.dtos.bookswaps.SwapFilter;
 import com.bookswap.bookswapapp.dtos.bookswaps.SwapListItem;
-import com.bookswap.bookswapapp.dtos.manageusers.UpdateUserData;
 import com.bookswap.bookswapapp.enums.EBookLabel;
-import com.bookswap.bookswapapp.enums.EBookStatus;
 import com.bookswap.bookswapapp.enums.ESwapStatus;
 import com.bookswap.bookswapapp.exception.ApiNotFoundException;
 import com.bookswap.bookswapapp.models.Book;
@@ -45,10 +43,39 @@ class BookSwapsServiceTest {
     private BookRepository testBookRepository;
     private BookSwapsService testBookSwapsService;
     private User user;
+    private User user2;
+    private SwapFilter swapFilter;
+    private Swap swap;
+    private Book book1;
+    private Book book2;
 
     @BeforeEach
     void setUp() {
         testBookSwapsService = new BookSwapsService(testUserRepository, testSwapRepository);
+        user = new User();
+        user.setUsername("username");
+        user.setPassword("password");
+        user.setEmail("test1@gmail.com");
+        testUserRepository.save(user);
+        user2 = new User();
+        user2.setUsername("username2");
+        user2.setPassword("password");
+        user2.setEmail("test2@gmail.com");
+        testUserRepository.save(user2);
+        swapFilter = new SwapFilter();
+        swapFilter.setBookLabel(EBookLabel.TEMPORARY_SWAP);
+        book1 = new Book();
+        book1.setLabel(EBookLabel.TEMPORARY_SWAP);
+        book1.setUser(user);
+        testBookRepository.save(book1);
+        book2 = new Book();
+        book2.setLabel(EBookLabel.TEMPORARY_SWAP);
+        book2.setUser(user2);
+        testBookRepository.save(book2);
+        swap = new Swap();
+        swap.setBook1(book1);
+        swap.setBook2(book2);
+        testSwapRepository.save(swap);
     }
 
     @Nested
@@ -56,11 +83,6 @@ class BookSwapsServiceTest {
 
         @BeforeEach
         public void init() {
-            user = new User();
-            user.setUsername("username");
-            user.setPassword("password");
-            user.setEmail("test1@gmail.com");
-            testUserRepository.save(user);
             UserDetailsI applicationUser = UserDetailsI.build(user);
             Authentication authentication = Mockito.mock(Authentication.class);
             SecurityContext securityContext = Mockito.mock(SecurityContext.class);
@@ -71,34 +93,13 @@ class BookSwapsServiceTest {
 
         @Test
         void testGetSwaps() {
-            EBookLabel label = EBookLabel.PERMANENT_SWAP;
+            ESwapStatus status = ESwapStatus.IN_PROGRESS;
 
-            SwapFilter swapFilter = new SwapFilter();
-            swapFilter.setBookLabel(label);
             List<ESwapStatus> statuses = new ArrayList<>();
-            statuses.add(ESwapStatus.IN_PROGRESS);
+            statuses.add(status);
             swapFilter.setSwapStatus(statuses);
 
-            User user2 = new User();
-            user2.setUsername("username2");
-            user2.setPassword("password");
-            user2.setEmail("test2@gmail.com");
-            testUserRepository.save(user2);
-
-            Book book1 = new Book();
-            book1.setUser(user);
-            book1.setLabel(label);
-            testBookRepository.save(book1);
-            Book book2 = new Book();
-            book2.setUser(user2);
-            book2.setLabel(label);
-            testBookRepository.save(book2);
-
-            Swap swap = new Swap();
-            swap.setStatus(ESwapStatus.IN_PROGRESS);
-            swap.setBook1(book1);
-            swap.setBook2(book2);
-            testSwapRepository.save(swap);
+            swap.setStatus(status);
 
             Mockito.when(testUserRepository.findByUsername("username")).thenReturn(java.util.Optional.of(user));
             Mockito.when(testSwapRepository.findUserSwaps(swapFilter.getSwapStatus(), swapFilter.getBookLabel(), user))
@@ -113,34 +114,121 @@ class BookSwapsServiceTest {
 
         @Test
         void testGetSwapsOtherUserBook1() {
-            EBookLabel label = EBookLabel.PERMANENT_SWAP;
-
-            SwapFilter swapFilter = new SwapFilter();
-            swapFilter.setBookLabel(label);
+            ESwapStatus status = ESwapStatus.COMPLETED;
             List<ESwapStatus> statuses = new ArrayList<>();
-            statuses.add(ESwapStatus.IN_PROGRESS);
+            statuses.add(status);
             swapFilter.setSwapStatus(statuses);
 
-            User user2 = new User();
-            user2.setUsername("username2");
-            user2.setPassword("password");
-            user2.setEmail("test2@gmail.com");
-            testUserRepository.save(user2);
-
-            Book book1 = new Book();
             book1.setUser(user2);
-            book1.setLabel(label);
-            testBookRepository.save(book1);
-            Book book2 = new Book();
             book2.setUser(user);
-            book2.setLabel(label);
-            testBookRepository.save(book2);
 
-            Swap swap = new Swap();
-            swap.setStatus(ESwapStatus.IN_PROGRESS);
-            swap.setBook1(book1);
-            swap.setBook2(book2);
-            testSwapRepository.save(swap);
+            swap.setStatus(status);
+
+            Mockito.when(testUserRepository.findByUsername("username")).thenReturn(java.util.Optional.of(user));
+            Mockito.when(testSwapRepository.findUserSwaps(swapFilter.getSwapStatus(), swapFilter.getBookLabel(), user))
+                    .thenReturn(Optional.of(List.of(swap)));
+
+            List<SwapListItem> swaps = testBookSwapsService.getSwaps(swapFilter);
+
+            verify(testSwapRepository).findUserSwaps(swapFilter.getSwapStatus(), swapFilter.getBookLabel(), user);
+            assertEquals(1, swaps.size());
+            assertEquals(swap.getId(), swaps.get(0).getId());
+        }
+
+        @Test
+        void testGetSwapsStatusConfirmed() {
+            ESwapStatus status = ESwapStatus.BOTH_CONFIRMED;
+            List<ESwapStatus> statuses = new ArrayList<>();
+            statuses.add(status);
+            swapFilter.setSwapStatus(statuses);
+
+            swap.setStatus(status);
+
+            Mockito.when(testUserRepository.findByUsername("username")).thenReturn(java.util.Optional.of(user));
+            Mockito.when(testSwapRepository.findUserSwaps(swapFilter.getSwapStatus(), swapFilter.getBookLabel(), user))
+                    .thenReturn(Optional.of(List.of(swap)));
+
+            List<SwapListItem> swaps = testBookSwapsService.getSwaps(swapFilter);
+
+            verify(testSwapRepository).findUserSwaps(swapFilter.getSwapStatus(), swapFilter.getBookLabel(), user);
+            assertEquals(1, swaps.size());
+            assertEquals(swap.getId(), swaps.get(0).getId());
+        }
+
+        @Test
+        void testGetSwapsStatusBook1ConfirmedOtherUserBook1() {
+            ESwapStatus status = ESwapStatus.BOOK_1_CONFIRMED;
+            List<ESwapStatus> statuses = new ArrayList<>();
+            statuses.add(status);
+            swapFilter.setSwapStatus(statuses);
+
+            swap.setStatus(status);
+
+            Mockito.when(testUserRepository.findByUsername("username")).thenReturn(java.util.Optional.of(user));
+            Mockito.when(testSwapRepository.findUserSwaps(swapFilter.getSwapStatus(), swapFilter.getBookLabel(), user))
+                    .thenReturn(Optional.of(List.of(swap)));
+
+            List<SwapListItem> swaps = testBookSwapsService.getSwaps(swapFilter);
+
+            verify(testSwapRepository).findUserSwaps(swapFilter.getSwapStatus(), swapFilter.getBookLabel(), user);
+            assertEquals(1, swaps.size());
+            assertEquals(swap.getId(), swaps.get(0).getId());
+        }
+
+        @Test
+        void testGetSwapsStatusBook2ConfirmedOtherUserBook1() {
+            ESwapStatus status = ESwapStatus.BOOK_2_CONFIRMED;
+            List<ESwapStatus> statuses = new ArrayList<>();
+            statuses.add(status);
+            swapFilter.setSwapStatus(statuses);
+
+            swap.setStatus(status);
+
+            Mockito.when(testUserRepository.findByUsername("username")).thenReturn(java.util.Optional.of(user));
+            Mockito.when(testSwapRepository.findUserSwaps(swapFilter.getSwapStatus(), swapFilter.getBookLabel(), user))
+                    .thenReturn(Optional.of(List.of(swap)));
+
+            List<SwapListItem> swaps = testBookSwapsService.getSwaps(swapFilter);
+
+            verify(testSwapRepository).findUserSwaps(swapFilter.getSwapStatus(), swapFilter.getBookLabel(), user);
+            assertEquals(1, swaps.size());
+            assertEquals(swap.getId(), swaps.get(0).getId());
+        }
+
+        @Test
+        void testGetSwapsStatusBook1Confirmed() {
+            ESwapStatus status = ESwapStatus.BOOK_1_CONFIRMED;
+            List<ESwapStatus> statuses = new ArrayList<>();
+            statuses.add(status);
+            swapFilter.setSwapStatus(statuses);
+
+            book1.setUser(user2);
+            book2.setUser(user);
+
+            swap.setStatus(status);
+
+            Mockito.when(testUserRepository.findByUsername("username")).thenReturn(java.util.Optional.of(user));
+            Mockito.when(testSwapRepository.findUserSwaps(swapFilter.getSwapStatus(), swapFilter.getBookLabel(), user))
+                    .thenReturn(Optional.of(List.of(swap)));
+
+            List<SwapListItem> swaps = testBookSwapsService.getSwaps(swapFilter);
+
+            verify(testSwapRepository).findUserSwaps(swapFilter.getSwapStatus(), swapFilter.getBookLabel(), user);
+            assertEquals(1, swaps.size());
+            assertEquals(swap.getId(), swaps.get(0).getId());
+        }
+
+        @Test
+        void testGetSwapsStatusBook2Confirmed() {
+            ESwapStatus status = ESwapStatus.BOOK_2_CONFIRMED;
+            List<ESwapStatus> statuses = new ArrayList<>();
+            statuses.add(status);
+            swapFilter.setSwapStatus(statuses);
+
+            book1.setUser(user2);
+            book2.setUser(user);
+
+            swap.setStatus(status);
 
             Mockito.when(testUserRepository.findByUsername("username")).thenReturn(java.util.Optional.of(user));
             Mockito.when(testSwapRepository.findUserSwaps(swapFilter.getSwapStatus(), swapFilter.getBookLabel(), user))
@@ -160,9 +248,141 @@ class BookSwapsServiceTest {
             assertThrows(UsernameNotFoundException.class, () -> testBookSwapsService.getSwaps(swapFilter));
         }
 
-        //    @Test
-        //    void confirmBookDelivery() {
-        //    }
+        @Test
+        void testConfirmBookDelivery() {
+            Long id = swap.getId();
+            swap.setStatus(ESwapStatus.IN_PROGRESS);
+            Mockito.when(testUserRepository.findByUsername("username")).thenReturn(java.util.Optional.of(user));
+            Mockito.when(testSwapRepository.findById(id)).thenReturn(Optional.of(swap));
+            testBookSwapsService.confirmBookDelivery(id);
+            verify(testSwapRepository).findById(id);
+        }
+
+        @Test
+        void testConfirmBookDeliveryOtherUserBook1() {
+            Long id = swap.getId();
+            book1.setUser(user2);
+            book2.setUser(user);
+            swap.setStatus(ESwapStatus.IN_PROGRESS);
+            Mockito.when(testUserRepository.findByUsername("username")).thenReturn(java.util.Optional.of(user));
+            Mockito.when(testSwapRepository.findById(id)).thenReturn(Optional.of(swap));
+            testBookSwapsService.confirmBookDelivery(id);
+            verify(testSwapRepository).findById(id);
+        }
+
+        @Test
+        void testConfirmBookDeliveryCompleted() {
+            Long id = swap.getId();
+            swap.setStatus(ESwapStatus.COMPLETED);
+            Mockito.when(testUserRepository.findByUsername("username")).thenReturn(java.util.Optional.of(user));
+            Mockito.when(testSwapRepository.findById(id)).thenReturn(Optional.of(swap));
+            testBookSwapsService.confirmBookDelivery(id);
+            verify(testSwapRepository).findById(id);
+        }
+
+        @Test
+        void testConfirmBookDeliveryCompletedOtherUserBook1() {
+            Long id = swap.getId();
+            book1.setUser(user2);
+            book2.setUser(user);
+            swap.setStatus(ESwapStatus.COMPLETED);
+            Mockito.when(testUserRepository.findByUsername("username")).thenReturn(java.util.Optional.of(user));
+            Mockito.when(testSwapRepository.findById(id)).thenReturn(Optional.of(swap));
+            testBookSwapsService.confirmBookDelivery(id);
+            verify(testSwapRepository).findById(id);
+        }
+
+        @Test
+        void testConfirmBookDeliveryBook1Confirmed() {
+            Long id = swap.getId();
+            swap.setStatus(ESwapStatus.BOOK_1_CONFIRMED);
+            Mockito.when(testUserRepository.findByUsername("username")).thenReturn(java.util.Optional.of(user));
+            Mockito.when(testSwapRepository.findById(id)).thenReturn(Optional.of(swap));
+            testBookSwapsService.confirmBookDelivery(id);
+            verify(testSwapRepository).findById(id);
+        }
+
+        @Test
+        void testConfirmBookDeliveryBook2ConfirmedOtherUserBook1() {
+            Long id = swap.getId();
+            book1.setUser(user2);
+            book2.setUser(user);
+            swap.setStatus(ESwapStatus.BOOK_2_CONFIRMED);
+            Mockito.when(testUserRepository.findByUsername("username")).thenReturn(java.util.Optional.of(user));
+            Mockito.when(testSwapRepository.findById(id)).thenReturn(Optional.of(swap));
+            testBookSwapsService.confirmBookDelivery(id);
+            verify(testSwapRepository).findById(id);
+        }
+
+        @Test
+        void testConfirmBookDeliveryBook1ConfirmedPermanent() {
+            Long id = swap.getId();
+            book1.setLabel(EBookLabel.PERMANENT_SWAP);
+            book2.setLabel(EBookLabel.PERMANENT_SWAP);
+            swap.setStatus(ESwapStatus.BOOK_1_CONFIRMED);
+            Mockito.when(testUserRepository.findByUsername("username")).thenReturn(java.util.Optional.of(user));
+            Mockito.when(testSwapRepository.findById(id)).thenReturn(Optional.of(swap));
+            testBookSwapsService.confirmBookDelivery(id);
+            verify(testSwapRepository).findById(id);
+        }
+
+        @Test
+        void testConfirmBookDeliveryBook2ConfirmedOtherUserBook1Permanent() {
+            Long id = swap.getId();
+            book1.setUser(user2);
+            book2.setUser(user);
+            book1.setLabel(EBookLabel.PERMANENT_SWAP);
+            book2.setLabel(EBookLabel.PERMANENT_SWAP);
+            swap.setStatus(ESwapStatus.BOOK_2_CONFIRMED);
+            Mockito.when(testUserRepository.findByUsername("username")).thenReturn(java.util.Optional.of(user));
+            Mockito.when(testSwapRepository.findById(id)).thenReturn(Optional.of(swap));
+            testBookSwapsService.confirmBookDelivery(id);
+            verify(testSwapRepository).findById(id);
+        }
+
+        @Test
+        void testConfirmBookDeliveryBothConfirmed() {
+            Long id = swap.getId();
+            swap.setStatus(ESwapStatus.BOTH_CONFIRMED);
+            Mockito.when(testUserRepository.findByUsername("username")).thenReturn(java.util.Optional.of(user));
+            Mockito.when(testSwapRepository.findById(id)).thenReturn(Optional.of(swap));
+            testBookSwapsService.confirmBookDelivery(id);
+            verify(testSwapRepository).findById(id);
+        }
+
+        @Test
+        void testConfirmBookDeliveryBothConfirmedOtherUserBook1() {
+            Long id = swap.getId();
+            book1.setUser(user2);
+            book2.setUser(user);
+            swap.setStatus(ESwapStatus.BOTH_CONFIRMED);
+            Mockito.when(testUserRepository.findByUsername("username")).thenReturn(java.util.Optional.of(user));
+            Mockito.when(testSwapRepository.findById(id)).thenReturn(Optional.of(swap));
+            testBookSwapsService.confirmBookDelivery(id);
+            verify(testSwapRepository).findById(id);
+        }
+
+        @Test
+        void testConfirmBookDeliveryBook2Returned() {
+            Long id = swap.getId();
+            swap.setStatus(ESwapStatus.BOOK_2_RETURNED);
+            Mockito.when(testUserRepository.findByUsername("username")).thenReturn(java.util.Optional.of(user));
+            Mockito.when(testSwapRepository.findById(id)).thenReturn(Optional.of(swap));
+            testBookSwapsService.confirmBookDelivery(id);
+            verify(testSwapRepository).findById(id);
+        }
+
+        @Test
+        void testConfirmBookDeliveryBook1ReturnedOtherUserBook1() {
+            Long id = swap.getId();
+            book1.setUser(user2);
+            book2.setUser(user);
+            swap.setStatus(ESwapStatus.BOOK_1_RETURNED);
+            Mockito.when(testUserRepository.findByUsername("username")).thenReturn(java.util.Optional.of(user));
+            Mockito.when(testSwapRepository.findById(id)).thenReturn(Optional.of(swap));
+            testBookSwapsService.confirmBookDelivery(id);
+            verify(testSwapRepository).findById(id);
+        }
 
     }
 
@@ -181,6 +401,14 @@ class BookSwapsServiceTest {
         String username = "user2";
         Mockito.when(testUserRepository.findByUsername(username)).thenReturn(java.util.Optional.empty());
         assertThrows(ApiNotFoundException.class, () -> testBookSwapsService.geUserAddressByUsername(username));
+    }
+
+    @Test
+    void testConfirmBookDeliverySwapNotFound() {
+        Long id = swap.getId();
+        swap.setStatus(ESwapStatus.IN_PROGRESS);
+        Mockito.when(testSwapRepository.findById(id)).thenReturn(Optional.empty());
+        assertThrows(ApiNotFoundException.class, () -> testBookSwapsService.confirmBookDelivery(id));
     }
 
 }
