@@ -145,9 +145,16 @@ class BookOffersServiceTest {
         assertTrue(offersResponse.getOffersList().isEmpty());
     }
 
-//    @Test
-//    void loadFilterHints() {
-//    }
+    @Test
+    void loadFilterHints() {
+        EBookStatus status = EBookStatus.AVAILABLE;
+
+        Mockito.when(testUserRepository.findByUsername("username")).thenReturn(java.util.Optional.of(user));
+        Mockito.when(testBookRepository.findBookByStatusAndUserIsNot(status, user)).thenReturn(Optional.of(List.of(bookOffer)));
+
+        testBookOffersService.loadFilterHints();
+        verify(testBookRepository).findBookByStatusAndUserIsNot(status, user);
+    }
 //
 //    @Test
 //    void getOffer() {
