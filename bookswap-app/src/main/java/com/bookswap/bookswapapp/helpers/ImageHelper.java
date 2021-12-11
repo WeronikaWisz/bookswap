@@ -26,7 +26,7 @@ public class ImageHelper {
         try {
             outputStream.close();
         } catch (IOException e) {
-            logger.error("Error compressing the image: ", e.getMessage());
+            logger.error("Error compressing the image: " + e.getMessage());
         }
         return outputStream.toByteArray();
     }
@@ -43,9 +43,9 @@ public class ImageHelper {
             }
             outputStream.close();
         } catch (IOException ioe) {
-            logger.error("Error compressing the image: ", ioe.getMessage());
+            logger.error("Error compressing the image: " + ioe.getMessage());
         } catch ( DataFormatException e) {
-            logger.error("Error formatting the image: ", e.getMessage());
+            logger.error("Error formatting the image: " + e.getMessage());
         }
         return outputStream.toByteArray();
     }

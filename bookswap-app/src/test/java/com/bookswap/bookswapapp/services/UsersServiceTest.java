@@ -18,8 +18,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
@@ -39,7 +39,6 @@ class UsersServiceTest {
         user.setUsername("username");
         user.setPassword("password");
         user.setEmail("test1@gmail.com");
-        testUserRepository.save(user);
         UserDetailsI applicationUser = UserDetailsI.build(user);
         Authentication authentication = Mockito.mock(Authentication.class);
         SecurityContext securityContext = Mockito.mock(SecurityContext.class);
@@ -64,20 +63,42 @@ class UsersServiceTest {
     @Test
     void testUpdateUserProfileData() {
         UpdateUserData updateUserData = new UpdateUserData();
-        updateUserData.setEmail("test2@email.com");
-        updateUserData.setName("test");
-        updateUserData.setSurname("test");
-        updateUserData.setPhone("123456789");
-        updateUserData.setPostalCode("43-098");
-        updateUserData.setPost("Post");
-        updateUserData.setCity("City");
-        updateUserData.setStreet("Street");
-        updateUserData.setBuildingNumber("3");
-        updateUserData.setDoorNumber("9");
+
+        String email = "test2@email.com";
+        String name = "test";
+        String surname = "test";
+        String phone = "123456789";
+        String postalCode = "43-098";
+        String post = "Post";
+        String city = "City";
+        String street = "Street";
+        String buildingNumber = "3";
+        String doorNumber = "9";
+
+        updateUserData.setEmail(email);
+        updateUserData.setName(name);
+        updateUserData.setSurname(surname);
+        updateUserData.setPhone(phone);
+        updateUserData.setPostalCode(postalCode);
+        updateUserData.setPost(post);
+        updateUserData.setCity(city);
+        updateUserData.setStreet(street);
+        updateUserData.setBuildingNumber(buildingNumber);
+        updateUserData.setDoorNumber(doorNumber);
 
         Mockito.when(testUserRepository.findByUsername("username")).thenReturn(java.util.Optional.of(user));
         testUserService.updateUserProfileData(updateUserData);
-        verify(testUserRepository).save(any(User.class));
+
+        assertEquals(email, user.getEmail());
+        assertEquals(name, user.getName());
+        assertEquals(surname, user.getSurname());
+        assertEquals( "+48"+phone, user.getPhone());
+        assertEquals(postalCode, user.getPostalCode());
+        assertEquals(post, user.getPost());
+        assertEquals(city, user.getCity());
+        assertEquals(street, user.getStreet());
+        assertEquals(buildingNumber, user.getBuildingNumber());
+        assertEquals(doorNumber, user.getDoorNumber());
     }
 
     @Test
@@ -104,7 +125,8 @@ class UsersServiceTest {
 
         Mockito.when(testUserRepository.findByUsername("username")).thenReturn(java.util.Optional.of(user));
         testUserService.updateUserProfileData(updateUserData);
-        verify(testUserRepository).save(any(User.class));
+
+        assertEquals( "", user.getPhone());
     }
 
     @Test
@@ -117,9 +139,12 @@ class UsersServiceTest {
 
         Mockito.when(testUserRepository.findByUsername("username")).thenReturn(java.util.Optional.of(user));
         Mockito.when(encoder.matches(oldPassword, user.getPassword())).thenReturn(true);
+        Mockito.when(encoder.matches(newPassword, user.getPassword())).thenReturn(false);
+        Mockito.when(encoder.encode(changePassword.getNewPassword())).thenReturn(newPassword);
 
         testUserService.changePassword(changePassword);
-        verify(testUserRepository).save(any(User.class));
+
+        assertEquals(newPassword, user.getPassword());
     }
 
     @Test

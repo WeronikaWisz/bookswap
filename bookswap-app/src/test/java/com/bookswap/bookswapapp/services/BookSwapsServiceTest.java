@@ -5,10 +5,10 @@ import com.bookswap.bookswapapp.dtos.bookswaps.SwapListItem;
 import com.bookswap.bookswapapp.enums.EBookLabel;
 import com.bookswap.bookswapapp.enums.ESwapStatus;
 import com.bookswap.bookswapapp.exception.ApiNotFoundException;
+import com.bookswap.bookswapapp.helpers.ImageHelper;
 import com.bookswap.bookswapapp.models.Book;
 import com.bookswap.bookswapapp.models.Swap;
 import com.bookswap.bookswapapp.models.User;
-import com.bookswap.bookswapapp.repositories.BookRepository;
 import com.bookswap.bookswapapp.repositories.SwapRepository;
 import com.bookswap.bookswapapp.repositories.UserRepository;
 import com.bookswap.bookswapapp.security.userdetails.UserDetailsI;
@@ -19,11 +19,13 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -39,8 +41,6 @@ class BookSwapsServiceTest {
     private UserRepository testUserRepository;
     @Mock
     private SwapRepository testSwapRepository;
-    @Mock
-    private BookRepository testBookRepository;
     private BookSwapsService testBookSwapsService;
     private User user;
     private User user2;
@@ -50,32 +50,30 @@ class BookSwapsServiceTest {
     private Book book2;
 
     @BeforeEach
-    void setUp() {
+    void setUp() throws IOException {
         testBookSwapsService = new BookSwapsService(testUserRepository, testSwapRepository);
         user = new User();
         user.setUsername("username");
         user.setPassword("password");
         user.setEmail("test1@gmail.com");
-        testUserRepository.save(user);
         user2 = new User();
         user2.setUsername("username2");
         user2.setPassword("password");
         user2.setEmail("test2@gmail.com");
-        testUserRepository.save(user2);
         swapFilter = new SwapFilter();
         swapFilter.setBookLabel(EBookLabel.TEMPORARY_SWAP);
+        MockMultipartFile image = new MockMultipartFile("image", new byte[1]);
         book1 = new Book();
         book1.setLabel(EBookLabel.TEMPORARY_SWAP);
         book1.setUser(user);
-        testBookRepository.save(book1);
+        book1.setImage(ImageHelper.compressBytes(image.getBytes()));
         book2 = new Book();
         book2.setLabel(EBookLabel.TEMPORARY_SWAP);
         book2.setUser(user2);
-        testBookRepository.save(book2);
+        book2.setImage(ImageHelper.compressBytes(image.getBytes()));
         swap = new Swap();
         swap.setBook1(book1);
         swap.setBook2(book2);
-        testSwapRepository.save(swap);
     }
 
     @Nested
