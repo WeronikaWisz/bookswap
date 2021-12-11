@@ -8,10 +8,13 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.io.Serializable;
+import java.util.Objects;
+
 @Getter
 @Setter
 @NoArgsConstructor
-public class SwapRequestListItem {
+public class SwapRequestListItem implements Serializable {
     private Long id;
     private String bookTitle;
     private String bookAuthor;
@@ -32,5 +35,18 @@ public class SwapRequestListItem {
         this.sender = sender;
         this.owner = owner;
         this.requestStatus = requestStatus;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        SwapRequestListItem that = (SwapRequestListItem) o;
+        return Objects.equals(id, that.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
     }
 }

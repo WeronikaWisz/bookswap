@@ -1,6 +1,5 @@
 package com.bookswap.bookswapapp.controllers;
 
-import com.bookswap.bookswapapp.dtos.bookoffers.SwapRequestListItem;
 import com.bookswap.bookswapapp.dtos.bookswaps.SwapFilter;
 import com.bookswap.bookswapapp.dtos.bookswaps.SwapListItem;
 import com.bookswap.bookswapapp.dtos.manageusers.ProfileData;
