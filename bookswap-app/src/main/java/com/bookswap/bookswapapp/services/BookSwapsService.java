@@ -23,7 +23,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class BookSwapsService {
@@ -45,6 +47,8 @@ public class BookSwapsService {
         List<Swap> swaps = swapRepository.findUserSwaps(swapFilter.getSwapStatus(),
                 swapFilter.getBookLabel(), user).orElse(Collections.emptyList());
         logger.info("Label: " + swapFilter.getBookLabel());
+        swaps = swaps.stream()
+                .sorted(Comparator.comparing(Swap::getCreationDate).reversed()).collect(Collectors.toList());
         for(Swap swap: swaps){
             SwapListItem swapListItem = new SwapListItem();
             swapListItem.setId(swap.getId());

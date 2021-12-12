@@ -26,10 +26,7 @@ import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -93,7 +90,8 @@ public class BookOffersService {
                     FilterHelper.localizationMatches(offerFilter.getLocalization(), book)).collect(Collectors.toList());
         }
         OffersResponse offersResponse = new OffersResponse();
-        offersResponse.setOffersList(offerListToOfferListItem(offerList));
+        offersResponse.setOffersList(offerListToOfferListItem(offerList.stream()
+                .sorted(Comparator.comparing(Book::getCreationDate).reversed()).collect(Collectors.toList())));
         long requestsCount = swapRequestRepository.countUserOfferRequest(offerFilter.getLabel(), user);
         long booksCount = bookRepository.countUserAvailableBooks(offerFilter.getLabel(), user);
         offersResponse.setAvailableOffersCount(booksCount - requestsCount);
@@ -226,7 +224,8 @@ public class BookOffersService {
                     swapRequest -> swapRequest.getBook().getLabel().equals(swapRequestFilter.getBookLabel()))
                     .collect(Collectors.toList());
         }
-        return getRequestListItems(swapRequests);
+        return getRequestListItems(swapRequests.stream()
+                .sorted(Comparator.comparing(SwapRequest::getCreationDate).reversed()).collect(Collectors.toList()));
     }
 
     @Transactional
@@ -239,7 +238,8 @@ public class BookOffersService {
                             swapRequest -> swapRequest.getBook().getLabel().equals(swapRequestFilter.getBookLabel()))
                     .collect(Collectors.toList());
         }
-        return getRequestListItems(swapRequests);
+        return getRequestListItems(swapRequests.stream()
+                .sorted(Comparator.comparing(SwapRequest::getCreationDate).reversed()).collect(Collectors.toList()));
     }
 
     @Transactional

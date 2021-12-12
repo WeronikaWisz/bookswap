@@ -174,7 +174,8 @@ public class UserBooksService {
             bookList = bookList.stream().filter(book -> book.getYearOfPublication() <= Integer.parseInt(bookFilter.getYearOfPublicationTo()))
                     .collect(Collectors.toList());
         }
-        return bookListToBookListItem(bookList);
+        return bookListToBookListItem(bookList
+                .stream().sorted(Comparator.comparing(Book::getCreationDate).reversed()).collect(Collectors.toList()));
     }
 
     public FilterHints loadFilterHints(){
