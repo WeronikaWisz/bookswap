@@ -294,14 +294,8 @@ export class AddBookComponent implements OnInit {
     this.file = event.target.files[0];
     if (this.file) {
       this.fileName = this.file.name;
-      // var reader = new FileReader();
-      // reader.readAsDataURL(event.target.files[0]); // read file as data url
-      // reader.onload = (event) => { // called once readAsDataURL is completed
-      //   this.imageUrl = event.target!.result as string;
-      // }
     } else {
       this.fileName = '';
-      // this.imageUrl = '';
     }
   }
 
