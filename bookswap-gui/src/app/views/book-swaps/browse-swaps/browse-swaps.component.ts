@@ -19,7 +19,7 @@ export class BrowseSwapsComponent implements OnInit {
 
   isLoggedIn = false;
   isPermanentSwaps = true;
-  title = 'Wymiany stałe';
+  title = '';
   swapsCount: number = 0;
   swaps: SwapListItem[] = [];
   currentTab = 0;
@@ -168,9 +168,13 @@ export class BrowseSwapsComponent implements OnInit {
           }
         },
         err => {
+          let message = ""
+          this.translate.get("book-swaps.browse-swaps.load-swap-error").subscribe(data =>
+            message = data
+          );
           Swal.fire({
             position: 'top-end',
-            title: 'Nie można załadować wymian',
+            title: message,
             text: err.error.message,
             icon: 'error',
             showConfirmButton: false
@@ -193,9 +197,13 @@ export class BrowseSwapsComponent implements OnInit {
           }
         },
         err => {
+          let message = ""
+          this.translate.get("book-swaps.browse-swaps.confirm-error").subscribe(data =>
+            message = data
+          );
           Swal.fire({
             position: 'top-end',
-            title: 'Nie można zatwierdzić odbioru',
+            title: message,
             text: err.error.message,
             icon: 'error',
             showConfirmButton: false

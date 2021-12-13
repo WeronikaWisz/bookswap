@@ -4,6 +4,7 @@ import { TokenStorageService } from '../../../services/token-storage.service';
 import {FormBuilder, FormGroup, Validators} from "@angular/forms";
 import {ActivatedRoute, Router} from "@angular/router";
 import Swal from "sweetalert2";
+import {TranslateService} from "@ngx-translate/core";
 
 @Component({
   selector: 'app-login',
@@ -19,7 +20,7 @@ export class LoginComponent implements OnInit {
 
   constructor(private formBuilder: FormBuilder,
               private route: ActivatedRoute,
-              private router: Router,
+              private router: Router, private translate: TranslateService,
               private authService: AuthService, private tokenStorage: TokenStorageService) { }
 
   ngOnInit(): void {
@@ -51,9 +52,13 @@ export class LoginComponent implements OnInit {
       err => {
         this.form.controls['username'].setErrors({'incorrect': true});
         this.form.controls['password'].setErrors({'incorrect': true});
+        let message = "";
+        this.translate.get("manage-users.login.error-message").subscribe(data =>
+          message = data
+        );
         Swal.fire({
           position: 'top-end',
-          title: 'Logowanie nie powiodło się',
+          title: message,
           text: err.error.message,
           icon: 'error',
           showConfirmButton: false

@@ -7,6 +7,7 @@ import {EBookStatus} from "../../../../enums/EBookStatus";
 import Swal from "sweetalert2";
 import {BookOffersService} from "../../../../services/book-offers.service";
 import {FormBuilder, FormGroup} from "@angular/forms";
+import {TranslateService} from "@ngx-translate/core";
 
 @Component({
   selector: 'app-offer-details-dialog',
@@ -19,7 +20,7 @@ export class OfferDetailsDialogComponent implements OnInit {
   requestAlreadySend = false;
 
   constructor(
-    public dialogRef: MatDialogRef<OfferDetailsDialogComponent>,
+    public dialogRef: MatDialogRef<OfferDetailsDialogComponent>, private translate: TranslateService,
     @Inject(MAT_DIALOG_DATA) public data: OfferInfo, private formBuilder: FormBuilder,
     private router: Router, private bookOffersService : BookOffersService
   ) {
@@ -73,6 +74,7 @@ export class OfferDetailsDialogComponent implements OnInit {
   sendSwapRequest(){
     console.log("sendRequestSwap")
     console.log(this.data.offerBasics.id)
+    let message = "";
     this.bookOffersService.sendSwapRequest({
       requestedBookId: this.data.offerBasics.id,
       userBookIdForSwap: null!
@@ -81,17 +83,23 @@ export class OfferDetailsDialogComponent implements OnInit {
         console.log(data);
         this.requestAlreadySend = true;
         this.disableSelect();
+        this.translate.get("book-offers.browse-offers.request-success").subscribe(data =>
+          message = data
+        );
         Swal.fire({
           position: 'top-end',
-          title: 'Pomyśnie wysłano propozycję',
+          title: message,
           icon: 'success',
           showConfirmButton: false
         })
       },
       err => {
+        this.translate.get("book-offers.browse-offers.request-error").subscribe(data =>
+          message = data
+        );
         Swal.fire({
           position: 'top-end',
-          title: 'Nie można wysłać propozycji wymiany',
+          title: message,
           text: err.error.message,
           icon: 'error',
           showConfirmButton: false
@@ -103,6 +111,7 @@ export class OfferDetailsDialogComponent implements OnInit {
 
   sendSwap(){
     console.log("sendSwap")
+    let message = "";
     this.bookOffersService.sendSwapRequest({
       requestedBookId: this.data.offerBasics.id,
       userBookIdForSwap: this.form.get("requestedBooksCtrl")?.value ? this.form.get("requestedBooksCtrl")?.value : null!
@@ -111,18 +120,28 @@ export class OfferDetailsDialogComponent implements OnInit {
         console.log(data);
         this.requestAlreadySend = true;
         this.disableSelect()
+        this.translate.get("book-offers.browse-offers.swap-success-title").subscribe(data =>
+          message = data
+        );
+        let message2 = "";
+        this.translate.get("book-offers.browse-offers.swap-success-text").subscribe(data =>
+          message2 = data
+        );
         Swal.fire({
           position: 'top-end',
-          title: 'Pomyśnie wymieniono książki',
-          text: 'Przejdź do strony z wymianami, żeby zobaczyć',
+          title: message,
+          text: message2,
           icon: 'success',
           showConfirmButton: false
         })
       },
       err => {
+        this.translate.get("book-offers.browse-offers.swap-error").subscribe(data =>
+          message = data
+        );
         Swal.fire({
           position: 'top-end',
-          title: 'Nie można wymienić wybranych książek',
+          title: message,
           text: err.error.message,
           icon: 'error',
           showConfirmButton: false
@@ -141,9 +160,13 @@ export class OfferDetailsDialogComponent implements OnInit {
           this.checkIfAvailable();
         },
         err => {
+          let message = "";
+          this.translate.get("book-offers.browse-offers.load-book-data-error").subscribe(data =>
+            message = data
+          );
           Swal.fire({
             position: 'top-end',
-            title: 'Nie można załadować aktualnych informacji o książce',
+            title: message,
             text: err.error.message,
             icon: 'error',
             showConfirmButton: false
@@ -154,10 +177,18 @@ export class OfferDetailsDialogComponent implements OnInit {
 
   checkIfAvailable(){
     if(this.getStatus() !== 'Dostępna'){
+      let messageTitle = "";
+      let messageText = "";
+      this.translate.get("book-offers.browse-offers.error-swapped-title").subscribe(data =>
+        messageTitle = data
+      );
+      this.translate.get("book-offers.browse-offers.error-swapped-text").subscribe(data =>
+        messageText = data
+      );
       Swal.fire({
         position: 'top-end',
-        title: 'Książka przed chwilą została wymieniona',
-        text: 'Nie jest możliwe złożenie oferty',
+        title: messageTitle,
+        text: messageText,
         icon: 'info',
         showConfirmButton: false
       })

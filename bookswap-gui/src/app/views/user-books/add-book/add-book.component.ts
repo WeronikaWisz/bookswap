@@ -136,9 +136,13 @@ export class AddBookComponent implements OnInit {
         console.log(data)
         this.fillFormWithEditedBook(data);
       }, err => {
+        let message = "";
+        this.translate.get("user-books.add-book.load-error").subscribe(data =>
+          message = data
+        );
         Swal.fire({
           position: 'top-end',
-          title: 'Pobranie danych książki nie powiodło się',
+          title: message,
           text: err.error.message,
           icon: 'error',
           showConfirmButton: false
@@ -222,6 +226,7 @@ export class AddBookComponent implements OnInit {
   }
 
   onSubmit(): void {
+    let message = ""
     this.userBookService.addBook({
       "title": this.form.get('title')?.value,
       "author": this.form.get('author')?.value,
@@ -233,18 +238,24 @@ export class AddBookComponent implements OnInit {
     }, this.file).subscribe(
       data => {
         console.log(data);
+        this.translate.get("user-books.add-book.add-success").subscribe(data =>
+          message = data
+        );
         Swal.fire({
           position: 'top-end',
-          title: 'Pomyśnie dodano książkę',
+          title: message,
           icon: 'success',
           showConfirmButton: false
         })
         this.clearFields();
       },
       err => {
+        this.translate.get("user-books.add-book.add-error").subscribe(data =>
+          message = data
+        );
         Swal.fire({
           position: 'top-end',
-          title: 'Dodawanie nie powiodło się',
+          title: message,
           text: err.error.message,
           icon: 'error',
           showConfirmButton: false
@@ -254,6 +265,7 @@ export class AddBookComponent implements OnInit {
   }
 
   updateBook(){
+    let message = "";
     this.userBookService.updateBook({
       "title": this.form.get('title')?.value,
       "author": this.form.get('author')?.value,
@@ -266,17 +278,23 @@ export class AddBookComponent implements OnInit {
       data => {
         console.log(data);
         this.form.markAsPristine();
+        this.translate.get("user-books.add-book.update-success").subscribe(data =>
+          message = data
+        );
         Swal.fire({
           position: 'top-end',
-          title: 'Pomyśnie zaktualizowano książkę',
+          title: message,
           icon: 'success',
           showConfirmButton: false
         })
       },
       err => {
+        this.translate.get("user-books.add-book.update-error").subscribe(data =>
+          message = data
+        );
         Swal.fire({
           position: 'top-end',
-          title: 'Aktualizacja nie powiodła się',
+          title: message,
           text: err.error.message,
           icon: 'error',
           showConfirmButton: false

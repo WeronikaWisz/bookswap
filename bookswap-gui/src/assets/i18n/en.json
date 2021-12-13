@@ -6,7 +6,8 @@
       "password": "Password",
       "username-error": "Username is required",
       "password-error": "Password is required",
-      "login-button": "Sign in"
+      "login-button": "Sign in",
+      "error-message": "Login failed"
     },
     "profile": {
       "address-data": "Address data",
@@ -45,7 +46,12 @@
       "building-number": "Building number",
       "building-number-error": "Enter building number",
       "door-number": "Door number",
-      "door-number-error": "Enter door number"
+      "door-number-error": "Enter door number",
+      "load-data-error": "Retrieving user data has failed",
+      "update-success": "Profile data successfully updated",
+      "update-error": "Data update failed",
+      "password-success": "Password changed successfully",
+      "password-error": "Password change failed"
     },
     "register": {
       "register-title": "Register",
@@ -82,7 +88,10 @@
       "password-error": "Enter password, at least 12 characters",
       "confirm-password": "Confirm password",
       "confirm-password-error": "Password not match",
-      "register-button": "Sign up"
+      "register-button": "Sign up",
+      "register-success": "Successfully registered!",
+      "register-success-can-login": "You can login to your account",
+      "register-error": "Registration failed"
     }
   },
   "user-books": {
@@ -104,7 +113,12 @@
       "button-add": "Add book",
       "button-edit": "Update book",
       "add-title": "Adding book",
-      "edit-title": "Edit book"
+      "edit-title": "Edit book",
+      "load-error": "Retrieving the book data has failed",
+      "add-success": "Book has been added successfully",
+      "add-error": "Adding failed",
+      "update-success": "Book has been updated successfully",
+      "update-error": "Update has failed"
     },
     "browse-books": {
       "my-books": "My books",
@@ -129,7 +143,9 @@
       "apply": "Apply",
       "image-alt": "Cover photo",
       "description": "Description",
-      "year": "Year of publication"
+      "year": "Year of publication",
+      "load-book-error": "Book information cannot be loaded",
+      "load-error": "Books cannot be loaded"
     }
   },
   "book-offers": {
@@ -164,7 +180,17 @@
       "swap": "SWAP",
       "choose-swap-book": "Choose book to swap",
       "book-label": "Type of exchange",
-      "swap-tooltip": "You have request from this user, you can swap books right away!"
+      "swap-tooltip": "You have request from this user, you can swap books right away!",
+      "load-book-error": "Book information cannot be loaded",
+      "load-error": "Books cannot be loaded",
+      "request-success": "Request sent successfully",
+      "request-error": "Cannot send request",
+      "swap-success-title": "Books swapped successfully",
+      "swap-success-text": "Go to the swaps page to view",
+      "swap-error": "Selected books cannot be swapped",
+      "load-book-data-error": "Current book information cannot be loaded",
+      "error-swapped-title": "The book has just been swapped",
+      "error-swapped-text": "Request cannot be send"
     },
     "browse-swap-requests": {
       "offer-status": "Request status",
@@ -181,7 +207,13 @@
       "cancel": "CANCEL",
       "image-alt": "Cover photo",
       "send-title": "Send requests",
-      "received-title": "Received requests"
+      "received-title": "Received requests",
+      "load-error": "Cannot load requests",
+      "cancel-success": "Request successfully canceled",
+      "go-to-history": "You can find it in historical requests",
+      "cancel-error": "cannot cancel request",
+      "deny-success": "Request successfully denied",
+      "deny-error": "Cannot deny request"
     }
   },
   "book-swaps": {
@@ -202,7 +234,10 @@
       "street": "st",
       "close": "Close",
       "permanent-title": "Permanent swaps",
-      "temporary-title": "Temporary swaps"
+      "temporary-title": "Temporary swaps",
+      "load-swap-error": "Cannot load swaps",
+      "confirm-error": "Cannot confirm delivery",
+      "load-user-data-error": "Retrieving user data has failed"
     }
   },
   "nav": {

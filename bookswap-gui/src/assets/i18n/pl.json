@@ -6,7 +6,8 @@
       "password": "Hasło",
       "username-error": "Nazwa użytkownika jest wymagana",
       "password-error": "Hasło jest wymagane",
-      "login-button": "Zaloguj"
+      "login-button": "Zaloguj",
+      "error-message": "Logowanie nie powiodło się"
     },
     "profile": {
       "address-data": "Dane adresowe",
@@ -45,7 +46,12 @@
       "building-number": "Numer domu",
       "building-number-error": "Podaj numer domu",
       "door-number": "Numer lokalu",
-      "door-number-error": "Podaj numer lokalu"
+      "door-number-error": "Podaj numer lokalu",
+      "load-data-error": "Pobranie danych użytkownika nie powiodło się",
+      "update-success": "Pomyślnie zaktualizowano dane profilowe",
+      "update-error": "Aktualizacja danych nie powiodła się",
+      "password-success": "Pomyślnie zmieniono hasło",
+      "password-error": "Nie udało się zmienić hasła"
     },
     "register": {
       "register-title": "Rejestracja",
@@ -82,7 +88,10 @@
       "password-error": "Wprowadź hasło, minimum 12 znaków",
       "confirm-password": "Powtórz hasło",
       "confirm-password-error": "Hasło nie pasuje",
-      "register-button": "Zarejestruj"
+      "register-button": "Zarejestruj",
+      "register-success": "Rejestracja przebiegła pomyślnie!",
+      "register-success-can-login": "Możesz zalogować się na swoje konto",
+      "register-error": "Rejestracja nie powiodła się"
     }
   },
   "user-books": {
@@ -104,7 +113,12 @@
       "button-add": "Dodaj książkę",
       "button-edit": "Aktualizuj książkę",
       "add-title": "Dodawanie książki",
-      "edit-title": "Edycja książki"
+      "edit-title": "Edycja książki",
+      "load-error": "Pobranie danych książki nie powiodło się",
+      "add-success": "Pomyśnie dodano książkę",
+      "add-error": "Dodawanie nie powiodło się",
+      "update-success": "Pomyśnie zaktualizowano książkę",
+      "update-error": "Aktualizacja nie powiodła się"
     },
     "browse-books": {
       "my-books": "Moje książki",
@@ -129,7 +143,9 @@
       "apply": "Zastosuj",
       "image-alt": "Zdjęcie okładki",
       "description": "Opis",
-      "year": "Rok publikacji"
+      "year": "Rok publikacji",
+      "load-book-error": "Nie można załadować informacji o książce",
+      "load-error": "Nie można załadować książek"
     }
   },
   "book-offers": {
@@ -164,7 +180,17 @@
       "swap": "WYMIEŃ",
       "choose-swap-book": "Wybierz książkę do wymiany",
       "book-label": "Typ wymiany",
-      "swap-tooltip": "Masz propozycje od tego użytkownika, możesz od razu wymienić książkę!"
+      "swap-tooltip": "Masz propozycje od tego użytkownika, możesz od razu wymienić książkę!",
+      "load-book-error": "Nie można załadować informacji o książce",
+      "load-error": "Nie można załadować książek",
+      "request-success": "Pomyśnie wysłano propozycję",
+      "request-error": "Nie można wysłać propozycji wymiany",
+      "swap-success-title": "Pomyśnie wymieniono książki",
+      "swap-success-text": "Przejdź do strony z wymianami, żeby zobaczyć",
+      "swap-error": "Nie można wymienić wybranych książek",
+      "load-book-data-error": "Nie można załadować aktualnych informacji o książce",
+      "error-swapped-title": "Książka przed chwilą została wymieniona",
+      "error-swapped-text": "Nie jest możliwe złożenie propozycji"
     },
     "browse-swap-requests": {
       "offer-status": "Status propozycji",
@@ -181,7 +207,13 @@
       "cancel": "REZYGNIUJ",
       "image-alt": "Zdjęcie okładki",
       "send-title": "Wysłane propozycje wymiany",
-      "received-title": "Otrzymane propozycje wymiany"
+      "received-title": "Otrzymane propozycje wymiany",
+      "load-error": "Nie można załadować propozycji",
+      "cancel-success": "Pomyśnie odwołanno propozycje",
+      "go-to-history": "Możesz znaleźć ją w propozycjach historycznych",
+      "cancel-error": "Nie można odwołać propozycji",
+      "deny-success": "Pomyśnie odrzucono propozycję",
+      "deny-error": "Nie można odrzucić propozycji"
     }
   },
   "book-swaps": {
@@ -202,7 +234,10 @@
       "street": "ul",
       "close": "Zamknij",
       "permanent-title": "Wymiany stałe",
-      "temporary-title": "Wymiany tymczasowe"
+      "temporary-title": "Wymiany tymczasowe",
+      "load-swap-error": "Nie można załadować wymian",
+      "confirm-error": "Nie można zatwierdzić odbioru",
+      "load-user-data-error": "Pobranie danych użytkownika nie powiodło się"
     }
   },
   "nav": {

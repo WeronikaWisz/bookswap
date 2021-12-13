@@ -4,6 +4,7 @@ import {UpdateUserData} from "../../../../models/manage-users/UpdateUserData";
 import {AbstractControl, FormBuilder, FormGroup, Validators} from "@angular/forms";
 import Swal from "sweetalert2";
 import {UsersService} from "../../../../services/manage-users/users.service";
+import {TranslateService} from "@ngx-translate/core";
 
 @Component({
   selector: 'app-update-profile-dialog',
@@ -21,7 +22,7 @@ export class UpdateProfileDialogComponent implements OnInit {
   constructor(
     public dialogRef: MatDialogRef<UpdateProfileDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: UpdateUserData, private formBuilder: FormBuilder,
-    private usersService: UsersService
+    private usersService: UsersService, private translate: TranslateService
   ) {
     dialogRef.disableClose = true;
   }
@@ -48,6 +49,7 @@ export class UpdateProfileDialogComponent implements OnInit {
   }
 
   saveData(){
+    let message = "";
     this.usersService.updateUserProfileData({
       "email": this.formArray!.get([0])!.get('email')?.value,
       "name": this.formArray!.get([0])!.get('name')?.value,
@@ -64,17 +66,23 @@ export class UpdateProfileDialogComponent implements OnInit {
         console.log(data);
         this.dataChanged = true
         this.form.markAsPristine();
+        this.translate.get("manage-users.profile.update-success").subscribe(data =>
+          message = data
+        );
         Swal.fire({
           position: 'top-end',
-          title: 'Pomyślnie zaktualizowano dane profilowe',
+          title: message,
           icon: 'success',
           showConfirmButton: false
         })
       },
       err => {
+        this.translate.get("manage-users.profile.update-error").subscribe(data =>
+          message = data
+        );
         Swal.fire({
           position: 'top-end',
-          title: 'Aktualizacja danych nie powiodła się',
+          title: message,
           text: err.error.message,
           icon: 'error',
           showConfirmButton: false

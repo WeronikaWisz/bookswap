@@ -6,6 +6,7 @@ import {STEPPER_GLOBAL_OPTIONS} from '@angular/cdk/stepper';
 import {Router} from "@angular/router";
 import {TokenStorageService} from "../../../services/token-storage.service";
 import Swal from 'sweetalert2';
+import {TranslateService} from "@ngx-translate/core";
 
 @Component({
   selector: 'app-register',
@@ -23,7 +24,7 @@ export class RegisterComponent implements OnInit {
 
   get formArray(): AbstractControl | null { return this.form.get('formArray'); }
 
-  constructor(private formBuilder: FormBuilder, private authService: AuthService,
+  constructor(private formBuilder: FormBuilder, private authService: AuthService, private translate: TranslateService,
               private router: Router, private tokenStorage: TokenStorageService) { }
 
   ngOnInit(): void {
@@ -100,9 +101,13 @@ export class RegisterComponent implements OnInit {
         } else if(err.error.message.includes("Nazwa") || err.error.message.includes("Username")){
           this.form.controls['formArray'].get([2])?.get('username')?.setErrors({'incorrect': true})
         }
+        let message = "";
+        this.translate.get("manage-users.register.register-error").subscribe(data =>
+          message = data
+        );
         Swal.fire({
           position: 'top-end',
-          title: 'Rejestracja nie powiodła się',
+          title: message,
           text: err.error.message,
           icon: 'error',
           showConfirmButton: false
@@ -112,10 +117,18 @@ export class RegisterComponent implements OnInit {
   }
 
   showSuccess(): void {
+    let messageTitle = "";
+    this.translate.get("manage-users.register.register-success").subscribe(data =>
+      messageTitle = data
+    );
+    let messageText = "";
+    this.translate.get("manage-users.register.register-success-can-login").subscribe(data =>
+      messageText = data
+    );
     Swal.fire({
       position: 'top-end',
-      title: 'Rejestracja przebiegła pomyślnie!',
-      text: 'Możesz zalogować się na swoje konto',
+      title: messageTitle,
+      text: messageText,
       icon: 'success',
       showConfirmButton: false,
       timer: 6000

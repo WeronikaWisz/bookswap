@@ -11,6 +11,7 @@ import {BookDetailsDialogComponent} from "./book-details-dialog/book-details-dia
 import {FilterHints} from "../../../models/user-books/FilterHints";
 import {Label} from "../add-book/add-book.component";
 import {EBookLabel} from "../../../enums/EBookLabel";
+import {TranslateService} from "@ngx-translate/core";
 
 @Component({
   selector: 'app-browse-books',
@@ -45,7 +46,7 @@ export class BrowseBooksComponent implements OnInit {
 
   emptySearchList = false;
 
-  constructor(public dialog: MatDialog, private router: Router,
+  constructor(public dialog: MatDialog, private router: Router, private translate: TranslateService,
               private userBookService : UserBookService, private tokenStorage: TokenStorageService) { }
 
   ngOnInit(): void {
@@ -74,9 +75,13 @@ export class BrowseBooksComponent implements OnInit {
           });
         },
         err => {
+          let message = "";
+          this.translate.get("user-books.browse-books.load-book-error").subscribe(data =>
+            message = data
+          );
           Swal.fire({
             position: 'top-end',
-            title: 'Nie można załadować informacji o książce',
+            title: message,
             text: err.error.message,
             icon: 'error',
             showConfirmButton: false
@@ -141,9 +146,13 @@ export class BrowseBooksComponent implements OnInit {
           }
         },
         err => {
+          let message = "";
+          this.translate.get("user-books.browse-books.load-error").subscribe(data =>
+            message = data
+          );
           Swal.fire({
             position: 'top-end',
-            title: 'Nie można załadować książek',
+            title: message,
             text: err.error.message,
             icon: 'error',
             showConfirmButton: false

@@ -9,6 +9,7 @@ import {FilterHints} from "../../../models/book-offers/FilterHints";
 import {BookOffersService} from "../../../services/book-offers.service";
 import {FilterOffersDialogComponent} from "./filter-offers-dialog/filter-offers-dialog.component";
 import {OfferDetailsDialogComponent} from "./offer-details-dialog/offer-details-dialog.component";
+import {TranslateService} from "@ngx-translate/core";
 
 @Component({
   selector: 'app-browse-offers',
@@ -40,7 +41,8 @@ export class BrowseOffersComponent implements OnInit {
   emptySearchList = false;
 
   constructor(public dialog: MatDialog, private router: Router, private route: ActivatedRoute,
-              private bookOffersService : BookOffersService, private tokenStorage: TokenStorageService) { }
+              private translate: TranslateService, private bookOffersService : BookOffersService,
+              private tokenStorage: TokenStorageService) { }
 
   ngOnInit(): void {
     if (this.tokenStorage.getToken()) {
@@ -91,9 +93,13 @@ export class BrowseOffersComponent implements OnInit {
           });
         },
         err => {
+          let message = "";
+          this.translate.get("book-offers.browse-offers.load-book-error").subscribe(data =>
+            message = data
+          );
           Swal.fire({
             position: 'top-end',
-            title: 'Nie można załadować informacji o książce',
+            title: message,
             text: err.error.message,
             icon: 'error',
             showConfirmButton: false
@@ -159,9 +165,13 @@ export class BrowseOffersComponent implements OnInit {
           }
         },
         err => {
+          let message = "";
+          this.translate.get("book-offers.browse-offers.load-error").subscribe(data =>
+            message = data
+          );
           Swal.fire({
             position: 'top-end',
-            title: 'Nie można załadować książek',
+            title: message,
             text: err.error.message,
             icon: 'error',
             showConfirmButton: false

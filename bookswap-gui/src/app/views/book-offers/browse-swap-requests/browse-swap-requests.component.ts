@@ -110,9 +110,13 @@ export class BrowseSwapRequestsComponent implements OnInit {
           this.checkIfEmptyRequestList();
         },
         err => {
+          let message = "";
+          this.translate.get("book-offers.browse-swap-requests.load-error").subscribe(data =>
+            message = data
+          );
           Swal.fire({
             position: 'top-end',
-            title: 'Nie można załadować propozycji',
+            title: message,
             text: err.error.message,
             icon: 'error',
             showConfirmButton: false
@@ -130,9 +134,13 @@ export class BrowseSwapRequestsComponent implements OnInit {
           this.checkIfEmptyRequestList();
         },
         err => {
+          let message = ""
+          this.translate.get("book-offers.browse-swap-requests.load-error").subscribe(data =>
+             message = data
+          );
           Swal.fire({
             position: 'top-end',
-            title: 'Nie można załadować propozycji',
+            title: message,
             text: err.error.message,
             icon: 'error',
             showConfirmButton: false
@@ -196,14 +204,22 @@ export class BrowseSwapRequestsComponent implements OnInit {
   }
 
   cancelSwapRequest(swapRequestId: number){
+    let message = "";
     this.bookOffersService.cancelSwapRequest(swapRequestId)
       .subscribe(
         data => {
           console.log(data);
+          let messageText = ""
+          this.translate.get("book-offers.browse-swap-requests.cancel-success").subscribe(data =>
+            message = data
+          );
+          this.translate.get("book-offers.browse-swap-requests.go-to-history").subscribe(data =>
+            messageText = data
+          );
           Swal.fire({
             position: 'top-end',
-            title: 'Pomyśnie odwołanno ofertę',
-            text: 'Możesz znaleźć ją w ofertach historycznych',
+            title: message,
+            text: messageText,
             icon: 'success',
             showConfirmButton: false
           })
@@ -212,9 +228,12 @@ export class BrowseSwapRequestsComponent implements OnInit {
           this.offersCount -= 1;
         },
         err => {
+          this.translate.get("book-offers.browse-swap-requests.cancel-error").subscribe(data =>
+            message = data
+          );
           Swal.fire({
             position: 'top-end',
-            title: 'Nie można odwołać oferty',
+            title: message,
             text: err.error.message,
             icon: 'error',
             showConfirmButton: false
@@ -224,14 +243,22 @@ export class BrowseSwapRequestsComponent implements OnInit {
   }
 
   denySwapRequest(swapRequestId: number){
+    let message = "";
     this.bookOffersService.denySwapRequest(swapRequestId)
       .subscribe(
         data => {
           console.log(data);
+          let messageText = ""
+          this.translate.get("book-offers.browse-swap-requests.go-to-history").subscribe(data =>
+            messageText = data
+          );
+          this.translate.get("book-offers.browse-swap-requests.deny-success").subscribe(data =>
+            message = data
+          );
           Swal.fire({
             position: 'top-end',
-            title: 'Pomyśnie odrzucono ofertę',
-            text: 'Możesz znaleźć ją w ofertach historycznych',
+            title: message,
+            text: messageText,
             icon: 'success',
             showConfirmButton: false
           })
@@ -240,9 +267,12 @@ export class BrowseSwapRequestsComponent implements OnInit {
           this.offersCount -= 1;
         },
         err => {
+          this.translate.get("book-offers.browse-swap-requests.deny-error").subscribe(data =>
+            message = data
+          );
           Swal.fire({
             position: 'top-end',
-            title: 'Nie można odrzucić oferty',
+            title: message,
             text: err.error.message,
             icon: 'error',
             showConfirmButton: false

@@ -3,6 +3,7 @@ import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
 import Swal from "sweetalert2";
 import {ProfileData} from "../../../../models/manage-users/ProfileData";
 import {BookSwapsService} from "../../../../services/book-swaps.service";
+import {TranslateService} from "@ngx-translate/core";
 
 @Component({
   selector: 'app-user-address-dialog',
@@ -14,7 +15,7 @@ export class UserAddressDialogComponent implements OnInit {
   profileData?: ProfileData;
 
   constructor(
-    public dialogRef: MatDialogRef<UserAddressDialogComponent>,
+    public dialogRef: MatDialogRef<UserAddressDialogComponent>, private translate: TranslateService,
     @Inject(MAT_DIALOG_DATA) public data: string, private bookSwapService: BookSwapsService
   ) {
     dialogRef.disableClose = true;
@@ -27,9 +28,13 @@ export class UserAddressDialogComponent implements OnInit {
         console.log(data)
         this.profileData = data;
       }, err => {
+        let message = ""
+        this.translate.get("book-swaps.browse-swaps.load-user-data-error").subscribe(data =>
+          message = data
+        );
         Swal.fire({
           position: 'top-end',
-          title: 'Pobranie danych użytkownika nie powiodło się',
+          title: message,
           text: err.error.message,
           icon: 'error',
           showConfirmButton: false
