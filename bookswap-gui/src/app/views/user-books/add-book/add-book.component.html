@@ -3,28 +3,28 @@
     <form *ngIf="isLoggedIn" [formGroup]="form">
       <h2>{{formTitle}}</h2>
       <mat-form-field class="full-width-input smaller-input" appearance="outline">
-        <mat-label>Tytuł</mat-label>
+        <mat-label>{{ 'user-books.add-book.title' | translate}}</mat-label>
         <input matInput formControlName="title" required>
         <mat-error>
-          Tytuł jest wymagany
+          {{ 'user-books.add-book.title-error' | translate}}
         </mat-error>
       </mat-form-field>
       <mat-form-field class="full-width-input smaller-input" appearance="outline">
-        <mat-label>Autor</mat-label>
+        <mat-label>{{ 'user-books.add-book.author' | translate}}</mat-label>
         <input matInput formControlName="author" required>
         <mat-error>
-          Autor jest wymagany
+          {{ 'user-books.add-book.author-error' | translate}}
         </mat-error>
       </mat-form-field>
       <mat-form-field class="full-width-input smaller-input" appearance="outline">
-        <mat-label>Wydawnictwo</mat-label>
+        <mat-label>{{ 'user-books.add-book.publisher' | translate}}</mat-label>
         <input matInput formControlName="publisher" required>
         <mat-error>
-          Wydawnictwo jest wymagane
+          {{ 'user-books.add-book.publisher-error' | translate}}
         </mat-error>
       </mat-form-field>
       <mat-form-field class="smaller-input" appearance="outline">
-        <mat-label>Rok publikacji</mat-label>
+        <mat-label>{{ 'user-books.add-book.year' | translate}}</mat-label>
         <input matInput [max]="maxDate" [matDatepicker]="dp" formControlName="yearOfPublication" required>
         <mat-datepicker-toggle matSuffix [for]="dp"></mat-datepicker-toggle>
         <mat-datepicker [calendarHeaderComponent]="dataPickerHeader" #dp
@@ -33,11 +33,11 @@
                         panelClass="example-month-picker">
         </mat-datepicker>
         <mat-error>
-          Rok publikacji jest wymagany
+          {{ 'user-books.add-book.year-error' | translate}}
         </mat-error>
       </mat-form-field>
       <mat-form-field class="full-width-input wider-input" appearance="outline">
-        <mat-label>Opis</mat-label>
+        <mat-label>{{ 'user-books.add-book.description' | translate}}</mat-label>
         <textarea matInput #description
                   formControlName="description"
                   cdkTextareaAutosize
@@ -48,7 +48,7 @@
         <mat-hint align="end">{{description.value?.length || 0}}/255</mat-hint>
       </mat-form-field>
       <mat-form-field class="example-chip-list wider-input" appearance="outline">
-        <mat-label>Kategorie</mat-label>
+        <mat-label>{{ 'user-books.add-book.categories' | translate}}</mat-label>
         <mat-chip-list #chipList aria-label="Category selection">
           <mat-chip
             *ngFor="let category of categories"
@@ -61,7 +61,7 @@
             </button>
           </mat-chip>
           <input
-            placeholder="Wybierz kategorię..."
+            placeholder="{{ 'user-books.add-book.choose-category' | translate}}..."
             #categoryInput
             [formControl]="categoriesCtrl"
             [matAutocomplete]="auto"
@@ -79,18 +79,20 @@
         <div>
           <input type="file" class="file-input" accept="image/*" formControlName="image"
                  (change)="onFileSelected($event)" #fileUpload>
-          <mat-checkbox *ngIf="isEditBookView" [(ngModel)]="checkEditImage" [ngModelOptions]="{standalone: true}" class="example-margin">Zamień lub dodaj zdjęcie</mat-checkbox>
+          <mat-checkbox *ngIf="isEditBookView" [(ngModel)]="checkEditImage" [ngModelOptions]="{standalone: true}" class="example-margin">
+            {{ 'user-books.add-book.image' | translate}}
+          </mat-checkbox>
           <div class="file-upload">
             <button type="button" [disabled]="isEditBookView && !checkEditImage" mat-mini-fab color="primary" class="upload-btn"
                     (click)="fileUpload.click()">
               <mat-icon>add_photo_alternate</mat-icon>
             </button>
           </div>
-          <p>{{fileName || "Nie wybrano pliku."}}</p>
+          <p>{{fileName || ('user-books.add-book.no-file' | translate)}}</p>
         </div>
         <div>
           <mat-form-field appearance="outline">
-            <mat-label>Typ wymiany</mat-label>
+            <mat-label>{{ 'user-books.add-book.book-label' | translate}}</mat-label>
             <mat-select formControlName="label" required>
               <mat-option *ngFor="let label of labels" [value]="label.label">
                 {{label.name}}
@@ -99,8 +101,15 @@
           </mat-form-field>
         </div>
       </div>
-      <button mat-raised-button color="primary" *ngIf="!isEditBookView" [disabled]="form.invalid" (click)="onSubmit()"><mat-icon>add_circle_outline</mat-icon><span class="add-button">Dodaj książkę</span></button>
-      <button mat-raised-button color="primary" *ngIf="isEditBookView" [disabled]="form.invalid || !form.dirty" (click)="updateBook()"><mat-icon>update</mat-icon><span class="add-button">Aktualizuj książkę</span></button>
+      <button mat-raised-button color="primary" *ngIf="!isEditBookView" [disabled]="form.invalid" (click)="onSubmit()">
+        <mat-icon>add_circle_outline</mat-icon>
+        <span class="add-button">{{ 'user-books.add-book.button-add' | translate}}</span>
+      </button>
+      <button mat-raised-button color="primary" *ngIf="isEditBookView" [disabled]="form.invalid || !form.dirty"
+              (click)="updateBook()">
+        <mat-icon>update</mat-icon>
+        <span class="add-button">{{ 'user-books.add-book.button-edit' | translate}}</span>
+      </button>
     </form>
   </mat-card-content>
 </mat-card>

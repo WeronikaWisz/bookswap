@@ -1,127 +1,131 @@
 <mat-card class="example-card mat-elevation-z8">
   <mat-card-content>
     <form *ngIf="!isLoggedIn" [formGroup]="form">
-      <h2>Rejestracja</h2>
+      <h2>{{ 'manage-users.register.register-title' | translate}}</h2>
       <mat-vertical-stepper formArrayName="formArray" [linear]="false" #stepper>
         <mat-step formGroupName="0" [stepControl]="formArray?.get([0])!">
-          <ng-template matStepLabel>Wprowadź dane osobowe</ng-template>
+          <ng-template matStepLabel>{{ 'manage-users.register.user-data' | translate}}</ng-template>
           <mat-form-field class="full-width-input left-mat-field" appearance="outline">
-            <mat-label>Imię</mat-label>
+            <mat-label>{{ 'manage-users.register.name' | translate}}</mat-label>
             <input matInput formControlName="name" required>
             <mat-error>
-              Podaj imię
+              {{ 'manage-users.register.name-error' | translate}}
             </mat-error>
           </mat-form-field>
           <mat-form-field class="full-width-input" appearance="outline">
-            <mat-label>Nazwisko</mat-label>
+            <mat-label>{{ 'manage-users.register.surname' | translate}}</mat-label>
             <input matInput formControlName="surname" required>
             <mat-error>
-              Podaj nazwisko
+              {{ 'manage-users.register.surname-error' | translate}}
             </mat-error>
           </mat-form-field>
           <mat-form-field class="full-width-input left-mat-field" appearance="outline">
-            <mat-label>Email</mat-label>
+            <mat-label>{{ 'manage-users.register.email' | translate}}</mat-label>
             <input matInput formControlName="email" required>
             <mat-error>
-              Podaj poprawny adres email
+              {{ 'manage-users.register.email-error' | translate}}
             </mat-error>
           </mat-form-field>
           <mat-form-field class="full-width-input" appearance="outline">
-            <mat-label>Numer telefonu</mat-label>
+            <mat-label>{{ 'manage-users.register.phone' | translate}}</mat-label>
             <input matInput placeholder="(+48) 123 456 789" formControlName="phone">
             <mat-error>
-              Podaj poprawny numer telefonu
+              {{ 'manage-users.register.phone-error' | translate}}
             </mat-error>
           </mat-form-field>
           <div class="buttons-section">
-            <button mat-button matStepperNext>Dalej</button>
+            <button mat-button matStepperNext>{{ 'manage-users.register.next' | translate}}</button>
           </div>
         </mat-step>
         <mat-step formGroupName="1" [stepControl]="formArray?.get([1])!">
-          <ng-template matStepLabel>Wprowadź dane adresowe</ng-template>
+          <ng-template matStepLabel>{{ 'manage-users.register.user-address' | translate}}</ng-template>
           <mat-form-field class="full-width-input left-mat-field" appearance="outline">
-            <mat-label>Kod pocztowy</mat-label>
+            <mat-label>{{ 'manage-users.register.postal-code' | translate}}</mat-label>
             <input matInput placeholder="12-345" formControlName="postalCode" required>
             <mat-error>
-              Podaj poprawny kod pocztowy
+              {{ 'manage-users.register.postal-code-error' | translate}}
             </mat-error>
           </mat-form-field>
           <mat-form-field class="full-width-input" appearance="outline">
-            <mat-label>Poczta</mat-label>
+            <mat-label>{{ 'manage-users.register.post' | translate}}</mat-label>
             <input matInput formControlName="post" required>
             <mat-error>
-              Podaj miejscowość poczty
+              {{ 'manage-users.register.post-error' | translate}}
             </mat-error>
           </mat-form-field>
           <mat-form-field class="full-width-input left-mat-field" appearance="outline">
-            <mat-label>Miejscowość</mat-label>
+            <mat-label>{{ 'manage-users.register.city' | translate}}</mat-label>
             <input matInput formControlName="city" required>
             <mat-error>
-              Podaj miejsce zamieszkania
+              {{ 'manage-users.register.city-error' | translate}}
             </mat-error>
           </mat-form-field>
           <mat-form-field class="full-width-input" appearance="outline">
-            <mat-label>Ulica</mat-label>
+            <mat-label>{{ 'manage-users.register.street' | translate}}</mat-label>
             <input matInput formControlName="street" required>
             <mat-error>
-              Podaj nazwę ulicy
+              {{ 'manage-users.register.street-error' | translate}}
             </mat-error>
           </mat-form-field>
           <mat-form-field class="full-width-input left-mat-field" appearance="outline">
-            <mat-label>Numer domu</mat-label>
+            <mat-label>{{ 'manage-users.register.building-number' | translate}}</mat-label>
             <input matInput formControlName="buildingNumber" required>
             <mat-error>
-              Podaj numer domu
+              {{ 'manage-users.register.building-number-error' | translate}}
             </mat-error>
           </mat-form-field>
           <mat-form-field class="full-width-input" appearance="outline">
-            <mat-label>Numer lokalu</mat-label>
+            <mat-label>{{ 'manage-users.register.door-number' | translate}}</mat-label>
             <input matInput formControlName="doorNumber">
             <mat-error>
-              Podaj numer lokalu
+              {{ 'manage-users.register.door-number-error' | translate}}
             </mat-error>
           </mat-form-field>
           <div class="buttons-section">
-            <button mat-button matStepperPrevious>Wstecz</button>
-            <button mat-button matStepperNext>Dalej</button>
+            <button mat-button matStepperPrevious>{{ 'manage-users.register.back' | translate}}</button>
+            <button mat-button matStepperNext>{{ 'manage-users.register.next' | translate}}</button>
           </div>
         </mat-step>
         <mat-step formGroupName="2" [stepControl]="formArray?.get([2])!">
-          <ng-template matStepLabel>Wprowadź dane do logowania</ng-template>
+          <ng-template matStepLabel>{{ 'manage-users.register.profile-data' | translate}}</ng-template>
           <mat-form-field class="full-width-input" appearance="outline">
-            <mat-label>Nazwa użytkownika</mat-label>
+            <mat-label>{{ 'manage-users.register.username' | translate}}</mat-label>
             <input matInput formControlName="username" required>
-            <mat-hint>Minimum 6 znaków</mat-hint>
+            <mat-hint>{{ 'manage-users.register.username-hint' | translate}}</mat-hint>
             <mat-error>
-              Wprowadź nazwę użytkownika, minimum 6 znaków
+              {{ 'manage-users.register.username-error' | translate}}
             </mat-error>
           </mat-form-field>
           <br/>
           <mat-form-field class="full-width-input left-mat-field" appearance="outline">
-            <mat-label>Hasło</mat-label>
+            <mat-label>{{ 'manage-users.register.password' | translate}}</mat-label>
             <input matInput [type]="hide ? 'password' : 'text'" formControlName="password" required>
-            <button mat-icon-button matSuffix (click)="hide = !hide" [attr.aria-label]="'Hide password'" [attr.aria-pressed]="hide">
+            <button mat-icon-button matSuffix (click)="hide = !hide"
+                    [attr.aria-label]="'Hide password'" [attr.aria-pressed]="hide">
               <mat-icon>{{hide ? 'visibility_off' : 'visibility'}}</mat-icon>
             </button>
-            <mat-hint>Minimum 12 znaków</mat-hint>
+            <mat-hint>{{ 'manage-users.register.password-hint' | translate}}</mat-hint>
             <mat-error>
-              Wprowadź hasło, minimum 12 znaków
+              {{ 'manage-users.register.password-error' | translate}}
             </mat-error>
           </mat-form-field>
           <mat-form-field class="full-width-input" appearance="outline">
-            <mat-label>Powtórz hasło</mat-label>
+            <mat-label>{{ 'manage-users.register.confirm-password' | translate}}</mat-label>
             <input matInput type="password" formControlName="confirmPassword" required>
             <mat-error>
-              Potwierdź hasło
+              {{ 'manage-users.register.confirm-password-error' | translate}}
             </mat-error>
           </mat-form-field>
           <div class="buttons-section">
-            <button mat-button matStepperPrevious>Wstecz</button>
+            <button mat-button matStepperPrevious>{{ 'manage-users.register.back' | translate}}</button>
           </div>
         </mat-step>
       </mat-vertical-stepper>
       <span class="register-button">
-        <button mat-raised-button color="primary" [disabled]="form.invalid" (click)="onSubmit()"><mat-icon>how_to_reg</mat-icon><span class="signup-button">Zarejestruj</span></button>
+        <button mat-raised-button color="primary" [disabled]="form.invalid" (click)="onSubmit()">
+          <mat-icon>how_to_reg</mat-icon>
+          <span class="signup-button">{{ 'manage-users.register.register-button' | translate}}</span>
+        </button>
       </span>
     </form>
   </mat-card-content>

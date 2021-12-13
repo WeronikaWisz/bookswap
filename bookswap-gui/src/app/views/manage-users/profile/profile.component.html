@@ -11,9 +11,11 @@
     <br/>
     <hr>
     <br/>
-    <h3>Dane adresowe:</h3>
-    <p><span class="description-titles">{{profileData.city}} <span *ngIf="profileData.street">ul. {{profileData.street}}</span>
-      {{profileData.buildingNumber}}<span *ngIf="profileData.doorNumber">/{{profileData.doorNumber}}</span> </span></p>
+    <h3>{{ 'manage-users.profile.address-data' | translate}}:</h3>
+    <p><span class="description-titles">{{profileData.city}} <span *ngIf="profileData.street">
+      {{ 'manage-users.profile.street' | translate}}. {{profileData.street}}</span>
+      {{profileData.buildingNumber}}<span *ngIf="profileData.doorNumber">/{{profileData.doorNumber}}</span>
+    </span></p>
     <p><span class="description-titles">{{profileData.postalCode}} {{profileData.post}}</span></p>
     <p><span class="description-titles" *ngIf="profileData.phone">tel. {{profileData.phone}}</span></p>
     <br/>
@@ -21,7 +23,7 @@
     <br/>
     <div class="change-password">
       <button mat-raised-button color="white" (click)="changePassword()">
-        Zmień hasło
+        {{ 'manage-users.profile.change-password' | translate}}
       </button>
     </div>
   </mat-card-content>

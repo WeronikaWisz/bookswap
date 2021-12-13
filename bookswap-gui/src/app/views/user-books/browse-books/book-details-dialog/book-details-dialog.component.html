@@ -10,16 +10,24 @@
 <div mat-dialog-content>
   <div class="book-basic">
     <div class="book-image">
-      <img *ngIf="data.bookBasics.image != null" [src]="'data:image/jpeg;base64,'+data.bookBasics.image" alt="Zdjęcie okładki">
-      <img *ngIf="data.bookBasics.image == null" src="../../../../../assets/images/brak_obrazka.png" alt="Zdjęcie okładki">
+      <img *ngIf="data.bookBasics.image != null" [src]="'data:image/jpeg;base64,'+data.bookBasics.image"
+           alt="{{ 'user-books.browse-books.image-alt' | translate}}">
+      <img *ngIf="data.bookBasics.image == null" src="../../../../../assets/images/brak_obrazka.png"
+           alt="{{ 'user-books.browse-books.image-alt' | translate}}">
     </div>
     <div class="book-info">
       <h2 id="book-title">{{data.bookBasics.title}}</h2>
       <div class="book-info-no-title">
         <div>
-          <p><span class="description-titles">Autor:</span> {{data.bookBasics.author}}</p>
-          <p><span class="description-titles">Wydawnictwo:</span> {{data.bookDetails.publisher}}</p>
-          <p><span class="description-titles">Rok wydania:</span> {{data.bookDetails.yearOfPublication}}</p>
+          <p><span class="description-titles">{{ 'user-books.browse-books.author' | translate}}:</span>
+            {{data.bookBasics.author}}
+          </p>
+          <p><span class="description-titles">{{ 'user-books.browse-books.publisher' | translate}}:</span>
+            {{data.bookDetails.publisher}}
+          </p>
+          <p><span class="description-titles">{{ 'user-books.browse-books.year' | translate}}:</span>
+            {{data.bookDetails.yearOfPublication}}
+          </p>
         </div>
         <br/>
         <div>
@@ -27,7 +35,7 @@
             <span class="description-titles">Status:</span>
             <span> {{getStatus()}}</span>
           </p>
-          <p><span class="description-titles">Typ wymiany:</span>
+          <p><span class="description-titles">{{ 'user-books.browse-books.book-label' | translate}}:</span>
             <span> {{getLabel()}}</span>
           </p>
         </div>
@@ -41,10 +49,10 @@
     </div>
   </div>
   <div class="book-details">
-    <p class="description-titles">Opis:</p>
+    <p class="description-titles">{{ 'user-books.browse-books.description' | translate}}:</p>
     {{data.bookDetails.description}}
     <br/><br/>
-    <p class="description-titles">Kategorie: </p>
+    <p class="description-titles">{{ 'user-books.browse-books.categories' | translate}}: </p>
     <mat-chip-list>
       <mat-chip *ngFor="let category of data.bookDetails.categories" [selectable]="true">
         {{category}}
@@ -53,5 +61,5 @@
   </div>
 </div>
 <div mat-dialog-actions align="end">
-  <button mat-button (click)="onNoClick()">Zamknij</button>
+  <button mat-button (click)="onNoClick()">{{ 'user-books.browse-books.close' | translate}}</button>
 </div>

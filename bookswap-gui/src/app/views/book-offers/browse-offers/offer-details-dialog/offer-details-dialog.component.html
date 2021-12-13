@@ -4,16 +4,24 @@
 <div mat-dialog-content>
   <div class="book-basic">
     <div class="book-image">
-      <img *ngIf="data.offerBasics.image != null" [src]="'data:image/jpeg;base64,'+data.offerBasics.image" alt="Zdjęcie okładki">
-      <img *ngIf="data.offerBasics.image == null" src="../../../../../assets/images/brak_obrazka.png" alt="Zdjęcie okładki">
+      <img *ngIf="data.offerBasics.image != null" [src]="'data:image/jpeg;base64,'+data.offerBasics.image"
+           alt="{{ 'book-offers.browse-offers.image-alt' | translate}}">
+      <img *ngIf="data.offerBasics.image == null" src="../../../../../assets/images/brak_obrazka.png"
+           alt="{{ 'book-offers.browse-offers.image-alt' | translate}}">
     </div>
     <div class="book-info">
       <h2 id="book-title">{{data.offerBasics.title}}</h2>
       <div class="book-info-no-title">
         <div>
-          <p><span class="description-titles">Autor:</span> {{data.offerBasics.author}}</p>
-          <p><span class="description-titles">Wydawnictwo:</span> {{data.offerDetails.publisher}}</p>
-          <p><span class="description-titles">Rok wydania:</span> {{data.offerDetails.yearOfPublication}}</p>
+          <p><span class="description-titles">{{ 'book-offers.browse-offers.author' | translate}}:</span>
+            {{data.offerBasics.author}}
+          </p>
+          <p><span class="description-titles">{{ 'book-offers.browse-offers.publisher' | translate}}:</span>
+            {{data.offerDetails.publisher}}
+          </p>
+          <p><span class="description-titles">{{ 'book-offers.browse-offers.year' | translate}}:</span>
+            {{data.offerDetails.yearOfPublication}}
+          </p>
         </div>
         <br/>
         <div>
@@ -21,14 +29,14 @@
             <span class="description-titles">Status:</span>
             <span> {{getStatus()}}</span>
           </p>
-          <p><span class="description-titles">Typ wymiany:</span>
+          <p><span class="description-titles">{{ 'book-offers.browse-offers.book-label' | translate}}:</span>
             <span> {{getLabel()}}</span>
           </p>
           <p>
-            <span class="description-titles">Właściciel:</span>
+            <span class="description-titles">{{ 'book-offers.browse-offers.owner' | translate}}:</span>
             <span> {{data.offerDetails.owner}}</span>
           </p>
-          <p><span class="description-titles">Lokalizacja:</span>
+          <p><span class="description-titles">{{ 'book-offers.browse-offers.localization' | translate}}:</span>
             <span> {{data.offerDetails.localization}}</span>
           </p>
         </div>
@@ -39,10 +47,10 @@
     </div>
   </div>
   <div class="book-details">
-    <p class="description-titles">Opis:</p>
+    <p class="description-titles">{{ 'book-offers.browse-offers.description' | translate}}:</p>
     {{data.offerDetails.description}}
     <br/><br/>
-    <p class="description-titles">Kategorie: </p>
+    <p class="description-titles">{{ 'book-offers.browse-offers.categories' | translate}}: </p>
     <mat-chip-list>
       <mat-chip *ngFor="let category of data.offerDetails.categories" [selectable]="true">
         {{category}}
@@ -54,7 +62,7 @@
   </div>
 </div>
 <div mat-dialog-actions align="end">
-  <button mat-button [mat-dialog-close]="onNoClick()">Zamknij</button>
+  <button mat-button [mat-dialog-close]="onNoClick()">{{ 'book-offers.browse-offers.close' | translate}}</button>
 </div>
 
 <ng-template #swapButtonsTemplate let-data="data" let-formGroup="formGroup">
@@ -62,14 +70,14 @@
     <span *ngIf="data.offerDetails.hasOfferFromUser">
       <button mat-raised-button color="primary"
               [disabled]="getStatus() !== 'Dostępna' || requestAlreadySend || !data.hasBooksForSwap" (click)="sendSwap()">
-        <mat-icon>swap_horiz</mat-icon> WYMIEŃ
+        <mat-icon>swap_horiz</mat-icon> {{ 'book-offers.browse-offers.swap' | translate}}
       </button>
-      <button mat-icon-button color="accent" matTooltip="Masz oferty od tego użytkownika, możesz od razu wymienić książkę!">
+      <button mat-icon-button color="accent" matTooltip="{{ 'book-offers.browse-offers.swap-tooltip' | translate}">
         <mat-icon>info</mat-icon>
       </button>
       <br/><br/>
       <mat-form-field appearance="outline" >
-        <mat-label>Wybierz książkę do wymiany</mat-label>
+        <mat-label>{{ 'book-offers.browse-offers.choose-swap-book' | translate}}</mat-label>
         <mat-select formControlName="requestedBooksCtrl">
           <mat-option *ngFor="let book of data.offerDetails.requestedBooks" [value]="book.id" class="multiline-mat-option">
             <div>{{book.title}}, </div>
@@ -81,7 +89,7 @@
     <button mat-raised-button color="primary" *ngIf="!data.offerDetails.hasOfferFromUser"
             [disabled]="getStatus() !== 'Dostępna' || requestAlreadySend || !data.hasBooksForSwap"
             (click)="sendSwapRequest()">
-      <mat-icon>send</mat-icon> ZŁÓŻ OFERTĘ
+      <mat-icon>send</mat-icon> {{ 'book-offers.browse-offers.send-request' | translate}}
     </button>
   </form>
 </ng-template>

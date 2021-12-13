@@ -3,7 +3,7 @@
     <h2>{{title}}</h2>
     <div>
       <mat-form-field appearance="outline" *ngIf="currentTab === 1" class="request-status-select field-filter">
-        <mat-label>Status oferty</mat-label>
+        <mat-label>{{ 'book-offers.browse-swap-requests.offer-status' | translate}}</mat-label>
         <mat-select [(ngModel)]="selectedRequestStatus" (selectionChange)="changeSelectedRequestStatus()">
           <mat-option>--</mat-option>
           <mat-option *ngFor="let status of statuses" [value]="status.status">
@@ -12,7 +12,7 @@
         </mat-select>
       </mat-form-field>
       <mat-form-field appearance="outline" class="field-filter">
-        <mat-label>Typ wymiany</mat-label>
+        <mat-label>{{ 'book-offers.browse-swap-requests.label' | translate}}</mat-label>
         <mat-select [(ngModel)]="bookLabel" (selectionChange)="changeBookLabel()">
           <mat-option>--</mat-option>
           <mat-option *ngFor="let label of labels" [value]="label.label">
@@ -22,12 +22,12 @@
       </mat-form-field>
     </div>
   </div>
-  <p>Liczba ofert: {{offersCount}}</p>
+  <p>{{ 'book-offers.browse-swap-requests.offers-count' | translate}}: {{offersCount}}</p>
   <mat-tab-group (selectedTabChange)="onTabChange($event)">
-    <mat-tab label="Oczekujące">
+    <mat-tab label="{{ 'book-offers.browse-swap-requests.waiting' | translate}}">
       <ng-template *ngTemplateOutlet="bookListTemplate; context: {$implicit: swapRequests}"></ng-template>
     </mat-tab>
-    <mat-tab label="Historyczne">
+    <mat-tab label="{{ 'book-offers.browse-swap-requests.history' | translate}}">
       <ng-template *ngTemplateOutlet="bookListTemplate; context: {$implicit: swapRequests}"></ng-template>
     </mat-tab>
   </mat-tab-group>
@@ -44,34 +44,58 @@
                 <mat-card-title>{{swapRequest.bookTitle}}</mat-card-title>
                 <mat-card-subtitle>{{swapRequest.bookAuthor}}</mat-card-subtitle>
               </mat-card-header>
-              <p *ngIf="isSentOffers"> <span class="description-titles">Właściciel książki:</span> {{swapRequest.owner}}</p>
-              <p *ngIf="!isSentOffers"> <span class="description-titles">Zgłaszający ofertę:</span> {{swapRequest.sender}}</p>
-              <p> <span class="description-titles">Typ wymiany:</span> {{getBookLabel(swapRequest.bookLabel)}}</p>
-              <p> <span class="description-titles">Status książki:</span> {{getBookStatus(swapRequest.bookStatus)}}</p>
-              <p class="status-chip"> <span class="description-titles">Status oferty: </span>
-              <mat-chip-list>
-                <mat-chip>
-                  {{getRequestStatus(swapRequest.requestStatus)}}
-                </mat-chip>
-              </mat-chip-list>
+              <p *ngIf="isSentOffers"> <span class="description-titles">
+                {{ 'book-offers.browse-swap-requests.owner' | translate}}:</span>
+                {{swapRequest.owner}}
+              </p>
+              <p *ngIf="!isSentOffers"> <span class="description-titles">
+                {{ 'book-offers.browse-swap-requests.sender' | translate}}:</span>
+                {{swapRequest.sender}}
+              </p>
+              <p> <span class="description-titles">
+                {{ 'book-offers.browse-swap-requests.label' | translate}}:</span>
+                {{getBookLabel(swapRequest.bookLabel)}}
+              </p>
+              <p> <span class="description-titles">
+                {{ 'book-offers.browse-swap-requests.book-status' | translate}}:</span>
+                {{getBookStatus(swapRequest.bookStatus)}}
+              </p>
+              <p class="status-chip"> <span class="description-titles">
+                {{ 'book-offers.browse-swap-requests.offer-status' | translate}}: </span>
+                <mat-chip-list>
+                  <mat-chip>
+                    {{getRequestStatus(swapRequest.requestStatus)}}
+                  </mat-chip>
+                </mat-chip-list>
               </p>
             </div>
             <div class="book-image">
-            <img *ngIf="swapRequest.bookImage != null" mat-card-image [src]="'data:image/jpeg;base64,'+swapRequest.bookImage" alt="Zdjęcie okładki" >
-            <img *ngIf="swapRequest.bookImage == null" mat-card-image src="../../../../assets/images/brak_obrazka.png" alt="Zdjęcie okładki">
+            <img *ngIf="swapRequest.bookImage != null" mat-card-image 
+                 [src]="'data:image/jpeg;base64,'+swapRequest.bookImage"
+                 alt="{{ 'book-offers.browse-swap-requests.image-alt' | translate}}" >
+            <img *ngIf="swapRequest.bookImage == null" mat-card-image src="../../../../assets/images/brak_obrazka.png"
+                 alt="{{ 'book-offers.browse-swap-requests.image-alt' | translate}}">
             </div>
           </div>
           <mat-card-actions *ngIf="isRequestWaiting(swapRequest.requestStatus)">
-            <button mat-button *ngIf="!isSentOffers" (click)="denySwapRequest(swapRequest.id)">ODRZUĆ</button>
-            <button mat-raised-button color="primary" *ngIf="!isSentOffers" (click)="goToBrowseBooks(swapRequest.sender, swapRequest.bookLabel)">WYMIEŃ</button>
-            <button mat-button *ngIf="isSentOffers" (click)="cancelSwapRequest(swapRequest.id)">REZYGNIUJ</button>
+            <button mat-button *ngIf="!isSentOffers" (click)="denySwapRequest(swapRequest.id)">
+              {{ 'book-offers.browse-swap-requests.deny' | translate}}
+            </button>
+            <button mat-raised-button color="primary" *ngIf="!isSentOffers"
+                    (click)="goToBrowseBooks(swapRequest.sender, swapRequest.bookLabel)">
+              {{ 'book-offers.browse-swap-requests.swap' | translate}}
+            </button>
+            <button mat-button *ngIf="isSentOffers" (click)="cancelSwapRequest(swapRequest.id)">
+              {{ 'book-offers.browse-swap-requests.cancel' | translate}}
+            </button>
           </mat-card-actions>
         </mat-card>
       </div>
     </div>
   </div>
   <div class="empty-list" *ngIf="emptySearchList">
-    <img src="../../../../assets/images/brak_wynikow.png" alt="Brak wyników">
-    <h3>Brak wyników wyszukiwania</h3>
+    <img src="../../../../assets/images/brak_wynikow.png"
+         alt="{{ 'book-offers.browse-swap-requests.image-alt' | translate}}">
+    <h3>{{ 'book-offers.browse-swap-requests.no-data' | translate}}</h3>
   </div>
 </ng-template>

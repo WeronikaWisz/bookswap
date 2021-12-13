@@ -8,6 +8,7 @@ import {EBookLabel} from "../../../enums/EBookLabel";
 import Swal from "sweetalert2";
 import {MatDialog} from "@angular/material/dialog";
 import {UserAddressDialogComponent} from "./user-address-dialog/user-address-dialog.component";
+import {TranslateService} from "@ngx-translate/core";
 
 @Component({
   selector: 'app-browse-swaps',
@@ -28,7 +29,8 @@ export class BrowseSwapsComponent implements OnInit {
   emptySearchList = false;
 
   constructor(private router: Router, private tokenStorage: TokenStorageService, public dialog: MatDialog,
-              private bookSwapsService : BookSwapsService, private route: ActivatedRoute,) { }
+              private bookSwapsService : BookSwapsService, private route: ActivatedRoute,
+              private translate: TranslateService) { }
 
   ngOnInit(): void {
     if (this.tokenStorage.getToken()) {
@@ -46,10 +48,14 @@ export class BrowseSwapsComponent implements OnInit {
           console.log(params);
           this.isPermanentSwaps = params.label === 'permanent';
           if(!this.isPermanentSwaps){
-            this.title = "Wymiany tymczasowe"
+            this.translate.get("book-swaps.browse-swaps.temporary-title").subscribe(data =>
+              this.title = data
+            );
             this.label = EBookLabel.TEMPORARY_SWAP
           } else {
-            this.title = "Wymiany stałe"
+            this.translate.get("book-swaps.browse-swaps.permanent-title").subscribe(data =>
+              this.title = data
+            );
             this.label = EBookLabel.PERMANENT_SWAP
           }
           this.getSwaps();

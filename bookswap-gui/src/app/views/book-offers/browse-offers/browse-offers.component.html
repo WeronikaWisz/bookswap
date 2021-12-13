@@ -1,16 +1,16 @@
 <div class="content mat-elevation-z8">
   <div fxLayout="row" fxLayoutAlign="space-between center" *ngIf="isLoggedIn">
-    <h2>Szukaj książek</h2>
+    <h2>{{ 'book-offers.browse-offers.search-offers' | translate}}</h2>
     <button mat-raised-button color="white" (click)="openFilter()">
-      <mat-icon>filter_list</mat-icon> Filtry
+      <mat-icon>filter_list</mat-icon> {{ 'book-offers.browse-offers.filter' | translate}}
     </button>
   </div>
-  <p>Liczba ofert, które możesz złożyć: {{availableOffersCount}}</p>
+  <p>{{ 'book-offers.browse-offers.request-count' | translate}}: {{availableOffersCount}}</p>
   <mat-tab-group [selectedIndex]="selectedTabIndex" (selectedTabChange)="onTabChange($event)">
-    <mat-tab label="Wymiana stała">
+    <mat-tab label="{{ 'book-offers.browse-offers.permanent' | translate}}">
       <ng-template *ngTemplateOutlet="bookListTemplate; context: {$implicit: offers}"></ng-template>
     </mat-tab>
-    <mat-tab label="Wypożyczenie">
+    <mat-tab label="{{ 'book-offers.browse-offers.temporary' | translate}}">
       <ng-template *ngTemplateOutlet="bookListTemplate; context: {$implicit: offers}"></ng-template>
     </mat-tab>
   </mat-tab-group>
@@ -25,14 +25,16 @@
             <mat-card-title>{{offer.title}}</mat-card-title>
             <mat-card-subtitle>{{offer.author}}</mat-card-subtitle>
           </mat-card-header>
-          <img *ngIf="offer.image != null" mat-card-image [src]="'data:image/jpeg;base64,'+offer.image" alt="Zdjęcie okładki">
-          <img *ngIf="offer.image == null" mat-card-image src="../../../../assets/images/brak_obrazka.png" alt="Zdjęcie okładki">
+          <img *ngIf="offer.image != null" mat-card-image [src]="'data:image/jpeg;base64,'+offer.image"
+               alt="{{ 'book-offers.browse-offers.image-alt' | translate}}">
+          <img *ngIf="offer.image == null" mat-card-image src="../../../../assets/images/brak_obrazka.png"
+               alt="{{ 'book-offers.browse-offers.image-alt' | translate}}">
         </mat-card>
       </div>
     </div>
   </div>
   <div class="empty-list" *ngIf="emptySearchList">
-    <img src="../../../../assets/images/brak_wynikow.png" alt="Brak wyników">
-    <h3>Brak wyników wyszukiwania</h3>
+    <img src="../../../../assets/images/brak_wynikow.png" alt="{{ 'book-offers.browse-offers.image-alt' | translate}}">
+    <h3>{{ 'book-offers.browse-offers.no-data' | translate}}</h3>
   </div>
 </ng-template>

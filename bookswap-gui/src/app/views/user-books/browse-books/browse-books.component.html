@@ -1,9 +1,9 @@
 <div class="content mat-elevation-z8">
   <div fxLayout="row" fxLayoutAlign="space-between center" *ngIf="isLoggedIn">
-    <h2>Moje książki</h2>
+    <h2>{{ 'user-books.browse-books.my-books' | translate}}</h2>
     <div>
       <mat-form-field appearance="outline" class="label-filter" *ngIf="currentTab === 0">
-        <mat-label>Typ wymiany</mat-label>
+        <mat-label>{{ 'user-books.browse-books.book-label' | translate}}</mat-label>
         <mat-select [(ngModel)]="bookLabel" (selectionChange)="changeBookLabel()">
           <mat-option>--</mat-option>
           <mat-option *ngFor="let label of labels" [value]="label.label">
@@ -12,19 +12,19 @@
         </mat-select>
       </mat-form-field>
       <button mat-raised-button color="white" (click)="openFilter()">
-        <mat-icon>filter_list</mat-icon> Filtry
+        <mat-icon>filter_list</mat-icon> {{ 'user-books.browse-books.filter' | translate}}
       </button>
     </div>
   </div>
-  <p>Liczba książek: {{bookCount}}</p>
+  <p>{{ 'user-books.browse-books.book-count' | translate}}: {{bookCount}}</p>
   <mat-tab-group (selectedTabChange)="onTabChange($event)">
-    <mat-tab label="Dostępne">
+    <mat-tab label="{{ 'user-books.browse-books.available' | translate}}">
       <ng-template *ngTemplateOutlet="bookListTemplate; context: {$implicit: books}"></ng-template>
     </mat-tab>
-    <mat-tab label="Wypożyczone">
+    <mat-tab label="{{ 'user-books.browse-books.temporary' | translate}}">
       <ng-template *ngTemplateOutlet="bookListTemplate; context: {$implicit: books}"></ng-template>
     </mat-tab>
-    <mat-tab label="Wymienione">
+    <mat-tab label="{{ 'user-books.browse-books.permanent' | translate}}">
       <ng-template *ngTemplateOutlet="bookListTemplate; context: {$implicit: books}"></ng-template>
     </mat-tab>
   </mat-tab-group>
@@ -39,14 +39,16 @@
             <mat-card-title>{{book.title}}</mat-card-title>
             <mat-card-subtitle>{{book.author}}</mat-card-subtitle>
           </mat-card-header>
-          <img *ngIf="book.image != null" mat-card-image [src]="'data:image/jpeg;base64,'+book.image" alt="Zdjęcie okładki">
-          <img *ngIf="book.image == null" mat-card-image src="../../../../assets/images/brak_obrazka.png" alt="Zdjęcie okładki">
+          <img *ngIf="book.image != null" mat-card-image [src]="'data:image/jpeg;base64,'+book.image"
+               alt="{{ 'user-books.browse-books.image-alt' | translate}}">
+          <img *ngIf="book.image == null" mat-card-image src="../../../../assets/images/brak_obrazka.png"
+               alt="{{ 'user-books.browse-books.image-alt' | translate}}">
         </mat-card>
       </div>
     </div>
   </div>
   <div class="empty-list" *ngIf="emptySearchList">
-    <img src="../../../../assets/images/brak_wynikow.png" alt="Brak wyników">
-    <h3>Brak wyników wyszukiwania</h3>
+    <img src="../../../../assets/images/brak_wynikow.png" alt="{{ 'user-books.browse-books.image-alt' | translate}}">
+    <h3>{{ 'user-books.browse-books.no-data' | translate}}</h3>
   </div>
 </ng-template>

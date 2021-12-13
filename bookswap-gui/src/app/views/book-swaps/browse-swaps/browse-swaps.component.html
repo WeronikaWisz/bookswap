@@ -2,15 +2,15 @@
   <div fxLayout="row" fxLayoutAlign="space-between center" *ngIf="isLoggedIn">
     <h2>{{title}}</h2>
   </div>
-  <p>Liczba wymian: {{swapsCount}}</p>
+  <p>{{ 'book-swaps.browse-swaps.swap-count' | translate}}: {{swapsCount}}</p>
   <mat-tab-group (selectedTabChange)="onTabChange($event)">
-    <mat-tab label="W trakcie realizacji">
+    <mat-tab label="{{ 'book-swaps.browse-swaps.in-progress' | translate}}">
       <ng-template *ngTemplateOutlet="swapListTemplate; context: {$implicit: swaps}"></ng-template>
     </mat-tab>
-    <mat-tab *ngIf="!isPermanentSwaps" label="Na wypożyczeniu">
+    <mat-tab *ngIf="!isPermanentSwaps" label="{{ 'book-swaps.browse-swaps.temporary' | translate}}">
       <ng-template *ngTemplateOutlet="swapListTemplate; context: {$implicit: swaps}"></ng-template>
     </mat-tab>
-    <mat-tab label="Historyczne">
+    <mat-tab label="{{ 'book-swaps.browse-swaps.history' | translate}}">
       <ng-template *ngTemplateOutlet="swapListTemplate; context: {$implicit: swaps}"></ng-template>
     </mat-tab>
   </mat-tab-group>
@@ -26,16 +26,25 @@
               <h2 class="book-title"> {{swap.currentUserBookTitle}}</h2>
               <div class="image-description">
                 <div class="book-image">
-                  <img *ngIf="swap.currentUserBookImage != null" mat-card-image [src]="'data:image/jpeg;base64,'+swap.currentUserBookImage" alt="Zdjęcie okładki" >
-                  <img *ngIf="swap.currentUserBookImage == null" mat-card-image src="../../../../assets/images/brak_obrazka.png" alt="Zdjęcie okładki">
+                  <img *ngIf="swap.currentUserBookImage != null" mat-card-image
+                       [src]="'data:image/jpeg;base64,'+swap.currentUserBookImage"
+                       alt="{{ 'book-swaps.browse-swaps.image-alt' | translate}}" >
+                  <img *ngIf="swap.currentUserBookImage == null" mat-card-image
+                       src="../../../../assets/images/brak_obrazka.png"
+                       alt="{{ 'book-swaps.browse-swaps.image-alt' | translate}}">
                 </div>
                 <div class="swap-description">
-                  <p> <span class="description-titles">Autor:</span> {{swap.currentUserBookAuthor}}</p>
-                  <p> <span class="description-titles">Typ wymiany:</span> {{getBookLabel(swap.currentUserBookLabel)}}</p>
+                  <p> <span class="description-titles">{{ 'book-swaps.browse-swaps.author' | translate}}:</span>
+                    {{swap.currentUserBookAuthor}}
+                  </p>
+                  <p> <span class="description-titles">{{ 'book-swaps.browse-swaps.label' | translate}}:</span>
+                    {{getBookLabel(swap.currentUserBookLabel)}}
+                  </p>
                   <p class="status-chip"> <span class="description-titles">Status: </span>
                     <mat-chip-list>
                       <mat-chip>
-                        {{getSwapStatus(swap.swapStatus, swap.ifCurrentUserConfirmed, true, swap.currentUserBookLabel)}}
+                        {{getSwapStatus(swap.swapStatus, swap.ifCurrentUserConfirmed,
+                        true, swap.currentUserBookLabel)}}
                       </mat-chip>
                     </mat-chip-list>
                   </p>
@@ -47,13 +56,23 @@
               <h2 class="book-title"> {{swap.otherUserBookTitle}}</h2>
               <div class="image-description">
                 <div class="book-image">
-                  <img *ngIf="swap.otherUserBookImage != null" mat-card-image [src]="'data:image/jpeg;base64,'+swap.otherUserBookImage" alt="Zdjęcie okładki" >
-                  <img *ngIf="swap.otherUserBookImage == null" mat-card-image src="../../../../assets/images/brak_obrazka.png" alt="Zdjęcie okładki">
+                  <img *ngIf="swap.otherUserBookImage != null" mat-card-image
+                       [src]="'data:image/jpeg;base64,'+swap.otherUserBookImage"
+                       alt="{{ 'book-swaps.browse-swaps.image-alt' | translate}}" >
+                  <img *ngIf="swap.otherUserBookImage == null" mat-card-image
+                       src="../../../../assets/images/brak_obrazka.png"
+                       alt="{{ 'book-swaps.browse-swaps.image-alt' | translate}}">
                 </div>
                 <div class="swap-description">
-                  <p> <span class="description-titles">Autor:</span> {{swap.otherUserBookAuthor}}</p>
-                  <p> <span class="description-titles">Typ wymiany:</span> {{getBookLabel(swap.otherUserBookLabel)}}</p>
-                  <p> <span class="description-titles">Właściciel książki:</span> {{swap.otherUsername}}</p>
+                  <p> <span class="description-titles">{{ 'book-swaps.browse-swaps.author' | translate}}:</span>
+                    {{swap.otherUserBookAuthor}}
+                  </p>
+                  <p> <span class="description-titles">{{ 'book-swaps.browse-swaps.label' | translate}}:</span>
+                    {{getBookLabel(swap.otherUserBookLabel)}}
+                  </p>
+                  <p> <span class="description-titles">{{ 'book-swaps.browse-swaps.owner' | translate}}:</span>
+                    {{swap.otherUsername}}
+                  </p>
                   <p class="status-chip"> <span class="description-titles">Status: </span>
                     <mat-chip-list>
                       <mat-chip>
@@ -66,16 +85,21 @@
             </div>
           </div>
           <mat-card-actions *ngIf="!isSwapCompleted(swap.swapStatus)">
-            <button mat-button (click)="getOtherUserAddress(swap.otherUsername)">SPRAWDŹ ADRES</button>
-            <button mat-raised-button color="primary" *ngIf="!swap.ifCurrentUserConfirmed" (click)="confirmBookDelivery(swap.id)">POTWIERDŹ ODBIÓR</button>
+            <button mat-button (click)="getOtherUserAddress(swap.otherUsername)">
+              {{ 'book-swaps.browse-swaps.check-address' | translate}}
+            </button>
+            <button mat-raised-button color="primary" *ngIf="!swap.ifCurrentUserConfirmed"
+                    (click)="confirmBookDelivery(swap.id)">
+              {{ 'book-swaps.browse-swaps.confirm' | translate}}
+            </button>
           </mat-card-actions>
         </mat-card>
       </div>
     </div>
   </div>
   <div class="empty-list" *ngIf="emptySearchList">
-    <img src="../../../../assets/images/brak_wynikow.png" alt="Brak wyników">
-    <h3>Brak wyników wyszukiwania</h3>
+    <img src="../../../../assets/images/brak_wynikow.png" alt="{{ 'book-swaps.browse-swaps.image-alt' | translate}}">
+    <h3>{{ 'book-swaps.browse-swaps.no-data' | translate}}</h3>
   </div>
 </ng-template>
 

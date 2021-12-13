@@ -18,6 +18,7 @@ import {COMMA, ENTER} from "@angular/cdk/keycodes";
 import {UserBookService} from "../../../services/user-book.service";
 import {BookData} from "../../../models/user-books/BookData";
 import {EBookLabel} from "../../../enums/EBookLabel";
+import {TranslateService} from "@ngx-translate/core";
 
 const moment = _rollupMoment || _moment;
 
@@ -63,13 +64,13 @@ export class AddBookComponent implements OnInit {
 
   @ViewChild(FormGroupDirective) formGroupDirective!: FormGroupDirective;
 
-  formTitle = "Dodawanie książki";
+  formTitle = "";
   isEditBookView = false;
   bookId?: number;
   checkEditImage = false;
 
   constructor(private formBuilder: FormBuilder,
-              private route: ActivatedRoute,
+              private route: ActivatedRoute, private translate: TranslateService,
               private router: Router, private userBookService : UserBookService,
               private tokenStorage: TokenStorageService) {
     const currentYear = moment();
@@ -116,8 +117,14 @@ export class AddBookComponent implements OnInit {
           if (params.id){
             this.isEditBookView = true;
             this.bookId = params.id;
-            this.formTitle = "Edycja książki";
+            this.translate.get("user-books.add-book.edit-title").subscribe(data =>
+              this.formTitle = data
+            );
             this.getBook(params.id)
+          } else {
+            this.translate.get("user-books.add-book.add-title").subscribe(data =>
+              this.formTitle = data
+            );
           }
         }
       );

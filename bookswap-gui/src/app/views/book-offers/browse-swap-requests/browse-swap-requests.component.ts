@@ -8,6 +8,7 @@ import {SwapRequestListItem} from "../../../models/book-offers/SwapRequestListIt
 import Swal from "sweetalert2";
 import {EBookStatus} from "../../../enums/EBookStatus";
 import {Label} from "../../user-books/add-book/add-book.component";
+import {TranslateService} from "@ngx-translate/core";
 
 export interface RequestStatus{
   status: ERequestStatus,
@@ -32,7 +33,7 @@ export class BrowseSwapRequestsComponent implements OnInit {
   currentTab = 0;
 
   isSentOffers = true;
-  title = "Wysłane ofery wymiany";
+  title = "";
 
   statuses: RequestStatus[] = [{status: ERequestStatus.ACCEPTED, name: "Zaakceptowana"},
     {status: ERequestStatus.DENIED, name: "Odrzucona"},
@@ -43,7 +44,7 @@ export class BrowseSwapRequestsComponent implements OnInit {
 
   emptySearchList = false;
 
-  constructor(private router: Router, private tokenStorage: TokenStorageService,
+  constructor(private router: Router, private tokenStorage: TokenStorageService, private translate: TranslateService,
               private bookOffersService : BookOffersService, private route: ActivatedRoute) { }
 
   ngOnInit(): void {
@@ -62,9 +63,13 @@ export class BrowseSwapRequestsComponent implements OnInit {
           console.log(params);
           this.isSentOffers = params.direction === 'sent';
           if(!this.isSentOffers){
-            this.title = "Otrzymane ofery wymiany"
+            this.translate.get("book-offers.browse-swap-requests.received-title").subscribe(data =>
+              this.title = data
+            );
           } else {
-            this.title = "Wysłane ofery wymiany"
+            this.translate.get("book-offers.browse-swap-requests.send-title").subscribe(data =>
+              this.title = data
+            );
           }
           this.getRequests();
         }

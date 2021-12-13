@@ -11,7 +11,7 @@
     "profile": {
       "address-data": "Dane adresowe",
       "change-password": "Zmień hasło",
-      "street": "ul.",
+      "street": "ul",
       "old-password": "Podaj stare hasło",
       "old-password-error": "Wprowadź aktualne hasło",
       "new-password": "Nowe hasło",
@@ -20,7 +20,32 @@
       "confirm-password": "Powtórz nowe hasło",
       "confirm-password-error": "Hasło nie pasuje",
       "close": "Zamknij",
-      "save": "Zapisz"
+      "save": "Zapisz",
+      "edit-profile": "Edytuj profil",
+      "user-data": "Dane osobowe",
+      "name": "Imię",
+      "name-error": "Podaj imię",
+      "surname": "Nazwisko",
+      "surname-error": "Podaj nazwisko",
+      "email": "Email",
+      "email-error": "Podaj poprawny adres email",
+      "phone": "Numer telefonu",
+      "phone-error": "Podaj poprawny numer telefonu",
+      "next": "Dalej",
+      "back": "Wstecz",
+      "user-address": "Dane adresowe",
+      "postal-code": "Kod pocztowy",
+      "postal-code-error": "Podaj poprawny kod pocztowy",
+      "post": "Poczta",
+      "post-error": "Podaj miejscowość poczty",
+      "city": "Miejscowość",
+      "city-error": "Podaj miejsce zamieszkania",
+      "street-full": "Ulica",
+      "street-error": "Podaj nazwę ulicy",
+      "building-number": "Numer domu",
+      "building-number-error": "Podaj numer domu",
+      "door-number": "Numer lokalu",
+      "door-number-error": "Podaj numer lokalu"
     },
     "register": {
       "register-title": "Rejestracja",
@@ -77,7 +102,9 @@
       "no-file": "Nie wybrano pliku",
       "book-label": "Typ wymiany",
       "button-add": "Dodaj książkę",
-      "button-edit": "Aktualizuj książkę"
+      "button-edit": "Aktualizuj książkę",
+      "add-title": "Dodawanie książki",
+      "edit-title": "Edycja książki"
     },
     "browse-books": {
       "my-books": "Moje książki",
@@ -135,12 +162,14 @@
       "owner": "Właściciel",
       "send-request": "ZŁÓŻ PROPOZYCJĘ",
       "swap": "WYMIEŃ",
-      "choose-swap-book": "Wybierz książkę do wymiany"
+      "choose-swap-book": "Wybierz książkę do wymiany",
+      "book-label": "Typ wymiany",
+      "swap-tooltip": "Masz propozycje od tego użytkownika, możesz od razu wymienić książkę!"
     },
     "browse-swap-requests": {
-      "offer-status": "Status oferty",
+      "offer-status": "Status propozycji",
       "label": "Typ wymiany",
-      "offers-count": "Liczba ofert",
+      "offers-count": "Liczba propozycji",
       "waiting": "Oczekujące",
       "history": "Historyczne",
       "no-data": "Brak wyników wyszukiwania",
@@ -150,13 +179,16 @@
       "deny": "ODRZUĆ",
       "swap": "WYMIEŃ",
       "cancel": "REZYGNIUJ",
-      "image-alt": "Zdjęcie okładki"
+      "image-alt": "Zdjęcie okładki",
+      "send-title": "Wysłane propozycje wymiany",
+      "received-title": "Otrzymane propozycje wymiany"
     }
   },
   "book-swaps": {
     "browse-swaps": {
       "swap-count": "Liczba wymian",
       "in-progress": "W trakcie realizacji",
+      "temporary": "Na wypożyczeniu",
       "history": "Historyczne",
       "image-alt": "Zdjęcie okładki",
       "author": "Autor",
@@ -167,8 +199,10 @@
       "confirm": "POTWIERDŹ ODBIÓR",
       "address-data": "Dane adresowe",
       "user-data": "Dane użytkownika",
-      "street": "ul.",
-      "close": "Zamknij"
+      "street": "ul",
+      "close": "Zamknij",
+      "permanent-title": "Wymiany stałe",
+      "temporary-title": "Wymiany tymczasowe"
     }
   },
   "nav": {
@@ -186,6 +220,9 @@
     "my-profile": "Mój profil",
     "logout": "Wyloguj",
     "login": "Logowanie",
-    "register": "Rejestracja"
+    "register": "Rejestracja",
+    "my-books-l": "Moje książki",
+    "offers-l": "Oferty",
+    "swaps-l": "Wymiany"
   }
 }

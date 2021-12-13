@@ -11,7 +11,7 @@
     "profile": {
       "address-data": "Address data",
       "change-password": "Change password",
-      "street": "st.",
+      "street": "st",
       "old-password": "Enter old password",
       "old-password-error": "Enter your current password",
       "new-password": "New password",
@@ -20,7 +20,32 @@
       "confirm-password": "Confirm password",
       "confirm-password-error": "Password not match",
       "close": "Close",
-      "save": "Save"
+      "save": "Save",
+      "edit-profile": "Edit profile",
+      "user-data": "Personal data",
+      "name": "Name",
+      "name-error": "Enter name",
+      "surname": "Surname",
+      "surname-error": "Enter surname",
+      "email": "Email",
+      "email-error": "Enter valid email",
+      "phone": "Phone number",
+      "phone-error": "Enter valid phone number",
+      "next": "Next",
+      "back": "Back",
+      "user-address": "Address data",
+      "postal-code": "Postal code",
+      "postal-code-error": "Enter valid postal code",
+      "post": "Post",
+      "post-error": "Enter post",
+      "city": "City",
+      "city-error": "Enter city",
+      "street-full": "Street",
+      "street-error": "Enter street",
+      "building-number": "Building number",
+      "building-number-error": "Enter building number",
+      "door-number": "Door number",
+      "door-number-error": "Enter door number"
     },
     "register": {
       "register-title": "Register",
@@ -77,7 +102,9 @@
       "no-file": "No file chosen",
       "book-label": "Type of exchange",
       "button-add": "Add book",
-      "button-edit": "Update book"
+      "button-edit": "Update book",
+      "add-title": "Adding book",
+      "edit-title": "Edit book"
     },
     "browse-books": {
       "my-books": "My books",
@@ -135,12 +162,14 @@
       "owner": "Owner",
       "send-request": "SEND REQUEST",
       "swap": "SWAP",
-      "choose-swap-book": "Choose book to swap"
+      "choose-swap-book": "Choose book to swap",
+      "book-label": "Type of exchange",
+      "swap-tooltip": "You have request from this user, you can swap books right away!"
     },
     "browse-swap-requests": {
-      "offer-status": "Offer status",
+      "offer-status": "Request status",
       "label": "Type of exchange",
-      "offers-count": "Offer count",
+      "offers-count": "Request count",
       "waiting": "Waiting",
       "history": "History",
       "no-data": "No results found",
@@ -150,13 +179,16 @@
       "deny": "DENY",
       "swap": "SWAP",
       "cancel": "CANCEL",
-      "image-alt": "Cover photo"
+      "image-alt": "Cover photo",
+      "send-title": "Send requests",
+      "received-title": "Received requests"
     }
   },
   "book-swaps": {
     "browse-swaps": {
       "swap-count": "Swap count",
       "in-progress": "In progress",
+      "temporary": "During exchange",
       "history": "History",
       "image-alt": "Cover photo",
       "author": "Author",
@@ -166,9 +198,11 @@
       "check-address": "CHECK ADDRESS",
       "confirm": "CONFIRM DELIVERY",
       "address-data": "Address data",
-      "user-data": "Personal data",
-      "street": "st.",
-      "close": "Close"
+      "user-data": "Personal data of",
+      "street": "st",
+      "close": "Close",
+      "permanent-title": "Permanent swaps",
+      "temporary-title": "Temporary swaps"
     }
   },
   "nav": {
@@ -186,6 +220,9 @@
     "my-profile": "My profile",
     "logout": "Logout",
     "login": "Sign in",
-    "register": "Sign up"
+    "register": "Sign up",
+    "my-books-l": "My books",
+    "offers-l": "Offers",
+    "swaps-l": "Swaps"
   }
 }

@@ -12,14 +12,16 @@
       <mat-form-field class="full-width-input" appearance="outline">
         <mat-label>{{ 'manage-users.login.password' | translate}}</mat-label>
         <input matInput [type]="hide ? 'password' : 'text'" formControlName="password" required>
-        <button mat-icon-button matSuffix (click)="hide = !hide" [attr.aria-label]="'Hide password'" [attr.aria-pressed]="hide">
+        <button mat-icon-button matSuffix (click)="hide = !hide"
+                [attr.aria-label]="'Hide password'" [attr.aria-pressed]="hide">
           <mat-icon>{{hide ? 'visibility_off' : 'visibility'}}</mat-icon>
         </button>
         <mat-error>
           {{ 'manage-users.login.password-error' | translate}}
         </mat-error>
       </mat-form-field>
-      <button mat-raised-button color="primary" [disabled]="form.invalid" (click)="onSubmit()"><mat-icon>login</mat-icon>
+      <button mat-raised-button color="primary" [disabled]="form.invalid" (click)="onSubmit()">
+        <mat-icon>login</mat-icon>
         <span class="login-button">
           {{ 'manage-users.login.login-button' | translate}}
         </span></button>
