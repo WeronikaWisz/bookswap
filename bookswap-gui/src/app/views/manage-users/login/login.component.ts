@@ -52,13 +52,9 @@ export class LoginComponent implements OnInit {
       err => {
         this.form.controls['username'].setErrors({'incorrect': true});
         this.form.controls['password'].setErrors({'incorrect': true});
-        let message = "";
-        this.translate.get("manage-users.login.error-message").subscribe(data =>
-          message = data
-        );
         Swal.fire({
           position: 'top-end',
-          title: message,
+          title: this.getTranslateMessage("manage-users.login.error-message"),
           text: err.error.message,
           icon: 'error',
           showConfirmButton: false
@@ -69,6 +65,14 @@ export class LoginComponent implements OnInit {
 
   reloadPage(): void {
     window.location.reload();
+  }
+
+  getTranslateMessage(key: string): string{
+    let message = "";
+    this.translate.get(key).subscribe(data =>
+      message = data
+    );
+    return message;
   }
 
 }

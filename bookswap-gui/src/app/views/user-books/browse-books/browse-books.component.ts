@@ -9,9 +9,9 @@ import Swal from "sweetalert2";
 import {BookListItem} from "../../../models/user-books/BookListItem";
 import {BookDetailsDialogComponent} from "./book-details-dialog/book-details-dialog.component";
 import {FilterHints} from "../../../models/user-books/FilterHints";
-import {Label} from "../add-book/add-book.component";
 import {EBookLabel} from "../../../enums/EBookLabel";
 import {TranslateService} from "@ngx-translate/core";
+import {Label} from "../../../models/user-books/Label";
 
 @Component({
   selector: 'app-browse-books',
@@ -39,15 +39,24 @@ export class BrowseBooksComponent implements OnInit {
 
   bookLabel?: EBookLabel;
 
-  labels: Label[] = [{label: EBookLabel.PERMANENT_SWAP, name: "Wymiana stała"},
-    {label: EBookLabel.TEMPORARY_SWAP, name: "Wymiana tymczasowa"}]
+  labels: Label[] = []
 
   currentTab = 0;
 
   emptySearchList = false;
 
   constructor(public dialog: MatDialog, private router: Router, private translate: TranslateService,
-              private userBookService : UserBookService, private tokenStorage: TokenStorageService) { }
+              private userBookService : UserBookService, private tokenStorage: TokenStorageService) {
+    this.labels = [
+      {
+        label: EBookLabel.PERMANENT_SWAP,
+        name: this.getTranslateMessage("user-books.browse-books.label-permanent")
+      },
+      {
+        label: EBookLabel.TEMPORARY_SWAP,
+        name: this.getTranslateMessage("user-books.browse-books.label-temporary")
+      }];
+  }
 
   ngOnInit(): void {
     if (this.tokenStorage.getToken()) {
@@ -75,13 +84,9 @@ export class BrowseBooksComponent implements OnInit {
           });
         },
         err => {
-          let message = "";
-          this.translate.get("user-books.browse-books.load-book-error").subscribe(data =>
-            message = data
-          );
           Swal.fire({
             position: 'top-end',
-            title: message,
+            title: this.getTranslateMessage("user-books.browse-books.load-book-error"),
             text: err.error.message,
             icon: 'error',
             showConfirmButton: false
@@ -146,13 +151,9 @@ export class BrowseBooksComponent implements OnInit {
           }
         },
         err => {
-          let message = "";
-          this.translate.get("user-books.browse-books.load-error").subscribe(data =>
-            message = data
-          );
           Swal.fire({
             position: 'top-end',
-            title: message,
+            title: this.getTranslateMessage("user-books.browse-books.load-error"),
             text: err.error.message,
             icon: 'error',
             showConfirmButton: false
@@ -184,6 +185,14 @@ export class BrowseBooksComponent implements OnInit {
   changeBookLabel(){
     this.bookFilter.label = this.bookLabel;
     this.loadFilterBooks()
+  }
+
+  getTranslateMessage(key: string): string{
+    let message = "";
+    this.translate.get(key).subscribe(data =>
+      message = data
+    );
+    return message;
   }
 
 }

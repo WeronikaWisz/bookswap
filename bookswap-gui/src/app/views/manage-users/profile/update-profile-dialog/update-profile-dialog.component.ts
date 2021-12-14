@@ -49,7 +49,6 @@ export class UpdateProfileDialogComponent implements OnInit {
   }
 
   saveData(){
-    let message = "";
     this.usersService.updateUserProfileData({
       "email": this.formArray!.get([0])!.get('email')?.value,
       "name": this.formArray!.get([0])!.get('name')?.value,
@@ -66,29 +65,31 @@ export class UpdateProfileDialogComponent implements OnInit {
         console.log(data);
         this.dataChanged = true
         this.form.markAsPristine();
-        this.translate.get("manage-users.profile.update-success").subscribe(data =>
-          message = data
-        );
         Swal.fire({
           position: 'top-end',
-          title: message,
+          title: this.getTranslateMessage("manage-users.profile.update-success"),
           icon: 'success',
           showConfirmButton: false
         })
       },
       err => {
-        this.translate.get("manage-users.profile.update-error").subscribe(data =>
-          message = data
-        );
         Swal.fire({
           position: 'top-end',
-          title: message,
+          title: this.getTranslateMessage("manage-users.profile.update-error"),
           text: err.error.message,
           icon: 'error',
           showConfirmButton: false
         })
       }
     );
+  }
+
+  getTranslateMessage(key: string): string{
+    let message = "";
+    this.translate.get(key).subscribe(data =>
+      message = data
+    );
+    return message;
   }
 
 }

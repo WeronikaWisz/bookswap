@@ -93,13 +93,9 @@ export class BrowseOffersComponent implements OnInit {
           });
         },
         err => {
-          let message = "";
-          this.translate.get("book-offers.browse-offers.load-book-error").subscribe(data =>
-            message = data
-          );
           Swal.fire({
             position: 'top-end',
-            title: message,
+            title: this.getTranslateMessage("book-offers.browse-offers.load-book-error"),
             text: err.error.message,
             icon: 'error',
             showConfirmButton: false
@@ -165,13 +161,9 @@ export class BrowseOffersComponent implements OnInit {
           }
         },
         err => {
-          let message = "";
-          this.translate.get("book-offers.browse-offers.load-error").subscribe(data =>
-            message = data
-          );
           Swal.fire({
             position: 'top-end',
-            title: message,
+            title: this.getTranslateMessage("book-offers.browse-offers.load-error"),
             text: err.error.message,
             icon: 'error',
             showConfirmButton: false
@@ -188,6 +180,15 @@ export class BrowseOffersComponent implements OnInit {
     console.log(event);
     this.offerFilter.label = event.index;
     this.loadFilterOffers();
+  }
+
+
+  getTranslateMessage(key: string): string{
+    let message = "";
+    this.translate.get(key).subscribe(data =>
+      message = data
+    );
+    return message;
   }
 
 }

@@ -27,7 +27,7 @@
         <div>
           <p>
             <span class="description-titles">Status:</span>
-            <span> {{getStatus()}}</span>
+            <span> {{getStatusName(getStatusValue())}}</span>
           </p>
           <p><span class="description-titles">{{ 'book-offers.browse-offers.book-label' | translate}}:</span>
             <span> {{getLabel()}}</span>
@@ -69,7 +69,7 @@
   <form [formGroup]="formGroup">
     <span *ngIf="data.offerDetails.hasOfferFromUser">
       <button mat-raised-button color="primary"
-              [disabled]="getStatus() !== 'Dostępna' || requestAlreadySend || !data.hasBooksForSwap" (click)="sendSwap()">
+              [disabled]="getStatusValue() !== 0 || requestAlreadySend || !data.hasBooksForSwap" (click)="sendSwap()">
         <mat-icon>swap_horiz</mat-icon> {{ 'book-offers.browse-offers.swap' | translate}}
       </button>
       <button mat-icon-button color="accent" matTooltip="{{ 'book-offers.browse-offers.swap-tooltip' | translate}">
@@ -87,7 +87,7 @@
         </mat-form-field>
     </span>
     <button mat-raised-button color="primary" *ngIf="!data.offerDetails.hasOfferFromUser"
-            [disabled]="getStatus() !== 'Dostępna' || requestAlreadySend || !data.hasBooksForSwap"
+            [disabled]="getStatusValue() !== 0 || requestAlreadySend || !data.hasBooksForSwap"
             (click)="sendSwapRequest()">
       <mat-icon>send</mat-icon> {{ 'book-offers.browse-offers.send-request' | translate}}
     </button>

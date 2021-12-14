@@ -53,19 +53,15 @@ export class ChangePasswordDialogComponent implements OnInit {
   }
 
   changePassword(){
-    let message = "";
     this.usersService.changePassword({
       "oldPassword": this.form.get('oldPassword')?.value,
       "newPassword": this.form.get('password')?.value,
     }).subscribe(
       data => {
         console.log(data);
-        this.translate.get("manage-users.profile.password-success").subscribe(data =>
-          message = data
-        );
         Swal.fire({
           position: 'top-end',
-          title: message,
+          title: this.getTranslateMessage("manage-users.profile.password-success"),
           icon: 'success',
           showConfirmButton: false
         })
@@ -73,17 +69,22 @@ export class ChangePasswordDialogComponent implements OnInit {
         this.form.markAsUntouched();
         },
       err => {
-        this.translate.get("manage-users.profile.password-error").subscribe(data =>
-          message = data
-        );
         Swal.fire({
           position: 'top-end',
-          title: message,
+          title: this.getTranslateMessage("manage-users.profile.password-error"),
           text: err.error.message,
           icon: 'error',
           showConfirmButton: false
         })
       });
+  }
+
+  getTranslateMessage(key: string): string{
+    let message = "";
+    this.translate.get(key).subscribe(data =>
+      message = data
+    );
+    return message;
   }
 
 }

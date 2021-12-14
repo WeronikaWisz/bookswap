@@ -36,7 +36,7 @@ export class OfferDetailsDialogComponent implements OnInit {
   }
 
   onNoClick(): boolean {
-    return (this.getStatus() !== 'Dostępna' || this.requestAlreadySend);
+    return (this.getStatusValue() !== 0 || this.requestAlreadySend);
   }
 
   setBookToSwap(){
@@ -46,27 +46,40 @@ export class OfferDetailsDialogComponent implements OnInit {
     }
   }
 
-  getStatus(): string{
-    let status = this.data.offerDetails.status.valueOf() as unknown as string;
-    if(status === EBookStatus[EBookStatus.AVAILABLE]){
-      return 'Dostępna'
+  getStatusName(value: number): string{
+    if(value === 0){
+      return this.getTranslateMessage("book-offers.browse-offers.status-available")
     }
-    if(status === EBookStatus[EBookStatus.PERMANENT_SWAP]){
-      return 'Wymieniona'
+    if(value === 1){
+      return this.getTranslateMessage("book-offers.browse-offers.status-permanent")
     }
-    if(status === EBookStatus[EBookStatus.TEMPORARY_SWAP]){
-      return 'Na wymianie tymczasowej'
+    if(value === 2){
+      return this.getTranslateMessage("book-offers.browse-offers.status-temporary")
     }
     return ''
+  }
+
+  getStatusValue(): number{
+    let status = this.data.offerDetails.status.valueOf() as unknown as string;
+    if(status === EBookStatus[EBookStatus.AVAILABLE]){
+      return 0
+    }
+    if(status === EBookStatus[EBookStatus.PERMANENT_SWAP]){
+      return 1
+    }
+    if(status === EBookStatus[EBookStatus.TEMPORARY_SWAP]){
+      return 2
+    }
+    return 0
   }
 
   getLabel(): string{
     let label = this.data.offerDetails.label.valueOf() as unknown as string;
     if(label === EBookLabel[EBookLabel.PERMANENT_SWAP]){
-      return 'Stała'
+      return this.getTranslateMessage("book-offers.browse-offers.label-permanent-short")
     }
     if(label === EBookLabel[EBookLabel.TEMPORARY_SWAP]){
-      return 'Tymczasowa'
+      return this.getTranslateMessage("book-offers.browse-offers.label-temporary-short")
     }
     return ''
   }
@@ -74,7 +87,6 @@ export class OfferDetailsDialogComponent implements OnInit {
   sendSwapRequest(){
     console.log("sendRequestSwap")
     console.log(this.data.offerBasics.id)
-    let message = "";
     this.bookOffersService.sendSwapRequest({
       requestedBookId: this.data.offerBasics.id,
       userBookIdForSwap: null!
@@ -83,23 +95,17 @@ export class OfferDetailsDialogComponent implements OnInit {
         console.log(data);
         this.requestAlreadySend = true;
         this.disableSelect();
-        this.translate.get("book-offers.browse-offers.request-success").subscribe(data =>
-          message = data
-        );
         Swal.fire({
           position: 'top-end',
-          title: message,
+          title: this.getTranslateMessage("book-offers.browse-offers.request-success"),
           icon: 'success',
           showConfirmButton: false
         })
       },
       err => {
-        this.translate.get("book-offers.browse-offers.request-error").subscribe(data =>
-          message = data
-        );
         Swal.fire({
           position: 'top-end',
-          title: message,
+          title: this.getTranslateMessage("book-offers.browse-offers.request-error"),
           text: err.error.message,
           icon: 'error',
           showConfirmButton: false
@@ -111,7 +117,6 @@ export class OfferDetailsDialogComponent implements OnInit {
 
   sendSwap(){
     console.log("sendSwap")
-    let message = "";
     this.bookOffersService.sendSwapRequest({
       requestedBookId: this.data.offerBasics.id,
       userBookIdForSwap: this.form.get("requestedBooksCtrl")?.value ? this.form.get("requestedBooksCtrl")?.value : null!
@@ -120,28 +125,18 @@ export class OfferDetailsDialogComponent implements OnInit {
         console.log(data);
         this.requestAlreadySend = true;
         this.disableSelect()
-        this.translate.get("book-offers.browse-offers.swap-success-title").subscribe(data =>
-          message = data
-        );
-        let message2 = "";
-        this.translate.get("book-offers.browse-offers.swap-success-text").subscribe(data =>
-          message2 = data
-        );
         Swal.fire({
           position: 'top-end',
-          title: message,
-          text: message2,
+          title: this.getTranslateMessage("book-offers.browse-offers.swap-success-title"),
+          text: this.getTranslateMessage("book-offers.browse-offers.swap-success-text"),
           icon: 'success',
           showConfirmButton: false
         })
       },
       err => {
-        this.translate.get("book-offers.browse-offers.swap-error").subscribe(data =>
-          message = data
-        );
         Swal.fire({
           position: 'top-end',
-          title: message,
+          title: this.getTranslateMessage("book-offers.browse-offers.swap-error"),
           text: err.error.message,
           icon: 'error',
           showConfirmButton: false
@@ -160,13 +155,9 @@ export class OfferDetailsDialogComponent implements OnInit {
           this.checkIfAvailable();
         },
         err => {
-          let message = "";
-          this.translate.get("book-offers.browse-offers.load-book-data-error").subscribe(data =>
-            message = data
-          );
           Swal.fire({
             position: 'top-end',
-            title: message,
+            title: this.getTranslateMessage("book-offers.browse-offers.load-book-data-error"),
             text: err.error.message,
             icon: 'error',
             showConfirmButton: false
@@ -176,19 +167,11 @@ export class OfferDetailsDialogComponent implements OnInit {
   }
 
   checkIfAvailable(){
-    if(this.getStatus() !== 'Dostępna'){
-      let messageTitle = "";
-      let messageText = "";
-      this.translate.get("book-offers.browse-offers.error-swapped-title").subscribe(data =>
-        messageTitle = data
-      );
-      this.translate.get("book-offers.browse-offers.error-swapped-text").subscribe(data =>
-        messageText = data
-      );
+    if(this.getStatusValue() !== 0){
       Swal.fire({
         position: 'top-end',
-        title: messageTitle,
-        text: messageText,
+        title: this.getTranslateMessage("book-offers.browse-offers.error-swapped-title"),
+        text: this.getTranslateMessage("book-offers.browse-offers.error-swapped-text"),
         icon: 'info',
         showConfirmButton: false
       })
@@ -197,6 +180,14 @@ export class OfferDetailsDialogComponent implements OnInit {
 
   disableSelect(){
     this.form.get("requestedBooksCtrl")?.disable();
+  }
+
+  getTranslateMessage(key: string): string{
+    let message = "";
+    this.translate.get(key).subscribe(data =>
+      message = data
+    );
+    return message;
   }
 
 }

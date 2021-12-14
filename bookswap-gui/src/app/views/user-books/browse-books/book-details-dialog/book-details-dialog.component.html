@@ -1,7 +1,7 @@
 <div class="header-small-width">
   <h2 mat-dialog-title>{{data.bookBasics.title}}</h2>
   <div>
-    <button mat-mini-fab color="primary" [disabled]="getStatus() !== 'Dostępna'"
+    <button mat-mini-fab color="primary" [disabled]="getStatusValue() !== 0"
             (click)="goToEditBook()">
       <mat-icon>edit</mat-icon>
     </button>
@@ -33,7 +33,7 @@
         <div>
           <p>
             <span class="description-titles">Status:</span>
-            <span> {{getStatus()}}</span>
+            <span> {{getStatusName(getStatusValue())}}</span>
           </p>
           <p><span class="description-titles">{{ 'user-books.browse-books.book-label' | translate}}:</span>
             <span> {{getLabel()}}</span>
@@ -42,7 +42,7 @@
       </div>
     </div>
     <div class="edit-button">
-      <button mat-mini-fab color="primary" [disabled]="getStatus() !== 'Dostępna'"
+      <button mat-mini-fab color="primary" [disabled]="getStatusValue() !== 0"
               (click)="goToEditBook()">
         <mat-icon>edit</mat-icon>
       </button>

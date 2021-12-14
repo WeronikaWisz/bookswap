@@ -19,13 +19,9 @@ import {UserBookService} from "../../../services/user-book.service";
 import {BookData} from "../../../models/user-books/BookData";
 import {EBookLabel} from "../../../enums/EBookLabel";
 import {TranslateService} from "@ngx-translate/core";
+import {Label} from "../../../models/user-books/Label";
 
 const moment = _rollupMoment || _moment;
-
-export interface Label{
-  label: EBookLabel,
-  name: string
-}
 
 @Component({
   selector: 'app-add-book',
@@ -55,10 +51,8 @@ export class AddBookComponent implements OnInit {
   allCategories: string[] = [];
   file: File | null = null;
   fileName: string = '';
-  imageUrl = '';
 
-  labels: Label[] = [{label: EBookLabel.PERMANENT_SWAP, name: "Wymiana stała"},
-    {label: EBookLabel.TEMPORARY_SWAP, name: "Wymiana tymczasowa"}]
+  labels: Label[] = [];
 
   @ViewChild('categoryInput') categoryInput!: ElementRef<HTMLInputElement>;
 
@@ -80,6 +74,15 @@ export class AddBookComponent implements OnInit {
       startWith(null),
       map((category: string | null) => (category ? this._filter(category) : this.allCategories.slice())),
     );
+    this.labels = [
+      {
+        label: EBookLabel.PERMANENT_SWAP,
+        name: this.getTranslateMessage("user-books.add-book.label-permanent")
+      },
+      {
+        label: EBookLabel.TEMPORARY_SWAP,
+        name: this.getTranslateMessage("user-books.add-book.label-temporary")
+      }];
   }
 
   ngOnInit(): void {
@@ -117,14 +120,10 @@ export class AddBookComponent implements OnInit {
           if (params.id){
             this.isEditBookView = true;
             this.bookId = params.id;
-            this.translate.get("user-books.add-book.edit-title").subscribe(data =>
-              this.formTitle = data
-            );
+            this.formTitle = this.getTranslateMessage("user-books.add-book.edit-title")
             this.getBook(params.id)
           } else {
-            this.translate.get("user-books.add-book.add-title").subscribe(data =>
-              this.formTitle = data
-            );
+            this.formTitle = this.getTranslateMessage("user-books.add-book.add-title")
           }
         }
       );
@@ -136,13 +135,9 @@ export class AddBookComponent implements OnInit {
         console.log(data)
         this.fillFormWithEditedBook(data);
       }, err => {
-        let message = "";
-        this.translate.get("user-books.add-book.load-error").subscribe(data =>
-          message = data
-        );
         Swal.fire({
           position: 'top-end',
-          title: message,
+          title: this.getTranslateMessage("user-books.add-book.load-error"),
           text: err.error.message,
           icon: 'error',
           showConfirmButton: false
@@ -226,7 +221,6 @@ export class AddBookComponent implements OnInit {
   }
 
   onSubmit(): void {
-    let message = ""
     this.userBookService.addBook({
       "title": this.form.get('title')?.value,
       "author": this.form.get('author')?.value,
@@ -238,24 +232,18 @@ export class AddBookComponent implements OnInit {
     }, this.file).subscribe(
       data => {
         console.log(data);
-        this.translate.get("user-books.add-book.add-success").subscribe(data =>
-          message = data
-        );
         Swal.fire({
           position: 'top-end',
-          title: message,
+          title: this.getTranslateMessage("user-books.add-book.add-success"),
           icon: 'success',
           showConfirmButton: false
         })
         this.clearFields();
       },
       err => {
-        this.translate.get("user-books.add-book.add-error").subscribe(data =>
-          message = data
-        );
         Swal.fire({
           position: 'top-end',
-          title: message,
+          title: this.getTranslateMessage("user-books.add-book.add-error"),
           text: err.error.message,
           icon: 'error',
           showConfirmButton: false
@@ -265,7 +253,6 @@ export class AddBookComponent implements OnInit {
   }
 
   updateBook(){
-    let message = "";
     this.userBookService.updateBook({
       "title": this.form.get('title')?.value,
       "author": this.form.get('author')?.value,
@@ -278,23 +265,17 @@ export class AddBookComponent implements OnInit {
       data => {
         console.log(data);
         this.form.markAsPristine();
-        this.translate.get("user-books.add-book.update-success").subscribe(data =>
-          message = data
-        );
         Swal.fire({
           position: 'top-end',
-          title: message,
+          title: this.getTranslateMessage("user-books.add-book.update-success"),
           icon: 'success',
           showConfirmButton: false
         })
       },
       err => {
-        this.translate.get("user-books.add-book.update-error").subscribe(data =>
-          message = data
-        );
         Swal.fire({
           position: 'top-end',
-          title: message,
+          title: this.getTranslateMessage("user-books.add-book.update-error"),
           text: err.error.message,
           icon: 'error',
           showConfirmButton: false
@@ -304,7 +285,6 @@ export class AddBookComponent implements OnInit {
   }
 
   clearFields(){
-    console.log("cleaned")
     this.file = null;
     this.fileName = '';
     this.categories = [];
@@ -326,6 +306,14 @@ export class AddBookComponent implements OnInit {
 
   reloadPage(): void {
     window.location.reload();
+  }
+
+  getTranslateMessage(key: string): string{
+    let message = "";
+    this.translate.get(key).subscribe(data =>
+      message = data
+    );
+    return message;
   }
 
 }

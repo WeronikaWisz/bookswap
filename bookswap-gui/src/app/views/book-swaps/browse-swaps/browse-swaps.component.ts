@@ -48,14 +48,10 @@ export class BrowseSwapsComponent implements OnInit {
           console.log(params);
           this.isPermanentSwaps = params.label === 'permanent';
           if(!this.isPermanentSwaps){
-            this.translate.get("book-swaps.browse-swaps.temporary-title").subscribe(data =>
-              this.title = data
-            );
+            this.title = this.getTranslateMessage("book-swaps.browse-swaps.temporary-title")
             this.label = EBookLabel.TEMPORARY_SWAP
           } else {
-            this.translate.get("book-swaps.browse-swaps.permanent-title").subscribe(data =>
-              this.title = data
-            );
+            this.title = this.getTranslateMessage("book-swaps.browse-swaps.permanent-title")
             this.label = EBookLabel.PERMANENT_SWAP
           }
           this.getSwaps();
@@ -83,10 +79,10 @@ export class BrowseSwapsComponent implements OnInit {
   getBookLabel(label: EBookLabel): string{
     let labelS = label.valueOf() as unknown as string;
     if(labelS === EBookLabel[EBookLabel.PERMANENT_SWAP]){
-      return 'Stała'
+      return this.getTranslateMessage("book-swaps.browse-swaps.label-permanent-short")
     }
     if(labelS === EBookLabel[EBookLabel.TEMPORARY_SWAP]){
-      return 'Tymczasowa'
+      return this.getTranslateMessage("book-swaps.browse-swaps.label-permanent-short")
     }
     return ''
   }
@@ -94,44 +90,44 @@ export class BrowseSwapsComponent implements OnInit {
   getSwapStatus(status: ESwapStatus, ifCurrentUserConfirmed: boolean, statusForCurrentUserBook: boolean, label: EBookLabel) {
     let statusS = status.valueOf() as unknown as string;
     if(statusS === ESwapStatus[ESwapStatus.IN_PROGRESS]){
-      return 'Oczekuje na odbiór'
+      return this.getTranslateMessage("book-swaps.browse-swaps.waiting-receive")
     } else if(statusS === ESwapStatus[ESwapStatus.BOOK_1_CONFIRMED] || statusS === ESwapStatus[ESwapStatus.BOOK_2_CONFIRMED]){
       if(statusForCurrentUserBook){
         if(ifCurrentUserConfirmed){
-          return 'Oczekuje na odiór'
+          return this.getTranslateMessage("book-swaps.browse-swaps.waiting-receive")
         } else {
-          return 'Odebrana'
+          return this.getTranslateMessage("book-swaps.browse-swaps.received")
         }
       } else {
         if(ifCurrentUserConfirmed){
-          return 'Odebrana'
+          return this.getTranslateMessage("book-swaps.browse-swaps.received")
         } else {
-          return 'Oczekuje na odiór'
+          return this.getTranslateMessage("book-swaps.browse-swaps.waiting-receive")
         }
       }
     } else if(statusS === ESwapStatus[ESwapStatus.BOTH_CONFIRMED]){
-      return 'Oczekuje na zwrot'
+      return this.getTranslateMessage("book-swaps.browse-swaps.waiting-return")
     } else if(statusS === ESwapStatus[ESwapStatus.BOOK_1_RETURNED] || statusS === ESwapStatus[ESwapStatus.BOOK_2_RETURNED]){
       if(statusForCurrentUserBook){
         if(ifCurrentUserConfirmed){
-          return 'Zwrócona'
+          return this.getTranslateMessage("book-swaps.browse-swaps.returned")
         } else {
-          return 'Oczekuje na zwrot'
+          return this.getTranslateMessage("book-swaps.browse-swaps.waiting-return")
         }
       } else {
         if(ifCurrentUserConfirmed){
-          return 'Oczekuje na zwrot'
+          return this.getTranslateMessage("book-swaps.browse-swaps.waiting-return")
         } else {
-          return 'Zwrócona'
+          return this.getTranslateMessage("book-swaps.browse-swaps.returned")
         }
       }
     } else {
       let labelS = label.valueOf() as unknown as string;
       if(labelS === EBookLabel[EBookLabel.PERMANENT_SWAP]){
-        return 'Odebrana'
+        return this.getTranslateMessage("book-swaps.browse-swaps.received")
       }
       if(labelS === EBookLabel[EBookLabel.TEMPORARY_SWAP]){
-        return 'Zwrócona'
+        return this.getTranslateMessage("book-swaps.browse-swaps.returned")
       }
       return ''
     }
@@ -168,13 +164,9 @@ export class BrowseSwapsComponent implements OnInit {
           }
         },
         err => {
-          let message = ""
-          this.translate.get("book-swaps.browse-swaps.load-swap-error").subscribe(data =>
-            message = data
-          );
           Swal.fire({
             position: 'top-end',
-            title: message,
+            title: this.getTranslateMessage("book-swaps.browse-swaps.load-swap-error"),
             text: err.error.message,
             icon: 'error',
             showConfirmButton: false
@@ -197,19 +189,23 @@ export class BrowseSwapsComponent implements OnInit {
           }
         },
         err => {
-          let message = ""
-          this.translate.get("book-swaps.browse-swaps.confirm-error").subscribe(data =>
-            message = data
-          );
           Swal.fire({
             position: 'top-end',
-            title: message,
+            title: this.getTranslateMessage("book-swaps.browse-swaps.confirm-error"),
             text: err.error.message,
             icon: 'error',
             showConfirmButton: false
           })
         }
       )
+  }
+
+  getTranslateMessage(key: string): string{
+    let message = "";
+    this.translate.get(key).subscribe(data =>
+      message = data
+    );
+    return message;
   }
 
 }

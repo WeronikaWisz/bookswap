@@ -101,13 +101,9 @@ export class RegisterComponent implements OnInit {
         } else if(err.error.message.includes("Nazwa") || err.error.message.includes("Username")){
           this.form.controls['formArray'].get([2])?.get('username')?.setErrors({'incorrect': true})
         }
-        let message = "";
-        this.translate.get("manage-users.register.register-error").subscribe(data =>
-          message = data
-        );
         Swal.fire({
           position: 'top-end',
-          title: message,
+          title: this.getTranslateMessage("manage-users.register.register-error"),
           text: err.error.message,
           icon: 'error',
           showConfirmButton: false
@@ -117,18 +113,10 @@ export class RegisterComponent implements OnInit {
   }
 
   showSuccess(): void {
-    let messageTitle = "";
-    this.translate.get("manage-users.register.register-success").subscribe(data =>
-      messageTitle = data
-    );
-    let messageText = "";
-    this.translate.get("manage-users.register.register-success-can-login").subscribe(data =>
-      messageText = data
-    );
     Swal.fire({
       position: 'top-end',
-      title: messageTitle,
-      text: messageText,
+      title: this.getTranslateMessage("manage-users.register.register-success"),
+      text: this.getTranslateMessage("manage-users.register.register-success-can-login"),
       icon: 'success',
       showConfirmButton: false,
       timer: 6000
@@ -137,6 +125,14 @@ export class RegisterComponent implements OnInit {
 
   reloadPage(): void {
     window.location.reload();
+  }
+
+  getTranslateMessage(key: string): string{
+    let message = "";
+    this.translate.get(key).subscribe(data =>
+      message = data
+    );
+    return message;
   }
 
 }

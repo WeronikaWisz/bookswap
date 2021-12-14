@@ -118,7 +118,9 @@
       "add-success": "Pomyśnie dodano książkę",
       "add-error": "Dodawanie nie powiodło się",
       "update-success": "Pomyśnie zaktualizowano książkę",
-      "update-error": "Aktualizacja nie powiodła się"
+      "update-error": "Aktualizacja nie powiodła się",
+      "label-permanent": "Wymiana stała",
+      "label-temporary": "Wymiana tymczasowa"
     },
     "browse-books": {
       "my-books": "Moje książki",
@@ -145,7 +147,14 @@
       "description": "Opis",
       "year": "Rok publikacji",
       "load-book-error": "Nie można załadować informacji o książce",
-      "load-error": "Nie można załadować książek"
+      "load-error": "Nie można załadować książek",
+      "label-permanent": "Wymiana stała",
+      "label-temporary": "Wymiana tymczasowa",
+      "label-permanent-short": "Stała",
+      "label-temporary-short": "Tymczasowa",
+      "status-available": "Dostępna",
+      "status-permanent": "Wymieniona",
+      "status-temporary": "Na wymianie tymczasowej"
     }
   },
   "book-offers": {
@@ -190,7 +199,12 @@
       "swap-error": "Nie można wymienić wybranych książek",
       "load-book-data-error": "Nie można załadować aktualnych informacji o książce",
       "error-swapped-title": "Książka przed chwilą została wymieniona",
-      "error-swapped-text": "Nie jest możliwe złożenie propozycji"
+      "error-swapped-text": "Nie jest możliwe złożenie propozycji",
+      "label-permanent-short": "Stała",
+      "label-temporary-short": "Tymczasowa",
+      "status-available": "Dostępna",
+      "status-permanent": "Wymieniona",
+      "status-temporary": "Na wymianie tymczasowej"
     },
     "browse-swap-requests": {
       "offer-status": "Status propozycji",
@@ -213,7 +227,18 @@
       "go-to-history": "Możesz znaleźć ją w propozycjach historycznych",
       "cancel-error": "Nie można odwołać propozycji",
       "deny-success": "Pomyśnie odrzucono propozycję",
-      "deny-error": "Nie można odrzucić propozycji"
+      "deny-error": "Nie można odrzucić propozycji",
+      "label-permanent": "Wymiana stała",
+      "label-temporary": "Wymiana tymczasowa",
+      "accepted": "Zaakceptowana",
+      "denied": "Odrzucona",
+      "canceled": "Odwołana",
+      "waiting-status": "Oczekująca",
+      "label-permanent-short": "Stała",
+      "label-temporary-short": "Tymczasowa",
+      "status-available": "Dostępna",
+      "status-permanent": "Wymieniona",
+      "status-temporary": "Na wymianie tymczasowej"
     }
   },
   "book-swaps": {
@@ -237,7 +262,13 @@
       "temporary-title": "Wymiany tymczasowe",
       "load-swap-error": "Nie można załadować wymian",
       "confirm-error": "Nie można zatwierdzić odbioru",
-      "load-user-data-error": "Pobranie danych użytkownika nie powiodło się"
+      "load-user-data-error": "Pobranie danych użytkownika nie powiodło się",
+      "label-permanent-short": "Stała",
+      "label-temporary-short": "Tymczasowa",
+      "waiting-receive": "Oczekuje na odbiór",
+      "received": "Odebrana",
+      "waiting-return": "Oczekuje na zwrot",
+      "returned": "Zwrócona"
     }
   },
   "nav": {

@@ -28,13 +28,9 @@ export class UserAddressDialogComponent implements OnInit {
         console.log(data)
         this.profileData = data;
       }, err => {
-        let message = ""
-        this.translate.get("book-swaps.browse-swaps.load-user-data-error").subscribe(data =>
-          message = data
-        );
         Swal.fire({
           position: 'top-end',
-          title: message,
+          title: this.getTranslateMessage("book-swaps.browse-swaps.load-user-data-error"),
           text: err.error.message,
           icon: 'error',
           showConfirmButton: false
@@ -45,6 +41,14 @@ export class UserAddressDialogComponent implements OnInit {
 
   onNoClick(){
     this.dialogRef.close();
+  }
+
+  getTranslateMessage(key: string): string{
+    let message = "";
+    this.translate.get(key).subscribe(data =>
+      message = data
+    );
+    return message;
   }
 
 }

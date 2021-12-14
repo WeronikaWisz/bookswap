@@ -118,7 +118,9 @@
       "add-success": "Book has been added successfully",
       "add-error": "Adding failed",
       "update-success": "Book has been updated successfully",
-      "update-error": "Update has failed"
+      "update-error": "Update has failed",
+      "label-permanent": "Permanent swap",
+      "label-temporary": "Temporary swap"
     },
     "browse-books": {
       "my-books": "My books",
@@ -145,7 +147,14 @@
       "description": "Description",
       "year": "Year of publication",
       "load-book-error": "Book information cannot be loaded",
-      "load-error": "Books cannot be loaded"
+      "load-error": "Books cannot be loaded",
+      "label-permanent": "Permanent swap",
+      "label-temporary": "Temporary swap",
+      "label-permanent-short": "Permanent",
+      "label-temporary-short": "Temporary",
+      "status-available": "Available",
+      "status-permanent": "Swapped",
+      "status-temporary": "Borrowed"
     }
   },
   "book-offers": {
@@ -190,7 +199,12 @@
       "swap-error": "Selected books cannot be swapped",
       "load-book-data-error": "Current book information cannot be loaded",
       "error-swapped-title": "The book has just been swapped",
-      "error-swapped-text": "Request cannot be send"
+      "error-swapped-text": "Request cannot be send",
+      "label-permanent-short": "Permanent",
+      "label-temporary-short": "Temporary",
+      "status-available": "Available",
+      "status-permanent": "Swapped",
+      "status-temporary": "Borrowed"
     },
     "browse-swap-requests": {
       "offer-status": "Request status",
@@ -213,7 +227,18 @@
       "go-to-history": "You can find it in historical requests",
       "cancel-error": "cannot cancel request",
       "deny-success": "Request successfully denied",
-      "deny-error": "Cannot deny request"
+      "deny-error": "Cannot deny request",
+      "label-permanent": "Permanent swap",
+      "label-temporary": "Temporary swap",
+      "accepted": "Accepted",
+      "denied": "Denied",
+      "canceled": "Canceled",
+      "waiting-status": "Waiting",
+      "label-permanent-short": "Permanent",
+      "label-temporary-short": "Temporary",
+      "status-available": "Available",
+      "status-permanent": "Swapped",
+      "status-temporary": "Borrowed"
     }
   },
   "book-swaps": {
@@ -237,7 +262,13 @@
       "temporary-title": "Temporary swaps",
       "load-swap-error": "Cannot load swaps",
       "confirm-error": "Cannot confirm delivery",
-      "load-user-data-error": "Retrieving user data has failed"
+      "load-user-data-error": "Retrieving user data has failed",
+      "label-permanent-short": "Permanent",
+      "label-temporary-short": "Temporary",
+      "waiting-receive": "Waiting for receive",
+      "received": "Received",
+      "waiting-return": "Waiting for return",
+      "returned": "Returned"
     }
   },
   "nav": {

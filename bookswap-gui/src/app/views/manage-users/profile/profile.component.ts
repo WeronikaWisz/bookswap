@@ -37,13 +37,9 @@ export class ProfileComponent implements OnInit {
         console.log(data)
         this.profileData = data;
       }, err => {
-        let message = "";
-        this.translate.get("manage-users.profile.load-data-error").subscribe(data =>
-          message = data
-        );
         Swal.fire({
           position: 'top-end',
-          title: message,
+          title: this.getTranslateMessage("manage-users.profile.load-data-error"),
           text: err.error.message,
           icon: 'error',
           showConfirmButton: false
@@ -86,6 +82,14 @@ export class ProfileComponent implements OnInit {
 
   reloadPage(): void {
     window.location.reload();
+  }
+
+  getTranslateMessage(key: string): string{
+    let message = "";
+    this.translate.get(key).subscribe(data =>
+      message = data
+    );
+    return message;
   }
 
 }

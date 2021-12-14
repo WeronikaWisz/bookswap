@@ -48,7 +48,15 @@
         *ngIf="(isHandset$ | async) && isLoggedIn">
         <mat-icon aria-label="Side nav toggle icon">menu</mat-icon>
       </button>
-      <span>Bookswap</span>
+      <span>BookSwap</span>
+      <button mat-button [matMenuTriggerFor]="intern">
+        <mat-icon>language</mat-icon> {{translate.currentLang}}
+      </button>
+      <mat-menu #intern="matMenu">
+        <button (click)="translate.use(lang)" *ngFor="let lang of translate.getLangs()" mat-menu-item>
+          {{lang}}
+        </button>
+      </mat-menu>
       <span class="spacer"></span>
       <span *ngIf="(isHandset$ | async) === false && isLoggedIn">
         <button mat-button [matMenuTriggerFor]="books">{{ 'nav.my-books-l' | translate}}</button>
@@ -87,8 +95,8 @@
         </mat-menu>
       </span>
       <button mat-button [matMenuTriggerFor]="profile" *ngIf="isLoggedIn">
-        <mat-icon>person</mat-icon>
         <span class="user-info">{{username}}</span>
+        <mat-icon>person</mat-icon>
       </button>
       <mat-menu #profile="matMenu">
         <button mat-menu-item routerLink="profile">
@@ -100,14 +108,6 @@
       </mat-menu>
       <button mat-button *ngIf="!isLoggedIn" routerLink="login">{{ 'nav.login' | translate}}</button>
       <button mat-button *ngIf="!isLoggedIn" routerLink="register">{{ 'nav.register' | translate}}</button>
-      <button mat-button [matMenuTriggerFor]="intern">
-        <mat-icon>language</mat-icon> {{translate.currentLang}}
-      </button>
-      <mat-menu #intern="matMenu">
-        <button (click)="translate.use(lang)" *ngFor="let lang of translate.getLangs()" mat-menu-item>
-          {{lang}}
-        </button>
-      </mat-menu>
     </mat-toolbar>
     <ng-content></ng-content>
     <div class="content">
