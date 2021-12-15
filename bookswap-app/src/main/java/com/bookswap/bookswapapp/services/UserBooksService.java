@@ -1,9 +1,6 @@
 package com.bookswap.bookswapapp.services;
 
-import com.bookswap.bookswapapp.dtos.userbooks.BookData;
-import com.bookswap.bookswapapp.dtos.userbooks.BookFilter;
-import com.bookswap.bookswapapp.dtos.userbooks.BookListItem;
-import com.bookswap.bookswapapp.dtos.userbooks.FilterHints;
+import com.bookswap.bookswapapp.dtos.userbooks.*;
 import com.bookswap.bookswapapp.enums.EBookLabel;
 import com.bookswap.bookswapapp.enums.EBookStatus;
 import com.bookswap.bookswapapp.exception.ApiExpectationFailedException;
@@ -134,7 +131,7 @@ public class UserBooksService {
         );
     }
 
-    public List<BookListItem> filterBooks(BookFilter bookFilter){
+    public BooksResponse filterBooks(BookFilter bookFilter, Integer page, Integer size){
         boolean isLabelNull = (bookFilter.getLabel() == null);
         boolean isStatusNull = (bookFilter.getStatus() == null);
         List<Book> bookList;
@@ -174,8 +171,17 @@ public class UserBooksService {
             bookList = bookList.stream().filter(book -> book.getYearOfPublication() <= Integer.parseInt(bookFilter.getYearOfPublicationTo()))
                     .collect(Collectors.toList());
         }
-        return bookListToBookListItem(bookList
-                .stream().sorted(Comparator.comparing(Book::getCreationDate).reversed()).collect(Collectors.toList()));
+        int total = bookList.size();
+        int start = page * size;
+        int end = Math.min(start + size, total);
+        BooksResponse booksResponse = new BooksResponse();
+        if(end >= start){
+            booksResponse.setBooksList(bookListToBookListItem(bookList.stream().
+                    sorted(Comparator.comparing(Book::getCreationDate).reversed()).collect(Collectors.toList()))
+                    .subList(start, end));
+        }
+        booksResponse.setTotalBooksLength(total);
+        return booksResponse;
     }
 
     public FilterHints loadFilterHints(){

@@ -12,22 +12,21 @@ import java.util.Objects;
 @Getter
 @Setter
 @NoArgsConstructor
-public class OffersResponse implements Serializable {
-    private List<OfferListItem> offersList = new ArrayList<>();
-    private Long availableOffersCount;
-    private Integer totalOffersLength;
+public class RequestsResponse implements Serializable {
+    private List<SwapRequestListItem> requestsList = new ArrayList<>();
+    private Integer totalRequestsLength;
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        OffersResponse that = (OffersResponse) o;
-        return Objects.equals(offersList, that.offersList)
-                && Objects.equals(availableOffersCount, that.availableOffersCount);
+        RequestsResponse that = (RequestsResponse) o;
+        return Objects.equals(requestsList, that.requestsList)
+                && Objects.equals(totalRequestsLength, that.totalRequestsLength);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(offersList, availableOffersCount);
+        return Objects.hash(requestsList, totalRequestsLength);
     }
 }

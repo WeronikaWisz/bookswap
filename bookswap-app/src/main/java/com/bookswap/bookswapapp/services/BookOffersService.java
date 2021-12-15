@@ -47,7 +47,7 @@ public class BookOffersService {
         this.swapRepository = swapRepository;
     }
 
-    public OffersResponse filterOffers(OfferFilter offerFilter){
+    public OffersResponse filterOffers(OfferFilter offerFilter, Integer page, Integer size){
         User user = getCurrentUser();
         List<Book> offerList = bookRepository
                 .findBookByStatusAndLabelAndUserIsNot(EBookStatus.AVAILABLE, offerFilter.getLabel(), user)
@@ -89,12 +89,19 @@ public class BookOffersService {
             offerList = offerList.stream().filter(book ->
                     FilterHelper.localizationMatches(offerFilter.getLocalization(), book)).collect(Collectors.toList());
         }
+        int total = offerList.size();
+        int start = page * size;
+        int end = Math.min(start + size, total);
         OffersResponse offersResponse = new OffersResponse();
-        offersResponse.setOffersList(offerListToOfferListItem(offerList.stream()
-                .sorted(Comparator.comparing(Book::getCreationDate).reversed()).collect(Collectors.toList())));
+        if(end >= start) {
+            offersResponse.setOffersList(offerListToOfferListItem(offerList.stream()
+                    .sorted(Comparator.comparing(Book::getCreationDate).reversed()).collect(Collectors.toList())
+                    .subList(start, end)));
+        }
         long requestsCount = swapRequestRepository.countUserOfferRequest(offerFilter.getLabel(), user);
         long booksCount = bookRepository.countUserAvailableBooks(offerFilter.getLabel(), user);
         offersResponse.setAvailableOffersCount(booksCount - requestsCount);
+        offersResponse.setTotalOffersLength(total);
         return offersResponse;
     }
 
@@ -215,7 +222,7 @@ public class BookOffersService {
     }
 
     @Transactional
-    public List<SwapRequestListItem> getSentRequests(SwapRequestFilter swapRequestFilter){
+    public RequestsResponse getSentRequests(SwapRequestFilter swapRequestFilter, Integer page, Integer size){
         List<SwapRequest> swapRequests = swapRequestRepository.findByUserAndStatusIn(
                 getCurrentUser(), swapRequestFilter.getRequestStatus()
         ).orElse(Collections.emptyList());
@@ -224,12 +231,11 @@ public class BookOffersService {
                     swapRequest -> swapRequest.getBook().getLabel().equals(swapRequestFilter.getBookLabel()))
                     .collect(Collectors.toList());
         }
-        return getRequestListItems(swapRequests.stream()
-                .sorted(Comparator.comparing(SwapRequest::getCreationDate).reversed()).collect(Collectors.toList()));
+        return getRequestsResponse(swapRequests, page, size);
     }
 
     @Transactional
-    public List<SwapRequestListItem> getReceivedRequests(SwapRequestFilter swapRequestFilter){
+    public RequestsResponse getReceivedRequests(SwapRequestFilter swapRequestFilter, Integer page, Integer size){
         List<SwapRequest> swapRequests = swapRequestRepository.findByBook_UserAndStatusIn(
                 getCurrentUser(), swapRequestFilter.getRequestStatus()
         ).orElse(Collections.emptyList());
@@ -238,8 +244,21 @@ public class BookOffersService {
                             swapRequest -> swapRequest.getBook().getLabel().equals(swapRequestFilter.getBookLabel()))
                     .collect(Collectors.toList());
         }
-        return getRequestListItems(swapRequests.stream()
-                .sorted(Comparator.comparing(SwapRequest::getCreationDate).reversed()).collect(Collectors.toList()));
+        return getRequestsResponse(swapRequests, page, size);
+    }
+
+    private RequestsResponse getRequestsResponse(List<SwapRequest> swapRequests, Integer page, Integer size){
+        int total = swapRequests.size();
+        int start = page * size;
+        int end = Math.min(start + size, total);
+        RequestsResponse requestsResponse = new RequestsResponse();
+        if(end >= start){
+            requestsResponse.setRequestsList(getRequestListItems(swapRequests.stream()
+                    .sorted(Comparator.comparing(SwapRequest::getCreationDate).reversed()).collect(Collectors.toList()))
+                    .subList(start, end));
+        }
+        requestsResponse.setTotalRequestsLength(total);
+        return requestsResponse;
     }
 
     @Transactional

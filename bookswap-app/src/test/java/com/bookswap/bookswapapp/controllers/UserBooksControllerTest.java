@@ -174,8 +174,6 @@ class UserBooksControllerTest {
         mockMvc.perform(get("/user-books/book-details/{bookId}", bookId)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
-//                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-//                .andExpect(content().string(objectMapper.writeValueAsString(bookDetails)));
 
         verify(testUserBooksService).getBook(bookId);
     }
@@ -201,18 +199,18 @@ class UserBooksControllerTest {
     @WithMockUser
     void testFilterBooks() throws Exception {
         BookFilter bookFilter = new BookFilter();
-        List<BookListItem> bookItemList = new ArrayList<>();
+        BooksResponse booksResponse = new BooksResponse();
 
-        when(testUserBooksService.filterBooks(bookFilter)).thenReturn(bookItemList);
+        when(testUserBooksService.filterBooks(bookFilter, 0, 10)).thenReturn(booksResponse);
 
         mockMvc.perform(post("/user-books/books/filter")
                         .content(objectMapper.writeValueAsString(bookFilter))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(content().string(objectMapper.writeValueAsString(bookItemList)));
+                .andExpect(content().string(objectMapper.writeValueAsString(booksResponse)));
 
-        verify(testUserBooksService).filterBooks(bookFilter);
+        verify(testUserBooksService).filterBooks(bookFilter, 0, 10);
     }
 
     @Test

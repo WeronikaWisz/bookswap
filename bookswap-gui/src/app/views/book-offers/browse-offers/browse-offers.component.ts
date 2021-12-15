@@ -10,6 +10,7 @@ import {BookOffersService} from "../../../services/book-offers.service";
 import {FilterOffersDialogComponent} from "./filter-offers-dialog/filter-offers-dialog.component";
 import {OfferDetailsDialogComponent} from "./offer-details-dialog/offer-details-dialog.component";
 import {TranslateService} from "@ngx-translate/core";
+import {PageEvent} from "@angular/material/paginator";
 
 @Component({
   selector: 'app-browse-offers',
@@ -39,6 +40,11 @@ export class BrowseOffersComponent implements OnInit {
   selectedTabIndex = 0;
 
   emptySearchList = false;
+
+  totalOffersLength = 0;
+  pageSize = 10;
+  pageIndex = 0;
+  pageSizeOptions: number[] = [5, 10, 20];
 
   constructor(public dialog: MatDialog, private router: Router, private route: ActivatedRoute,
               private translate: TranslateService, private bookOffersService : BookOffersService,
@@ -131,6 +137,7 @@ export class BrowseOffersComponent implements OnInit {
       console.log(result);
       if(result) {
         this.offerFilter = result;
+        this.pageIndex = 0;
         this.loadFilterOffers();
       }
     });
@@ -150,12 +157,13 @@ export class BrowseOffersComponent implements OnInit {
       label: this.offerFilter.label,
       localization: this.offerFilter.localization,
       owners: this.offerFilter.owners
-    })
+    }, this.pageIndex, this.pageSize)
       .subscribe(
         data => {
           console.log(data);
           this.offers = data.offersList;
           this.availableOffersCount = data.availableOffersCount;
+          this.totalOffersLength = data.totalOffersLength;
           if(this.offers.length == 0){
             this.emptySearchList = true;
           }
@@ -179,6 +187,7 @@ export class BrowseOffersComponent implements OnInit {
   onTabChange(event: any){
     console.log(event);
     this.offerFilter.label = event.index;
+    this.pageIndex = 0;
     this.loadFilterOffers();
   }
 
@@ -189,6 +198,13 @@ export class BrowseOffersComponent implements OnInit {
       message = data
     );
     return message;
+  }
+
+  pageChanged(event: PageEvent) {
+    console.log({ event });
+    this.pageSize = event.pageSize;
+    this.pageIndex = event.pageIndex;
+    this.loadFilterOffers();
   }
 
 }

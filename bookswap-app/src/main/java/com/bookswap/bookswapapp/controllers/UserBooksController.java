@@ -102,9 +102,11 @@ public class UserBooksController {
 
     @PostMapping(path = "/books/filter")
     @PreAuthorize("hasRole('USER')")
-    public ResponseEntity<?> filterBooks(@RequestBody BookFilter bookFilter) {
-        List<BookListItem> bookItemList = userBooksService.filterBooks(bookFilter);
-        return ResponseEntity.ok(bookItemList);
+    public ResponseEntity<?> filterBooks(@RequestBody BookFilter bookFilter,
+                                         @RequestParam(defaultValue = "0") int page,
+                                         @RequestParam(defaultValue = "10") int size) {
+        BooksResponse booksResponse = userBooksService.filterBooks(bookFilter, page, size);
+        return ResponseEntity.ok(booksResponse);
     }
 
     @GetMapping(path = "/filter-hints")

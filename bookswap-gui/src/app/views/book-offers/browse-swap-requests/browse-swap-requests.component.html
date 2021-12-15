@@ -31,6 +31,12 @@
       <ng-template *ngTemplateOutlet="bookListTemplate; context: {$implicit: swapRequests}"></ng-template>
     </mat-tab>
   </mat-tab-group>
+  <mat-paginator [length]="totalRequestsLength"
+                 [pageSize]="pageSize"
+                 [pageIndex]="pageIndex"
+                 [pageSizeOptions]="pageSizeOptions"
+                 (page)="pageChanged($event)">
+  </mat-paginator>
 </div>
 
 <ng-template #bookListTemplate let-swapRequests>
@@ -70,7 +76,7 @@
               </p>
             </div>
             <div class="book-image">
-            <img *ngIf="swapRequest.bookImage != null" mat-card-image 
+            <img *ngIf="swapRequest.bookImage != null" mat-card-image
                  [src]="'data:image/jpeg;base64,'+swapRequest.bookImage"
                  alt="{{ 'book-offers.browse-swap-requests.image-alt' | translate}}" >
             <img *ngIf="swapRequest.bookImage == null" mat-card-image src="../../../../assets/images/brak_obrazka.png"

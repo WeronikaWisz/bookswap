@@ -2,6 +2,8 @@ package com.bookswap.bookswapapp.services;
 
 import com.bookswap.bookswapapp.dtos.bookswaps.SwapFilter;
 import com.bookswap.bookswapapp.dtos.bookswaps.SwapListItem;
+import com.bookswap.bookswapapp.dtos.bookswaps.SwapsResponse;
+import com.bookswap.bookswapapp.dtos.userbooks.BooksResponse;
 import com.bookswap.bookswapapp.enums.EBookLabel;
 import com.bookswap.bookswapapp.enums.EBookStatus;
 import com.bookswap.bookswapapp.enums.ESwapStatus;
@@ -41,7 +43,7 @@ public class BookSwapsService {
     }
 
     @Transactional
-    public List<SwapListItem> getSwaps(SwapFilter swapFilter){
+    public SwapsResponse getSwaps(SwapFilter swapFilter, Integer page, Integer size){
         List<SwapListItem> swapListItems = new ArrayList<>();
         User user = getCurrentUser();
         List<Swap> swaps = swapRepository.findUserSwaps(swapFilter.getSwapStatus(),
@@ -81,7 +83,15 @@ public class BookSwapsService {
             }
             swapListItems.add(swapListItem);
         }
-        return swapListItems;
+        int total = swapListItems.size();
+        int start = page * size;
+        int end = Math.min(start + size, total);
+        SwapsResponse swapsResponse = new SwapsResponse();
+        if(end >= start){
+            swapsResponse.setSwapsList(swapListItems.subList(start, end));
+        }
+        swapsResponse.setTotalSwapsLength(total);
+        return swapsResponse;
     }
 
     public User geUserAddressByUsername(String username){

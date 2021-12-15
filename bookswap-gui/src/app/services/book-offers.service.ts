@@ -8,6 +8,7 @@ import {OffersResponse} from "../models/book-offers/OffersResponse";
 import {BooksForSwap} from "../models/book-offers/BooksForSwap";
 import {SwapRequestListItem} from "../models/book-offers/SwapRequestListItem";
 import {SwapRequestFilter} from "../models/book-offers/SwapRequestFilter";
+import {RequestsResponse} from "../models/book-offers/RequestsResponse";
 
 const BOOK_OFFERS_API = 'http://localhost:8080/book-offers/';
 
@@ -26,8 +27,8 @@ export class BookOffersService {
     return this.http.get<OfferDetails>(BOOK_OFFERS_API + 'offer-details/' + offerId);
   }
 
-  loadFilteredOffers(offerFilter: OfferFilter): Observable<OffersResponse>{
-    return this.http.post<OffersResponse>(BOOK_OFFERS_API + 'offers/filter', JSON.stringify(offerFilter), httpOptions);
+  loadFilteredOffers(offerFilter: OfferFilter, pageIndex: number, pageSize: number): Observable<OffersResponse>{
+    return this.http.post<OffersResponse>(BOOK_OFFERS_API + `offers/filter?page=${pageIndex}&size=${pageSize}`, JSON.stringify(offerFilter), httpOptions);
   }
 
   loadHintsForFilter(): Observable<FilterHints>{
@@ -38,14 +39,14 @@ export class BookOffersService {
     return this.http.post(BOOK_OFFERS_API + 'swap-request', JSON.stringify(bookForSwap), httpOptions);
   }
 
-  getSentRequests(swapRequestFilter: SwapRequestFilter): Observable<SwapRequestListItem[]>{
+  getSentRequests(swapRequestFilter: SwapRequestFilter, pageIndex: number, pageSize: number): Observable<RequestsResponse>{
     console.log(swapRequestFilter)
-    return this.http.post<SwapRequestListItem[]>(BOOK_OFFERS_API + 'sent-requests', JSON.stringify(swapRequestFilter), httpOptions);
+    return this.http.post<RequestsResponse>(BOOK_OFFERS_API + `sent-requests?page=${pageIndex}&size=${pageSize}`, JSON.stringify(swapRequestFilter), httpOptions);
   }
 
-  getReceivedRequests(swapRequestFilter: SwapRequestFilter): Observable<SwapRequestListItem[]>{
+  getReceivedRequests(swapRequestFilter: SwapRequestFilter, pageIndex: number, pageSize: number): Observable<RequestsResponse>{
     console.log(swapRequestFilter)
-    return this.http.post<SwapRequestListItem[]>(BOOK_OFFERS_API + 'received-requests', JSON.stringify(swapRequestFilter), httpOptions);
+    return this.http.post<RequestsResponse>(BOOK_OFFERS_API + `received-requests?page=${pageIndex}&size=${pageSize}`, JSON.stringify(swapRequestFilter), httpOptions);
   }
 
   cancelSwapRequest(swapRequestId: number): Observable<any>{

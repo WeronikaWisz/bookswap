@@ -2,7 +2,7 @@ package com.bookswap.bookswapapp.services;
 
 import com.bookswap.bookswapapp.dtos.userbooks.BookData;
 import com.bookswap.bookswapapp.dtos.userbooks.BookFilter;
-import com.bookswap.bookswapapp.dtos.userbooks.BookListItem;
+import com.bookswap.bookswapapp.dtos.userbooks.BooksResponse;
 import com.bookswap.bookswapapp.enums.EBookLabel;
 import com.bookswap.bookswapapp.enums.EBookStatus;
 import com.bookswap.bookswapapp.exception.ApiExpectationFailedException;
@@ -244,11 +244,11 @@ class UserBooksServiceTest {
             Mockito.when(testBookRepository.findBookByStatusAndLabelAndUser(bookFilter.getStatus(),
                     bookFilter.getLabel(), user)).thenReturn(Optional.of(List.of(book)));
 
-            List<BookListItem> bookListItems = testUserBooksService.filterBooks(bookFilter);
+            BooksResponse booksResponse = testUserBooksService.filterBooks(bookFilter, 0, 10);
 
             verify(testBookRepository).findBookByStatusAndLabelAndUser(bookFilter.getStatus(),
                     bookFilter.getLabel(), user);
-            assertEquals(1, bookListItems.size());
+            assertEquals(1, booksResponse.getBooksList().size());
 
         }
 
@@ -261,10 +261,10 @@ class UserBooksServiceTest {
             Mockito.when(testBookRepository.findBookByLabelAndUser(bookFilter.getLabel(),
                     user)).thenReturn(Optional.of(List.of(book)));
 
-            List<BookListItem> bookListItems = testUserBooksService.filterBooks(bookFilter);
+            BooksResponse booksResponse = testUserBooksService.filterBooks(bookFilter, 0, 10);
 
             verify(testBookRepository).findBookByLabelAndUser(bookFilter.getLabel(), user);
-            assertEquals(1, bookListItems.size());
+            assertEquals(1, booksResponse.getBooksList().size());
 
         }
 
@@ -277,10 +277,10 @@ class UserBooksServiceTest {
             Mockito.when(testBookRepository.findBookByStatusAndUser(bookFilter.getStatus(),
                     user)).thenReturn(Optional.of(List.of(book)));
 
-            List<BookListItem> bookListItems = testUserBooksService.filterBooks(bookFilter);
+            BooksResponse booksResponse = testUserBooksService.filterBooks(bookFilter, 0, 10);
 
             verify(testBookRepository).findBookByStatusAndUser(bookFilter.getStatus(), user);
-            assertEquals(1, bookListItems.size());
+            assertEquals(1, booksResponse.getBooksList().size());
 
         }
 
@@ -291,10 +291,10 @@ class UserBooksServiceTest {
             Mockito.when(testUserRepository.findByUsername("username")).thenReturn(java.util.Optional.of(user));
             Mockito.when(testBookRepository.findBookByUser(user)).thenReturn(Optional.of(List.of(book)));
 
-            List<BookListItem> bookListItems = testUserBooksService.filterBooks(bookFilter);
+            BooksResponse booksResponse = testUserBooksService.filterBooks(bookFilter, 0 ,10);
 
             verify(testBookRepository).findBookByUser(user);
-            assertEquals(1, bookListItems.size());
+            assertEquals(1, booksResponse.getBooksList().size());
 
         }
 

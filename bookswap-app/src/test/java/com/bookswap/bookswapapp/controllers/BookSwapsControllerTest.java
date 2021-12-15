@@ -2,6 +2,7 @@ package com.bookswap.bookswapapp.controllers;
 
 import com.bookswap.bookswapapp.dtos.bookswaps.SwapFilter;
 import com.bookswap.bookswapapp.dtos.bookswaps.SwapListItem;
+import com.bookswap.bookswapapp.dtos.bookswaps.SwapsResponse;
 import com.bookswap.bookswapapp.enums.EBookLabel;
 import com.bookswap.bookswapapp.enums.ESwapStatus;
 import com.bookswap.bookswapapp.models.User;
@@ -79,22 +80,19 @@ class BookSwapsControllerTest {
         statuses.add(status);
         swapFilter.setSwapStatus(statuses);
 
-        List<SwapListItem> swapListItems = new ArrayList<>();
-        SwapListItem swapListItem = new SwapListItem();
-        swapListItem.setId(1L);
-        swapListItems.add(swapListItem);
+        SwapsResponse swapsResponse = new SwapsResponse();
 
-        when(testBookSwapsService.getSwaps(swapFilter))
-                .thenReturn(swapListItems);
+        when(testBookSwapsService.getSwaps(swapFilter, 0, 10))
+                .thenReturn(swapsResponse);
 
         mockMvc.perform(post("/book-swaps/swaps")
                         .content(objectMapper.writeValueAsString(swapFilter))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(content().string(objectMapper.writeValueAsString(swapListItems)));
+                .andExpect(content().string(objectMapper.writeValueAsString(swapsResponse)));
 
-        verify(testBookSwapsService).getSwaps(swapFilter);
+        verify(testBookSwapsService).getSwaps(swapFilter, 0, 10);
     }
 
     @Test
@@ -107,19 +105,12 @@ class BookSwapsControllerTest {
         user.setPassword("password");
         user.setEmail(email);
 
-//        ProfileData profileData = modelMapper.map(user, ProfileData.class);
-//        ProfileData profileData = new ProfileData();
-//        profileData.setUsername(username);
-//        profileData.setEmail(email);
-
         when(testBookSwapsService.geUserAddressByUsername(username))
                 .thenReturn(user);
 
         mockMvc.perform(get("/book-swaps/user-address/{username}", username)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
-//                .andExpect(content().contentType(MediaType.APPLICATION_JSON));
-//                .andExpect(content().string(objectMapper.writeValueAsString(profileData)));
 
         verify(testBookSwapsService).geUserAddressByUsername(username);
     }

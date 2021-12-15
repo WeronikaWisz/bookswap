@@ -42,8 +42,10 @@ public class BookOffersController {
 
     @PostMapping(path = "/offers/filter")
     @PreAuthorize("hasRole('USER')")
-    public ResponseEntity<?> filterOffers(@RequestBody OfferFilter offerFilter) {
-        OffersResponse offersResponse = bookOffersService.filterOffers(offerFilter);
+    public ResponseEntity<?> filterOffers(@RequestBody OfferFilter offerFilter,
+                                          @RequestParam(defaultValue = "0") int page,
+                                          @RequestParam(defaultValue = "10") int size) {
+        OffersResponse offersResponse = bookOffersService.filterOffers(offerFilter, page, size);
         return ResponseEntity.ok(offersResponse);
     }
 
@@ -64,16 +66,20 @@ public class BookOffersController {
 
     @PostMapping(path = "/sent-requests")
     @PreAuthorize("hasRole('USER')")
-    public ResponseEntity<?> getSentRequests(@RequestBody SwapRequestFilter swapRequestFilter) {
-        List<SwapRequestListItem> swapRequestListItems = bookOffersService.getSentRequests(swapRequestFilter);
-        return ResponseEntity.ok(swapRequestListItems);
+    public ResponseEntity<?> getSentRequests(@RequestBody SwapRequestFilter swapRequestFilter,
+                                             @RequestParam(defaultValue = "0") int page,
+                                             @RequestParam(defaultValue = "10") int size) {
+        RequestsResponse requestsResponse = bookOffersService.getSentRequests(swapRequestFilter, page, size);
+        return ResponseEntity.ok(requestsResponse);
     }
 
     @PostMapping(path = "/received-requests")
     @PreAuthorize("hasRole('USER')")
-    public ResponseEntity<?> getReceivedRequests(@RequestBody SwapRequestFilter swapRequestFilter) {
-        List<SwapRequestListItem> swapRequestListItems = bookOffersService.getReceivedRequests(swapRequestFilter);
-        return ResponseEntity.ok(swapRequestListItems);
+    public ResponseEntity<?> getReceivedRequests(@RequestBody SwapRequestFilter swapRequestFilter,
+                                                 @RequestParam(defaultValue = "0") int page,
+                                                 @RequestParam(defaultValue = "10") int size) {
+        RequestsResponse requestsResponse = bookOffersService.getReceivedRequests(swapRequestFilter, page, size);
+        return ResponseEntity.ok(requestsResponse);
     }
 
     @DeleteMapping(path = "/swap-request/cancel/{swapRequestId}")

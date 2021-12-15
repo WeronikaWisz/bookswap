@@ -139,7 +139,7 @@ class BookOffersServiceTest {
             Mockito.when(testBookRepository.findBookByStatusAndLabelAndUserIsNot(status, offerFilter.getLabel(), user))
                     .thenReturn(Optional.of(List.of(bookOffer)));
 
-            OffersResponse offersResponse = testBookOffersService.filterOffers(offerFilter);
+            OffersResponse offersResponse = testBookOffersService.filterOffers(offerFilter, 0, 10);
 
             verify(testBookRepository).findBookByStatusAndLabelAndUserIsNot(status, offerFilter.getLabel(), user);
             assertEquals(1, offersResponse.getOffersList().size());
@@ -149,7 +149,7 @@ class BookOffersServiceTest {
         void testFilterOffersUserNotFound() {
             Mockito.when(testUserRepository.findByUsername("username")).thenReturn(java.util.Optional.empty());
             OfferFilter offerFilter = new OfferFilter();
-            assertThrows(UsernameNotFoundException.class, () -> testBookOffersService.filterOffers(offerFilter));
+            assertThrows(UsernameNotFoundException.class, () -> testBookOffersService.filterOffers(offerFilter, 0, 10));
         }
 
         @Test
@@ -165,7 +165,7 @@ class BookOffersServiceTest {
             Mockito.when(testSwapRequestRepository.userSendRequestsBooks(label, user))
                     .thenReturn(Optional.of(List.of(bookId)));
 
-            OffersResponse offersResponse = testBookOffersService.filterOffers(offerFilter);
+            OffersResponse offersResponse = testBookOffersService.filterOffers(offerFilter, 0, 10);
 
             verify(testBookRepository).findBookByStatusAndLabelAndUserIsNot(status, offerFilter.getLabel(), user);
             assertTrue(offersResponse.getOffersList().isEmpty());
@@ -231,7 +231,7 @@ class BookOffersServiceTest {
             Mockito.when(testSwapRequestRepository.findByUserAndStatusIn(user, swapRequestFilter.getRequestStatus()))
                     .thenReturn(Optional.of(List.of(swapRequest2)));
 
-            testBookOffersService.getSentRequests(swapRequestFilter);
+            testBookOffersService.getSentRequests(swapRequestFilter, 0, 10);
 
             verify(testSwapRequestRepository).findByUserAndStatusIn(user, swapRequestFilter.getRequestStatus());
         }
@@ -250,7 +250,7 @@ class BookOffersServiceTest {
             Mockito.when(testSwapRequestRepository.findByBook_UserAndStatusIn(user, swapRequestFilter.getRequestStatus()))
                     .thenReturn(Optional.of(List.of(swapRequest)));
 
-            testBookOffersService.getReceivedRequests(swapRequestFilter);
+            testBookOffersService.getReceivedRequests(swapRequestFilter, 0, 10);
 
             verify(testSwapRequestRepository).findByBook_UserAndStatusIn(user, swapRequestFilter.getRequestStatus());
         }

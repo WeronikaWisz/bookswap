@@ -10,6 +10,7 @@ import {EBookStatus} from "../../../enums/EBookStatus";
 import {TranslateService} from "@ngx-translate/core";
 import {RequestStatus} from "../../../models/book-offers/RequestStatus";
 import {Label} from "../../../models/book-offers/Label";
+import {PageEvent} from "@angular/material/paginator";
 
 @Component({
   selector: 'app-sent-offers',
@@ -36,6 +37,11 @@ export class BrowseSwapRequestsComponent implements OnInit {
   labels: Label[] = []
 
   emptySearchList = false;
+
+  totalRequestsLength = 0;
+  pageSize = 10;
+  pageIndex = 0;
+  pageSizeOptions: number[] = [5, 10, 20];
 
   constructor(private router: Router, private tokenStorage: TokenStorageService, private translate: TranslateService,
               private bookOffersService : BookOffersService, private route: ActivatedRoute) {
@@ -100,6 +106,7 @@ export class BrowseSwapRequestsComponent implements OnInit {
         this.requestStatus = [ERequestStatus.ACCEPTED, ERequestStatus.DENIED, ERequestStatus.CANCELED];
       }
     }
+    this.pageIndex = 0;
     this.getRequests();
   }
 
@@ -111,15 +118,17 @@ export class BrowseSwapRequestsComponent implements OnInit {
     this.emptySearchList = false;
     this.swapRequests = [];
     this.offersCount = 0;
+    this.totalRequestsLength = 0;
     if (this.isSentOffers) {
       this.bookOffersService.getSentRequests({
         requestStatus: this.requestStatus,
         bookLabel: this.bookLabel != undefined ? this.bookLabel : null!
-      }).subscribe(data => {
+      }, this.pageIndex, this.pageSize).subscribe(data => {
           console.log(data)
-          this.swapRequests = data
-          this.offersCount = data.length;
-          this.checkIfEmptyRequestList();
+          this.swapRequests = data.requestsList
+          this.offersCount = data.totalRequestsLength;
+          this.totalRequestsLength = data.totalRequestsLength;
+          this.checkIfEmptyRequestList(data.requestsList.length);
         },
         err => {
           Swal.fire({
@@ -135,11 +144,12 @@ export class BrowseSwapRequestsComponent implements OnInit {
       this.bookOffersService.getReceivedRequests({
         requestStatus: this.requestStatus,
         bookLabel: this.bookLabel != undefined ? this.bookLabel : null!
-      }).subscribe(data => {
+      }, this.pageIndex, this.pageSize).subscribe(data => {
           console.log(data)
-          this.swapRequests = data
-          this.offersCount = data.length;
-          this.checkIfEmptyRequestList();
+          this.swapRequests = data.requestsList
+          this.offersCount = data.totalRequestsLength;
+          this.totalRequestsLength = data.totalRequestsLength;
+          this.checkIfEmptyRequestList(data.requestsList.length);
         },
         err => {
           Swal.fire({
@@ -154,8 +164,8 @@ export class BrowseSwapRequestsComponent implements OnInit {
     }
   }
 
-  checkIfEmptyRequestList(){
-    if(this.offersCount == 0){
+  checkIfEmptyRequestList(booksLength: number){
+    if(booksLength == 0){
       this.emptySearchList = true;
     }
   }
@@ -279,11 +289,13 @@ export class BrowseSwapRequestsComponent implements OnInit {
       } else {
         this.requestStatus = [ERequestStatus.ACCEPTED, ERequestStatus.DENIED, ERequestStatus.CANCELED];
       }
+      this.pageIndex = 0;
       this.getRequests()
     }
   }
 
   changeBookLabel(){
+    this.pageIndex = 0;
     this.getRequests()
   }
 
@@ -293,6 +305,13 @@ export class BrowseSwapRequestsComponent implements OnInit {
       message = data
     );
     return message;
+  }
+
+  pageChanged(event: PageEvent) {
+    console.log({ event });
+    this.pageSize = event.pageSize;
+    this.pageIndex = event.pageIndex;
+    this.getRequests();
   }
 
 }

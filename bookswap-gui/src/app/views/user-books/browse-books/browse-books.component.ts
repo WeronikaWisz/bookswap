@@ -12,6 +12,7 @@ import {FilterHints} from "../../../models/user-books/FilterHints";
 import {EBookLabel} from "../../../enums/EBookLabel";
 import {TranslateService} from "@ngx-translate/core";
 import {Label} from "../../../models/user-books/Label";
+import {PageEvent} from "@angular/material/paginator";
 
 @Component({
   selector: 'app-browse-books',
@@ -44,6 +45,11 @@ export class BrowseBooksComponent implements OnInit {
   currentTab = 0;
 
   emptySearchList = false;
+
+  totalBooksLength = 0;
+  pageSize = 10;
+  pageIndex = 0;
+  pageSizeOptions: number[] = [5, 10, 20];
 
   constructor(public dialog: MatDialog, private router: Router, private translate: TranslateService,
               private userBookService : UserBookService, private tokenStorage: TokenStorageService) {
@@ -122,6 +128,7 @@ export class BrowseBooksComponent implements OnInit {
       console.log(result);
       if(result) {
         this.bookFilter = result;
+        this.pageIndex = 0;
         this.loadFilterBooks();
       }
     });
@@ -140,13 +147,14 @@ export class BrowseBooksComponent implements OnInit {
         this.bookFilter.yearOfPublicationTo : null!,
       label: this.bookFilter.label != undefined ? this.bookFilter.label : null!,
       status: this.bookFilter.status
-    })
+    }, this.pageIndex, this.pageSize)
       .subscribe(
         data => {
           console.log(data);
-          this.books = data;
-          this.bookCount = this.books.length;
-          if(this.bookCount == 0){
+          this.books = data.booksList;
+          this.bookCount = data.totalBooksLength;
+          this.totalBooksLength = data.totalBooksLength;
+          if(this.books.length == 0){
             this.emptySearchList = true;
           }
         },
@@ -179,6 +187,7 @@ export class BrowseBooksComponent implements OnInit {
       this.bookFilter.status = 0;
       this.bookFilter.label = this.bookLabel;
     }
+    this.pageIndex = 0;
     this.loadFilterBooks();
   }
 
@@ -193,6 +202,13 @@ export class BrowseBooksComponent implements OnInit {
       message = data
     );
     return message;
+  }
+
+  pageChanged(event: PageEvent) {
+    console.log({ event });
+    this.pageSize = event.pageSize;
+    this.pageIndex = event.pageIndex;
+    this.loadFilterBooks();
   }
 
 }

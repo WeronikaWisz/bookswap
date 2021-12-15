@@ -28,6 +28,12 @@
       <ng-template *ngTemplateOutlet="bookListTemplate; context: {$implicit: books}"></ng-template>
     </mat-tab>
   </mat-tab-group>
+  <mat-paginator [length]="totalBooksLength"
+                 [pageSize]="pageSize"
+                 [pageIndex]="pageIndex"
+                 [pageSizeOptions]="pageSizeOptions"
+                 (page)="pageChanged($event)">
+  </mat-paginator>
 </div>
 
 <ng-template #bookListTemplate let-books>

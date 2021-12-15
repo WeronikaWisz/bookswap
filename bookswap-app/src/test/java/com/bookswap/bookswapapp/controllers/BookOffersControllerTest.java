@@ -21,8 +21,6 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Locale;
 
 import static org.mockito.ArgumentMatchers.any;
@@ -100,7 +98,7 @@ class BookOffersControllerTest {
         OfferFilter offerFilter = new OfferFilter();
         OffersResponse offersResponse = new OffersResponse();
 
-        when(testBookOffersService.filterOffers(offerFilter)).thenReturn(offersResponse);
+        when(testBookOffersService.filterOffers(offerFilter, 0, 10)).thenReturn(offersResponse);
 
         mockMvc.perform(post("/book-offers/offers/filter")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -109,7 +107,7 @@ class BookOffersControllerTest {
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(content().string(objectMapper.writeValueAsString(offersResponse)));
 
-        verify(testBookOffersService).filterOffers(offerFilter);
+        verify(testBookOffersService).filterOffers(offerFilter, 0, 10);
     }
 
     @Test
@@ -146,34 +144,34 @@ class BookOffersControllerTest {
     @WithMockUser
     void testGetSentRequests() throws Exception {
         SwapRequestFilter swapRequestFilter = new SwapRequestFilter();
-        List<SwapRequestListItem> swapRequestListItems = new ArrayList<>();
-        when(testBookOffersService.getSentRequests(swapRequestFilter)).thenReturn(swapRequestListItems);
+        RequestsResponse requestsResponse = new RequestsResponse();
+        when(testBookOffersService.getSentRequests(swapRequestFilter, 0, 10)).thenReturn(requestsResponse);
 
         mockMvc.perform(post("/book-offers/sent-requests")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(swapRequestFilter)))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(content().string(objectMapper.writeValueAsString(swapRequestListItems)));
+                .andExpect(content().string(objectMapper.writeValueAsString(requestsResponse)));
 
-        verify(testBookOffersService).getSentRequests(swapRequestFilter);
+        verify(testBookOffersService).getSentRequests(swapRequestFilter, 0, 10);
     }
 
     @Test
     @WithMockUser
     void testGetReceivedRequests() throws Exception {
         SwapRequestFilter swapRequestFilter = new SwapRequestFilter();
-        List<SwapRequestListItem> swapRequestListItems = new ArrayList<>();
-        when(testBookOffersService.getReceivedRequests(swapRequestFilter)).thenReturn(swapRequestListItems);
+        RequestsResponse requestsResponse = new RequestsResponse();
+        when(testBookOffersService.getReceivedRequests(swapRequestFilter, 0, 10)).thenReturn(requestsResponse);
 
         mockMvc.perform(post("/book-offers/received-requests")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(swapRequestFilter)))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(content().string(objectMapper.writeValueAsString(swapRequestListItems)));
+                .andExpect(content().string(objectMapper.writeValueAsString(requestsResponse)));
 
-        verify(testBookOffersService).getReceivedRequests(swapRequestFilter);
+        verify(testBookOffersService).getReceivedRequests(swapRequestFilter, 0, 10);
     }
 
     @Test

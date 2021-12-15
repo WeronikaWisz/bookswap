@@ -9,6 +9,7 @@ import Swal from "sweetalert2";
 import {MatDialog} from "@angular/material/dialog";
 import {UserAddressDialogComponent} from "./user-address-dialog/user-address-dialog.component";
 import {TranslateService} from "@ngx-translate/core";
+import {PageEvent} from "@angular/material/paginator";
 
 @Component({
   selector: 'app-browse-swaps',
@@ -27,6 +28,11 @@ export class BrowseSwapsComponent implements OnInit {
   label: EBookLabel = EBookLabel.PERMANENT_SWAP;
 
   emptySearchList = false;
+
+  totalSwapsLength = 0;
+  pageSize = 10;
+  pageIndex = 0;
+  pageSizeOptions: number[] = [5, 10, 20];
 
   constructor(private router: Router, private tokenStorage: TokenStorageService, public dialog: MatDialog,
               private bookSwapsService : BookSwapsService, private route: ActivatedRoute,
@@ -73,6 +79,7 @@ export class BrowseSwapsComponent implements OnInit {
     } else {
       this.swapStatus = [ESwapStatus.COMPLETED];
     }
+    this.pageIndex = 0;
     this.getSwaps();
   }
 
@@ -150,16 +157,18 @@ export class BrowseSwapsComponent implements OnInit {
     console.log(this.label)
     this.swaps = [];
     this.swapsCount = 0;
+    this.totalSwapsLength = 0;
     this.bookSwapsService.getSwaps({
       swapStatus: this.swapStatus,
       bookLabel: this.label
-    })
+    }, this.pageIndex, this.pageSize)
       .subscribe(
         data => {
           console.log(data)
-          this.swaps = data
-          this.swapsCount = data.length;
-          if(this.swapsCount == 0){
+          this.swaps = data.swapsList
+          this.swapsCount = data.totalSwapsLength;
+          this.totalSwapsLength = data.totalSwapsLength;
+          if(data.swapsList.length == 0){
             this.emptySearchList = true;
           }
         },
@@ -206,6 +215,13 @@ export class BrowseSwapsComponent implements OnInit {
       message = data
     );
     return message;
+  }
+
+  pageChanged(event: PageEvent) {
+    console.log({ event });
+    this.pageSize = event.pageSize;
+    this.pageIndex = event.pageIndex;
+    this.getSwaps();
   }
 
 }

@@ -1,7 +1,7 @@
 package com.bookswap.bookswapapp.services;
 
 import com.bookswap.bookswapapp.dtos.bookswaps.SwapFilter;
-import com.bookswap.bookswapapp.dtos.bookswaps.SwapListItem;
+import com.bookswap.bookswapapp.dtos.bookswaps.SwapsResponse;
 import com.bookswap.bookswapapp.enums.EBookLabel;
 import com.bookswap.bookswapapp.enums.ESwapStatus;
 import com.bookswap.bookswapapp.exception.ApiNotFoundException;
@@ -103,11 +103,11 @@ class BookSwapsServiceTest {
             Mockito.when(testSwapRepository.findUserSwaps(swapFilter.getSwapStatus(), swapFilter.getBookLabel(), user))
                     .thenReturn(Optional.of(List.of(swap)));
 
-            List<SwapListItem> swaps = testBookSwapsService.getSwaps(swapFilter);
+            SwapsResponse swapsResponse = testBookSwapsService.getSwaps(swapFilter, 0, 10);
 
             verify(testSwapRepository).findUserSwaps(swapFilter.getSwapStatus(), swapFilter.getBookLabel(), user);
-            assertEquals(1, swaps.size());
-            assertEquals(swap.getId(), swaps.get(0).getId());
+            assertEquals(1, swapsResponse.getSwapsList().size());
+            assertEquals(swap.getId(), swapsResponse.getSwapsList().get(0).getId());
         }
 
         @Test
@@ -126,11 +126,11 @@ class BookSwapsServiceTest {
             Mockito.when(testSwapRepository.findUserSwaps(swapFilter.getSwapStatus(), swapFilter.getBookLabel(), user))
                     .thenReturn(Optional.of(List.of(swap)));
 
-            List<SwapListItem> swaps = testBookSwapsService.getSwaps(swapFilter);
+            SwapsResponse swapsResponse = testBookSwapsService.getSwaps(swapFilter, 0, 10);
 
             verify(testSwapRepository).findUserSwaps(swapFilter.getSwapStatus(), swapFilter.getBookLabel(), user);
-            assertEquals(1, swaps.size());
-            assertEquals(swap.getId(), swaps.get(0).getId());
+            assertEquals(1, swapsResponse.getSwapsList().size());
+            assertEquals(swap.getId(), swapsResponse.getSwapsList().get(0).getId());
         }
 
         @Test
@@ -146,11 +146,11 @@ class BookSwapsServiceTest {
             Mockito.when(testSwapRepository.findUserSwaps(swapFilter.getSwapStatus(), swapFilter.getBookLabel(), user))
                     .thenReturn(Optional.of(List.of(swap)));
 
-            List<SwapListItem> swaps = testBookSwapsService.getSwaps(swapFilter);
+            SwapsResponse swapsResponse = testBookSwapsService.getSwaps(swapFilter, 0, 10);
 
             verify(testSwapRepository).findUserSwaps(swapFilter.getSwapStatus(), swapFilter.getBookLabel(), user);
-            assertEquals(1, swaps.size());
-            assertEquals(swap.getId(), swaps.get(0).getId());
+            assertEquals(1, swapsResponse.getSwapsList().size());
+            assertEquals(swap.getId(), swapsResponse.getSwapsList().get(0).getId());
         }
 
         @Test
@@ -166,11 +166,11 @@ class BookSwapsServiceTest {
             Mockito.when(testSwapRepository.findUserSwaps(swapFilter.getSwapStatus(), swapFilter.getBookLabel(), user))
                     .thenReturn(Optional.of(List.of(swap)));
 
-            List<SwapListItem> swaps = testBookSwapsService.getSwaps(swapFilter);
+            SwapsResponse swapsResponse = testBookSwapsService.getSwaps(swapFilter, 0, 10);
 
             verify(testSwapRepository).findUserSwaps(swapFilter.getSwapStatus(), swapFilter.getBookLabel(), user);
-            assertEquals(1, swaps.size());
-            assertEquals(swap.getId(), swaps.get(0).getId());
+            assertEquals(1, swapsResponse.getSwapsList().size());
+            assertEquals(swap.getId(), swapsResponse.getSwapsList().get(0).getId());
         }
 
         @Test
@@ -186,11 +186,11 @@ class BookSwapsServiceTest {
             Mockito.when(testSwapRepository.findUserSwaps(swapFilter.getSwapStatus(), swapFilter.getBookLabel(), user))
                     .thenReturn(Optional.of(List.of(swap)));
 
-            List<SwapListItem> swaps = testBookSwapsService.getSwaps(swapFilter);
+            SwapsResponse swapsResponse = testBookSwapsService.getSwaps(swapFilter, 0, 10);
 
             verify(testSwapRepository).findUserSwaps(swapFilter.getSwapStatus(), swapFilter.getBookLabel(), user);
-            assertEquals(1, swaps.size());
-            assertEquals(swap.getId(), swaps.get(0).getId());
+            assertEquals(1, swapsResponse.getSwapsList().size());
+            assertEquals(swap.getId(), swapsResponse.getSwapsList().get(0).getId());
         }
 
         @Test
@@ -209,11 +209,11 @@ class BookSwapsServiceTest {
             Mockito.when(testSwapRepository.findUserSwaps(swapFilter.getSwapStatus(), swapFilter.getBookLabel(), user))
                     .thenReturn(Optional.of(List.of(swap)));
 
-            List<SwapListItem> swaps = testBookSwapsService.getSwaps(swapFilter);
+            SwapsResponse swapsResponse = testBookSwapsService.getSwaps(swapFilter, 0, 10);
 
             verify(testSwapRepository).findUserSwaps(swapFilter.getSwapStatus(), swapFilter.getBookLabel(), user);
-            assertEquals(1, swaps.size());
-            assertEquals(swap.getId(), swaps.get(0).getId());
+            assertEquals(1, swapsResponse.getSwapsList().size());
+            assertEquals(swap.getId(), swapsResponse.getSwapsList().get(0).getId());
         }
 
         @Test
@@ -232,18 +232,18 @@ class BookSwapsServiceTest {
             Mockito.when(testSwapRepository.findUserSwaps(swapFilter.getSwapStatus(), swapFilter.getBookLabel(), user))
                     .thenReturn(Optional.of(List.of(swap)));
 
-            List<SwapListItem> swaps = testBookSwapsService.getSwaps(swapFilter);
+            SwapsResponse swapsResponse = testBookSwapsService.getSwaps(swapFilter, 0, 10);
 
             verify(testSwapRepository).findUserSwaps(swapFilter.getSwapStatus(), swapFilter.getBookLabel(), user);
-            assertEquals(1, swaps.size());
-            assertEquals(swap.getId(), swaps.get(0).getId());
+            assertEquals(1, swapsResponse.getSwapsList().size());
+            assertEquals(swap.getId(), swapsResponse.getSwapsList().get(0).getId());
         }
 
         @Test
         void testGetSwapsUserNotFound() {
             Mockito.when(testUserRepository.findByUsername("username")).thenReturn(java.util.Optional.empty());
             SwapFilter swapFilter = new SwapFilter();
-            assertThrows(UsernameNotFoundException.class, () -> testBookSwapsService.getSwaps(swapFilter));
+            assertThrows(UsernameNotFoundException.class, () -> testBookSwapsService.getSwaps(swapFilter, 0, 10));
         }
 
         @Test
