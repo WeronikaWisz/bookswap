@@ -2,7 +2,6 @@ package com.bookswap.bookswapapp.controllers;
 
 import com.bookswap.bookswapapp.dtos.auth.MessageResponse;
 import com.bookswap.bookswapapp.dtos.userbooks.*;
-import com.bookswap.bookswapapp.enums.EBookStatus;
 import com.bookswap.bookswapapp.models.Book;
 import com.bookswap.bookswapapp.models.Category;
 import com.bookswap.bookswapapp.services.UserBooksService;
@@ -11,6 +10,8 @@ import org.modelmapper.PropertyMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -30,10 +31,13 @@ public class UserBooksController {
     private final UserBooksService userBooksService;
     private ModelMapper modelMapper;
     private static final Logger logger = LoggerFactory.getLogger(UserBooksController.class);
+    private MessageSource messageSource;
 
     @Autowired
-    public UserBooksController(UserBooksService userBooksService, ModelMapper modelMapper) {
+    public UserBooksController(UserBooksService userBooksService, ModelMapper modelMapper,
+                               MessageSource messageSource) {
         this.userBooksService = userBooksService;
+        this.messageSource = messageSource;
         this.modelMapper = modelMapper;
         modelMapper.addMappings(new PropertyMap<BookData, Book>() {
             @Override
@@ -62,20 +66,24 @@ public class UserBooksController {
             MediaType.MULTIPART_FORM_DATA_VALUE
     })
     @PreAuthorize("hasRole('USER')")
-    public ResponseEntity<?> addBook(@RequestPart(name="image", required=false) MultipartFile image, @RequestPart("info") BookData newBook) {
+    public ResponseEntity<?> addBook(@RequestPart(name="image", required=false) MultipartFile image,
+                                     @RequestPart("info") BookData newBook) {
         if(image!=null) {
             try {
-                this.userBooksService.addBook(image, mapBookDataToBook(newBook), newBook.getCategories(), newBook.getLabel());
+                this.userBooksService.addBook(image, mapBookDataToBook(newBook),
+                        newBook.getCategories(), newBook.getLabel());
             } catch (IOException e) {
-                logger.error("Error getting bytes from file: ", e.getMessage());
+                logger.error("Error getting bytes from file: " + e.getMessage());
                 return ResponseEntity
                         .status(HttpStatus.EXPECTATION_FAILED)
-                        .body(new MessageResponse("Nie można zapisać pliku"));
+                        .body(new MessageResponse(messageSource.getMessage(
+                                "exception.cannotSaveFile", null, LocaleContextHolder.getLocale())));
             }
         } else {
             this.userBooksService.addBook(mapBookDataToBook(newBook), newBook.getCategories(), newBook.getLabel());
         }
-        return ResponseEntity.ok(new MessageResponse("Pomyśnie dodano książkę"));
+        return ResponseEntity.ok(new MessageResponse(messageSource.getMessage(
+                "success.addBook", null, LocaleContextHolder.getLocale())));
     }
 
     @GetMapping(path = "/book-details/{bookId}")
@@ -94,9 +102,11 @@ public class UserBooksController {
 
     @PostMapping(path = "/books/filter")
     @PreAuthorize("hasRole('USER')")
-    public ResponseEntity<?> filterBooks(@RequestBody BookFilter bookFilter) {
-        List<BookListItem> bookItemList = userBooksService.filterBooks(bookFilter);
-        return ResponseEntity.ok(bookItemList);
+    public ResponseEntity<?> filterBooks(@RequestBody BookFilter bookFilter,
+                                         @RequestParam(defaultValue = "0") int page,
+                                         @RequestParam(defaultValue = "10") int size) {
+        BooksResponse booksResponse = userBooksService.filterBooks(bookFilter, page, size);
+        return ResponseEntity.ok(booksResponse);
     }
 
     @GetMapping(path = "/filter-hints")
@@ -118,21 +128,24 @@ public class UserBooksController {
             MediaType.MULTIPART_FORM_DATA_VALUE
     })
     @PreAuthorize("hasRole('USER')")
-    public ResponseEntity<?> updateBook(@RequestPart(name="image", required=false) MultipartFile image, @RequestPart("info") BookData bookData,
+    public ResponseEntity<?> updateBook(@RequestPart(name="image", required=false) MultipartFile image,
+                                        @RequestPart("info") BookData bookData,
                                         @PathVariable(value = "id") Long bookId) {
         if(image!=null) {
             try {
                 this.userBooksService.updateBook(bookId, image, bookData, bookData.getCategories(), bookData.getLabel());
             } catch (IOException e) {
-                logger.error("Error getting bytes from file: ", e.getMessage());
+                logger.error("Error getting bytes from file: " + e.getMessage());
                 return ResponseEntity
                         .status(HttpStatus.EXPECTATION_FAILED)
-                        .body(new MessageResponse("Nie można zapisać pliku"));
+                        .body(new MessageResponse(messageSource.getMessage(
+                                "exception.cannotSaveFile", null, LocaleContextHolder.getLocale())));
             }
         } else {
             this.userBooksService.updateBook(bookId, bookData, bookData.getCategories(), bookData.getLabel());
         }
-        return ResponseEntity.ok(new MessageResponse("Pomyśnie zaktualizowano książkę"));
+        return ResponseEntity.ok(new MessageResponse(messageSource.getMessage(
+                "success.updateBook", null, LocaleContextHolder.getLocale())));
     }
 
 

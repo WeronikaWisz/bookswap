@@ -4,6 +4,7 @@ import {MatDialogRef} from "@angular/material/dialog";
 import {UsersService} from "../../../../services/manage-users/users.service";
 import Validation from "../../../../helpers/validation";
 import Swal from "sweetalert2";
+import {TranslateService} from "@ngx-translate/core";
 
 @Component({
   selector: 'app-change-password-dialog',
@@ -17,7 +18,7 @@ export class ChangePasswordDialogComponent implements OnInit {
 
   constructor(
     public dialogRef: MatDialogRef<ChangePasswordDialogComponent>,
-    private formBuilder: FormBuilder,
+    private formBuilder: FormBuilder, private translate: TranslateService,
     private usersService: UsersService
   ) {
     dialogRef.disableClose = true;
@@ -52,31 +53,38 @@ export class ChangePasswordDialogComponent implements OnInit {
   }
 
   changePassword(){
-      this.usersService.changePassword({
-        "oldPassword": this.form.get('oldPassword')?.value,
-        "newPassword": this.form.get('password')?.value,
-      }).subscribe(
-        data => {
-          console.log(data);
-          Swal.fire({
-            position: 'top-end',
-            title: 'Pomyślnie zmieniono hasło',
-            icon: 'success',
-            showConfirmButton: false
-          })
-          this.form.reset();
-          this.form.markAsUntouched();
+    this.usersService.changePassword({
+      "oldPassword": this.form.get('oldPassword')?.value,
+      "newPassword": this.form.get('password')?.value,
+    }).subscribe(
+      data => {
+        console.log(data);
+        Swal.fire({
+          position: 'top-end',
+          title: this.getTranslateMessage("manage-users.profile.password-success"),
+          icon: 'success',
+          showConfirmButton: false
+        })
+        this.form.reset();
+        this.form.markAsUntouched();
         },
-        err => {
-          Swal.fire({
-            position: 'top-end',
-            title: 'Nie udało się zmienić hasła',
-            text: err.error.message,
-            icon: 'error',
-            showConfirmButton: false
-          })
-        }
-      );
+      err => {
+        Swal.fire({
+          position: 'top-end',
+          title: this.getTranslateMessage("manage-users.profile.password-error"),
+          text: err.error.message,
+          icon: 'error',
+          showConfirmButton: false
+        })
+      });
+  }
+
+  getTranslateMessage(key: string): string{
+    let message = "";
+    this.translate.get(key).subscribe(data =>
+      message = data
+    );
+    return message;
   }
 
 }

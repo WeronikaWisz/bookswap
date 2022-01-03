@@ -1,94 +1,98 @@
-<h2 mat-dialog-title>Edytuj profil</h2>
+<h2 mat-dialog-title>{{ 'manage-users.profile.edit-profile' | translate}}</h2>
 <div mat-dialog-content>
   <form [formGroup]="form">
     <mat-vertical-stepper formArrayName="formArray" [linear]="false" #stepper>
       <mat-step formGroupName="0" [stepControl]="formArray?.get([0])!">
-        <ng-template matStepLabel>Dane osobowe</ng-template>
+        <ng-template matStepLabel>{{ 'manage-users.profile.user-data' | translate}}</ng-template>
         <mat-form-field class="full-width-input left-mat-field" appearance="outline">
-          <mat-label>Imię</mat-label>
+          <mat-label>{{ 'manage-users.profile.name' | translate}}</mat-label>
           <input matInput formControlName="name" required>
           <mat-error>
-            Podaj imię
+            {{ 'manage-users.profile.name-error' | translate}}
           </mat-error>
         </mat-form-field>
         <mat-form-field class="full-width-input" appearance="outline">
-          <mat-label>Nazwisko</mat-label>
+          <mat-label>{{ 'manage-users.profile.surname' | translate}}</mat-label>
           <input matInput formControlName="surname" required>
           <mat-error>
-            Podaj nazwisko
+            {{ 'manage-users.profile.surname-error' | translate}}
           </mat-error>
         </mat-form-field>
         <mat-form-field class="full-width-input left-mat-field" appearance="outline">
-          <mat-label>Email</mat-label>
+          <mat-label>{{ 'manage-users.profile.email' | translate}}</mat-label>
           <input matInput formControlName="email" required>
           <mat-error>
-            Podaj poprawny adres email
+            {{ 'manage-users.profile.email-error' | translate}}
           </mat-error>
         </mat-form-field>
         <mat-form-field class="full-width-input" appearance="outline">
-          <mat-label>Numer telefonu</mat-label>
+          <mat-label>{{ 'manage-users.profile.phone' | translate}}</mat-label>
           <input matInput placeholder="(+48) 123 456 789" formControlName="phone">
           <mat-error>
-            Podaj poprawny numer telefonu
+            {{ 'manage-users.profile.phone-error' | translate}}
           </mat-error>
         </mat-form-field>
         <div class="buttons-section">
-          <button mat-button matStepperNext>Dalej</button>
+          <button mat-button matStepperNext>{{ 'manage-users.profile.next' | translate}}</button>
         </div>
       </mat-step>
       <mat-step formGroupName="1" [stepControl]="formArray?.get([1])!">
-        <ng-template matStepLabel>Dane adresowe</ng-template>
+        <ng-template matStepLabel>{{ 'manage-users.profile.user-address' | translate}}</ng-template>
         <mat-form-field class="full-width-input left-mat-field" appearance="outline">
-          <mat-label>Kod pocztowy</mat-label>
+          <mat-label>{{ 'manage-users.profile.postal-code' | translate}}</mat-label>
           <input matInput placeholder="12-345" formControlName="postalCode" required>
           <mat-error>
-            Podaj poprawny kod pocztowy
+            {{ 'manage-users.profile.postal-code-error' | translate}}
           </mat-error>
         </mat-form-field>
         <mat-form-field class="full-width-input" appearance="outline">
-          <mat-label>Poczta</mat-label>
+          <mat-label>{{ 'manage-users.profile.post' | translate}}</mat-label>
           <input matInput formControlName="post" required>
           <mat-error>
-            Podaj miejscowość poczty
+            {{ 'manage-users.profile.post-error' | translate}}
           </mat-error>
         </mat-form-field>
         <mat-form-field class="full-width-input left-mat-field" appearance="outline">
-          <mat-label>Miejscowość</mat-label>
+          <mat-label>{{ 'manage-users.profile.city' | translate}}</mat-label>
           <input matInput formControlName="city" required>
           <mat-error>
-            Podaj miejsce zamieszkania
+            {{ 'manage-users.profile.city-error' | translate}}
           </mat-error>
         </mat-form-field>
         <mat-form-field class="full-width-input" appearance="outline">
-          <mat-label>Ulica</mat-label>
+          <mat-label>{{ 'manage-users.profile.street-full' | translate}}</mat-label>
           <input matInput formControlName="street" required>
           <mat-error>
-            Podaj nazwę ulicy
+            {{ 'manage-users.profile.street-error' | translate}}
           </mat-error>
         </mat-form-field>
         <mat-form-field class="full-width-input left-mat-field" appearance="outline">
-          <mat-label>Numer domu</mat-label>
+          <mat-label>{{ 'manage-users.profile.building-number' | translate}}</mat-label>
           <input matInput formControlName="buildingNumber" required>
           <mat-error>
-            Podaj numer domu
+            {{ 'manage-users.profile.building-number-error' | translate}}
           </mat-error>
         </mat-form-field>
         <mat-form-field class="full-width-input" appearance="outline">
-          <mat-label>Numer lokalu</mat-label>
+          <mat-label>{{ 'manage-users.profile.door-number' | translate}}</mat-label>
           <input matInput formControlName="doorNumber">
           <mat-error>
-            Podaj numer lokalu
+            {{ 'manage-users.profile.door-number-error' | translate}}
           </mat-error>
         </mat-form-field>
         <div class="buttons-section">
-          <button mat-button matStepperPrevious>Wstecz</button>
+          <button mat-button matStepperPrevious>{{ 'manage-users.profile.back' | translate}}</button>
         </div>
       </mat-step>
     </mat-vertical-stepper>
   </form>
 </div>
 <div mat-dialog-actions align="end">
-  <button mat-button [mat-dialog-close]="dataChanged">Zamknij</button>
-  <button mat-raised-button color="primary" (click)="saveData()" [disabled]="form.invalid || !form.dirty">Zapisz</button>
+  <button mat-button [mat-dialog-close]="dataChanged">
+    {{ 'manage-users.profile.close' | translate}}
+  </button>
+  <button mat-raised-button color="primary" (click)="saveData()" [disabled]="form.invalid || !form.dirty">
+    {{ 'manage-users.profile.save' | translate}}
+  </button>
 </div>
 

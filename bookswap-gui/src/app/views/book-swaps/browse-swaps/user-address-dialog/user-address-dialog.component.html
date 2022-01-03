@@ -1,4 +1,4 @@
-<h2 mat-dialog-title>Dane użytkownika {{data}}</h2>
+<h2 mat-dialog-title>{{ 'book-swaps.browse-swaps.user-data' | translate}} {{data}}</h2>
 <div mat-dialog-content *ngIf="profileData">
   <div>
     <h2>{{profileData.name}} {{profileData.surname}}</h2>
@@ -7,12 +7,14 @@
   <br/>
   <hr>
   <br/>
-  <h3>Dane adresowe:</h3>
-  <p><span class="description-titles">{{profileData.city}} <span *ngIf="profileData.street">ul. {{profileData.street}}</span>
-    {{profileData.buildingNumber}}<span *ngIf="profileData.doorNumber">/{{profileData.doorNumber}}</span> </span></p>
+  <h3>{{ 'book-swaps.browse-swaps.address-data' | translate}}:</h3>
+  <p><span class="description-titles">{{profileData.city}} <span *ngIf="profileData.street">
+    {{ 'book-swaps.browse-swaps.street' | translate}}. {{profileData.street}}</span>
+    {{profileData.buildingNumber}}<span *ngIf="profileData.doorNumber">/{{profileData.doorNumber}}</span> </span>
+  </p>
   <p><span class="description-titles">{{profileData.postalCode}} {{profileData.post}}</span></p>
   <p><span class="description-titles" *ngIf="profileData.phone">tel. {{profileData.phone}}</span></p>
 </div>
 <div mat-dialog-actions align="end">
-  <button mat-button (click)="onNoClick()">Zamknij</button>
+  <button mat-button (click)="onNoClick()">{{ 'book-swaps.browse-swaps.close' | translate}}</button>
 </div>

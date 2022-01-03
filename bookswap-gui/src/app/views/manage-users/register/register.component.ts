@@ -6,6 +6,7 @@ import {STEPPER_GLOBAL_OPTIONS} from '@angular/cdk/stepper';
 import {Router} from "@angular/router";
 import {TokenStorageService} from "../../../services/token-storage.service";
 import Swal from 'sweetalert2';
+import {TranslateService} from "@ngx-translate/core";
 
 @Component({
   selector: 'app-register',
@@ -23,7 +24,7 @@ export class RegisterComponent implements OnInit {
 
   get formArray(): AbstractControl | null { return this.form.get('formArray'); }
 
-  constructor(private formBuilder: FormBuilder, private authService: AuthService,
+  constructor(private formBuilder: FormBuilder, private authService: AuthService, private translate: TranslateService,
               private router: Router, private tokenStorage: TokenStorageService) { }
 
   ngOnInit(): void {
@@ -97,12 +98,12 @@ export class RegisterComponent implements OnInit {
       err => {
         if(err.error.message.includes("e-mail")){
           this.form.controls['formArray'].get([0])?.get('email')?.setErrors({'incorrect': true})
-        } else if(err.error.message.includes("Nazwa")){
+        } else if(err.error.message.includes("Nazwa") || err.error.message.includes("Username")){
           this.form.controls['formArray'].get([2])?.get('username')?.setErrors({'incorrect': true})
         }
         Swal.fire({
           position: 'top-end',
-          title: 'Rejestracja nie powiodła się',
+          title: this.getTranslateMessage("manage-users.register.register-error"),
           text: err.error.message,
           icon: 'error',
           showConfirmButton: false
@@ -114,8 +115,8 @@ export class RegisterComponent implements OnInit {
   showSuccess(): void {
     Swal.fire({
       position: 'top-end',
-      title: 'Rejestracja przebiegła pomyślnie!',
-      text: 'Możesz zalogować się na swoje konto',
+      title: this.getTranslateMessage("manage-users.register.register-success"),
+      text: this.getTranslateMessage("manage-users.register.register-success-can-login"),
       icon: 'success',
       showConfirmButton: false,
       timer: 6000
@@ -124,6 +125,14 @@ export class RegisterComponent implements OnInit {
 
   reloadPage(): void {
     window.location.reload();
+  }
+
+  getTranslateMessage(key: string): string{
+    let message = "";
+    this.translate.get(key).subscribe(data =>
+      message = data
+    );
+    return message;
   }
 
 }

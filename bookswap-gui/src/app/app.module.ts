@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
-import { HttpClientModule } from '@angular/common/http';
+import { HttpClientModule, HttpClient } from '@angular/common/http';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -46,6 +46,10 @@ import { UpdateProfileDialogComponent } from './views/manage-users/profile/updat
 import { ChangePasswordDialogComponent } from './views/manage-users/profile/change-password-dialog/change-password-dialog.component';
 import { BrowseSwapsComponent } from './views/book-swaps/browse-swaps/browse-swaps.component';
 import { UserAddressDialogComponent } from './views/book-swaps/browse-swaps/user-address-dialog/user-address-dialog.component';
+
+import {TranslateLoader, TranslateModule} from '@ngx-translate/core';
+import {TranslateHttpLoader} from '@ngx-translate/http-loader';
+import {MatPaginatorModule} from "@angular/material/paginator";
 
 @NgModule({
   declarations: [
@@ -95,9 +99,21 @@ import { UserAddressDialogComponent } from './views/book-swaps/browse-swaps/user
         MatDatepickerModule,
         MatTabsModule,
         MatCheckboxModule,
-        MatTooltipModule
+        MatTooltipModule,
+        TranslateModule.forRoot({
+            loader: {
+                provide: TranslateLoader,
+                useFactory: HttpLoaderFactory,
+                deps: [HttpClient]
+            }
+        }),
+        MatPaginatorModule
     ],
   providers: [authInterceptorProviders],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
+
+export function HttpLoaderFactory(http: HttpClient): TranslateHttpLoader {
+  return new TranslateHttpLoader(http);
+}

@@ -7,12 +7,10 @@ import {EBookLabel} from "../../../enums/EBookLabel";
 import {SwapRequestListItem} from "../../../models/book-offers/SwapRequestListItem";
 import Swal from "sweetalert2";
 import {EBookStatus} from "../../../enums/EBookStatus";
-import {Label} from "../../user-books/add-book/add-book.component";
-
-export interface RequestStatus{
-  status: ERequestStatus,
-  name: string
-}
+import {TranslateService} from "@ngx-translate/core";
+import {RequestStatus} from "../../../models/book-offers/RequestStatus";
+import {Label} from "../../../models/book-offers/Label";
+import {PageEvent} from "@angular/material/paginator";
 
 @Component({
   selector: 'app-sent-offers',
@@ -32,17 +30,44 @@ export class BrowseSwapRequestsComponent implements OnInit {
   currentTab = 0;
 
   isSentOffers = true;
-  title = "Wysłane ofery wymiany";
+  title = "";
 
-  statuses: RequestStatus[] = [{status: ERequestStatus.ACCEPTED, name: "Zaakceptowana"},
-    {status: ERequestStatus.DENIED, name: "Odrzucona"},
-    {status: ERequestStatus.CANCELED, name: "Odwołana"}]
+  statuses: RequestStatus[] = []
 
-  labels: Label[] = [{label: EBookLabel.PERMANENT_SWAP, name: "Wymiana stała"},
-    {label: EBookLabel.TEMPORARY_SWAP, name: "Wymiana tymczasowa"}]
+  labels: Label[] = []
 
-  constructor(private router: Router, private tokenStorage: TokenStorageService,
-              private bookOffersService : BookOffersService, private route: ActivatedRoute) { }
+  emptySearchList = false;
+
+  totalRequestsLength = 0;
+  pageSize = 10;
+  pageIndex = 0;
+  pageSizeOptions: number[] = [5, 10, 20];
+
+  constructor(private router: Router, private tokenStorage: TokenStorageService, private translate: TranslateService,
+              private bookOffersService : BookOffersService, private route: ActivatedRoute) {
+    this.statuses = [
+      {
+        status: ERequestStatus.ACCEPTED,
+        name: this.getTranslateMessage("book-offers.browse-swap-requests.accepted")
+      },
+      {
+        status: ERequestStatus.DENIED,
+        name: this.getTranslateMessage("book-offers.browse-swap-requests.denied")
+      },
+      {
+        status: ERequestStatus.CANCELED,
+        name: this.getTranslateMessage("book-offers.browse-swap-requests.canceled")
+      }];
+    this.labels = [
+      {
+        label: EBookLabel.PERMANENT_SWAP,
+        name: this.getTranslateMessage("book-offers.browse-swap-requests.label-permanent")
+      },
+      {
+        label: EBookLabel.TEMPORARY_SWAP,
+        name: this.getTranslateMessage("book-offers.browse-swap-requests.label-temporary")
+      }];
+  }
 
   ngOnInit(): void {
     if (this.tokenStorage.getToken()) {
@@ -60,9 +85,9 @@ export class BrowseSwapRequestsComponent implements OnInit {
           console.log(params);
           this.isSentOffers = params.direction === 'sent';
           if(!this.isSentOffers){
-            this.title = "Otrzymane ofery wymiany"
+            this.title = this.getTranslateMessage("book-offers.browse-swap-requests.received-title");
           } else {
-            this.title = "Wysłane ofery wymiany"
+            this.title = this.getTranslateMessage("book-offers.browse-swap-requests.send-title");
           }
           this.getRequests();
         }
@@ -75,8 +100,13 @@ export class BrowseSwapRequestsComponent implements OnInit {
     if(event.index === 0){
       this.requestStatus = [ERequestStatus.WAITING];
     } else {
-      this.requestStatus = [ERequestStatus.ACCEPTED, ERequestStatus.DENIED, ERequestStatus.CANCELED];
+      if (this.selectedRequestStatus) {
+        this.requestStatus = [this.selectedRequestStatus]
+      } else {
+        this.requestStatus = [ERequestStatus.ACCEPTED, ERequestStatus.DENIED, ERequestStatus.CANCELED];
+      }
     }
+    this.pageIndex = 0;
     this.getRequests();
   }
 
@@ -85,21 +115,25 @@ export class BrowseSwapRequestsComponent implements OnInit {
   }
 
   getRequests() {
+    this.emptySearchList = false;
     this.swapRequests = [];
     this.offersCount = 0;
+    this.totalRequestsLength = 0;
     if (this.isSentOffers) {
       this.bookOffersService.getSentRequests({
         requestStatus: this.requestStatus,
         bookLabel: this.bookLabel != undefined ? this.bookLabel : null!
-      }).subscribe(data => {
+      }, this.pageIndex, this.pageSize).subscribe(data => {
           console.log(data)
-          this.swapRequests = data
-          this.offersCount = data.length;
+          this.swapRequests = data.requestsList
+          this.offersCount = data.totalRequestsLength;
+          this.totalRequestsLength = data.totalRequestsLength;
+          this.checkIfEmptyRequestList(data.requestsList.length);
         },
         err => {
           Swal.fire({
             position: 'top-end',
-            title: 'Nie można załadować propozycji',
+            title: this.getTranslateMessage("book-offers.browse-swap-requests.load-error"),
             text: err.error.message,
             icon: 'error',
             showConfirmButton: false
@@ -110,15 +144,17 @@ export class BrowseSwapRequestsComponent implements OnInit {
       this.bookOffersService.getReceivedRequests({
         requestStatus: this.requestStatus,
         bookLabel: this.bookLabel != undefined ? this.bookLabel : null!
-      }).subscribe(data => {
+      }, this.pageIndex, this.pageSize).subscribe(data => {
           console.log(data)
-          this.swapRequests = data
-          this.offersCount = data.length;
+          this.swapRequests = data.requestsList
+          this.offersCount = data.totalRequestsLength;
+          this.totalRequestsLength = data.totalRequestsLength;
+          this.checkIfEmptyRequestList(data.requestsList.length);
         },
         err => {
           Swal.fire({
             position: 'top-end',
-            title: 'Nie można załadować propozycji',
+            title: this.getTranslateMessage("book-offers.browse-swap-requests.load-error"),
             text: err.error.message,
             icon: 'error',
             showConfirmButton: false
@@ -128,16 +164,22 @@ export class BrowseSwapRequestsComponent implements OnInit {
     }
   }
 
+  checkIfEmptyRequestList(booksLength: number){
+    if(booksLength == 0){
+      this.emptySearchList = true;
+    }
+  }
+
   getBookStatus(status: EBookStatus): string{
     let statusS = status.valueOf() as unknown as string;
     if(statusS === EBookStatus[EBookStatus.AVAILABLE]){
-      return 'Dostępna'
+      return this.getTranslateMessage("book-offers.browse-swap-requests.status-available")
     }
     if(statusS === EBookStatus[EBookStatus.PERMANENT_SWAP]){
-      return 'Wymieniona'
+      return this.getTranslateMessage("book-offers.browse-swap-requests.status-permanent")
     }
     if(statusS === EBookStatus[EBookStatus.TEMPORARY_SWAP]){
-      return 'Na wymianie tymczasowej'
+      return this.getTranslateMessage("book-offers.browse-swap-requests.status-temporary")
     }
     return ''
   }
@@ -145,10 +187,10 @@ export class BrowseSwapRequestsComponent implements OnInit {
   getBookLabel(label: EBookLabel): string{
     let labelS = label.valueOf() as unknown as string;
     if(labelS === EBookLabel[EBookLabel.PERMANENT_SWAP]){
-      return 'Stała'
+      return this.getTranslateMessage("book-offers.browse-swap-requests.label-permanent-short")
     }
     if(labelS === EBookLabel[EBookLabel.TEMPORARY_SWAP]){
-      return 'Tymczasowa'
+      return this.getTranslateMessage("book-offers.browse-swap-requests.label-temporary-short")
     }
     return ''
   }
@@ -156,16 +198,16 @@ export class BrowseSwapRequestsComponent implements OnInit {
   getRequestStatus(status: ERequestStatus): string{
     let statusS = status.valueOf() as unknown as string;
     if(statusS === ERequestStatus[ERequestStatus.WAITING]){
-      return 'Oczekująca'
+      return this.getTranslateMessage("book-offers.browse-swap-requests.waiting-status")
     }
     if(statusS === ERequestStatus[ERequestStatus.ACCEPTED]){
-      return 'Zaakceptowana'
+      return this.getTranslateMessage("book-offers.browse-swap-requests.accepted")
     }
     if(statusS === ERequestStatus[ERequestStatus.CANCELED]){
-      return 'Odwołana'
+      return this.getTranslateMessage("book-offers.browse-swap-requests.canceled")
     }
     if(statusS === ERequestStatus[ERequestStatus.DENIED]){
-      return 'Odrzucona'
+      return this.getTranslateMessage("book-offers.browse-swap-requests.denied")
     }
     return ''
   }
@@ -182,8 +224,8 @@ export class BrowseSwapRequestsComponent implements OnInit {
           console.log(data);
           Swal.fire({
             position: 'top-end',
-            title: 'Pomyśnie odwołanno ofertę',
-            text: 'Możesz znaleźć ją w ofertach historycznych',
+            title: this.getTranslateMessage("book-offers.browse-swap-requests.cancel-success"),
+            text: this.getTranslateMessage("book-offers.browse-swap-requests.go-to-history"),
             icon: 'success',
             showConfirmButton: false
           })
@@ -194,7 +236,7 @@ export class BrowseSwapRequestsComponent implements OnInit {
         err => {
           Swal.fire({
             position: 'top-end',
-            title: 'Nie można odwołać oferty',
+            title: this.getTranslateMessage("book-offers.browse-swap-requests.cancel-error"),
             text: err.error.message,
             icon: 'error',
             showConfirmButton: false
@@ -210,8 +252,8 @@ export class BrowseSwapRequestsComponent implements OnInit {
           console.log(data);
           Swal.fire({
             position: 'top-end',
-            title: 'Pomyśnie odrzucono ofertę',
-            text: 'Możesz znaleźć ją w ofertach historycznych',
+            title: this.getTranslateMessage("book-offers.browse-swap-requests.deny-success"),
+            text: this.getTranslateMessage("book-offers.browse-swap-requests.go-to-history"),
             icon: 'success',
             showConfirmButton: false
           })
@@ -222,7 +264,7 @@ export class BrowseSwapRequestsComponent implements OnInit {
         err => {
           Swal.fire({
             position: 'top-end',
-            title: 'Nie można odrzucić oferty',
+            title: this.getTranslateMessage("book-offers.browse-swap-requests.deny-error"),
             text: err.error.message,
             icon: 'error',
             showConfirmButton: false
@@ -247,12 +289,29 @@ export class BrowseSwapRequestsComponent implements OnInit {
       } else {
         this.requestStatus = [ERequestStatus.ACCEPTED, ERequestStatus.DENIED, ERequestStatus.CANCELED];
       }
+      this.pageIndex = 0;
       this.getRequests()
     }
   }
 
   changeBookLabel(){
+    this.pageIndex = 0;
     this.getRequests()
+  }
+
+  getTranslateMessage(key: string): string{
+    let message = "";
+    this.translate.get(key).subscribe(data =>
+      message = data
+    );
+    return message;
+  }
+
+  pageChanged(event: PageEvent) {
+    console.log({ event });
+    this.pageSize = event.pageSize;
+    this.pageIndex = event.pageIndex;
+    this.getRequests();
   }
 
 }

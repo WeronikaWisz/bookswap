@@ -1,11 +1,11 @@
 package com.bookswap.bookswapapp.services;
 
-import com.bookswap.bookswapapp.dtos.userbooks.BookData;
-import com.bookswap.bookswapapp.dtos.userbooks.BookFilter;
-import com.bookswap.bookswapapp.dtos.userbooks.BookListItem;
-import com.bookswap.bookswapapp.dtos.userbooks.FilterHints;
+import com.bookswap.bookswapapp.dtos.userbooks.*;
 import com.bookswap.bookswapapp.enums.EBookLabel;
 import com.bookswap.bookswapapp.enums.EBookStatus;
+import com.bookswap.bookswapapp.exception.ApiExpectationFailedException;
+import com.bookswap.bookswapapp.exception.ApiForbiddenException;
+import com.bookswap.bookswapapp.exception.ApiNotFoundException;
 import com.bookswap.bookswapapp.helpers.FilterHelper;
 import com.bookswap.bookswapapp.helpers.ImageHelper;
 import com.bookswap.bookswapapp.models.Book;
@@ -18,13 +18,11 @@ import com.bookswap.bookswapapp.security.userdetails.UserDetailsI;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
@@ -88,11 +86,11 @@ public class UserBooksService {
         User user = getCurrentUser();
 
         if(!book.getUser().getUsername().equals(user.getUsername())){
-            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Book does not belong to user");
+            throw new ApiForbiddenException("exception.bookNotBelongToUser");
         }
 
         if(!book.getStatus().equals(EBookStatus.AVAILABLE)){
-            throw new ResponseStatusException(HttpStatus.EXPECTATION_FAILED, "Cannot edit book that is not available");
+            throw new ApiExpectationFailedException("exception.cannotEditNotAvailableBook");
         }
 
         book.setUpdateDate(LocalDateTime.now());
@@ -129,11 +127,11 @@ public class UserBooksService {
 
     public Book getBook(Long id){
         return bookRepository.findById(id).orElseThrow(
-                () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Book not found")
+                () -> new ApiNotFoundException("exception.bookNotFound")
         );
     }
 
-    public List<BookListItem> filterBooks(BookFilter bookFilter){
+    public BooksResponse filterBooks(BookFilter bookFilter, Integer page, Integer size){
         boolean isLabelNull = (bookFilter.getLabel() == null);
         boolean isStatusNull = (bookFilter.getStatus() == null);
         List<Book> bookList;
@@ -173,7 +171,17 @@ public class UserBooksService {
             bookList = bookList.stream().filter(book -> book.getYearOfPublication() <= Integer.parseInt(bookFilter.getYearOfPublicationTo()))
                     .collect(Collectors.toList());
         }
-        return bookListToBookListItem(bookList);
+        int total = bookList.size();
+        int start = page * size;
+        int end = Math.min(start + size, total);
+        BooksResponse booksResponse = new BooksResponse();
+        if(end >= start){
+            booksResponse.setBooksList(bookListToBookListItem(bookList.stream().
+                    sorted(Comparator.comparing(Book::getCreationDate).reversed()).collect(Collectors.toList()))
+                    .subList(start, end));
+        }
+        booksResponse.setTotalBooksLength(total);
+        return booksResponse;
     }
 
     public FilterHints loadFilterHints(){

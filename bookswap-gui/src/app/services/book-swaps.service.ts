@@ -4,6 +4,7 @@ import {Observable} from "rxjs";
 import {SwapListItem} from "../models/book-swaps/SwapListItem";
 import {SwapFilter} from "../models/book-swaps/SwapFilter";
 import {ProfileData} from "../models/manage-users/ProfileData";
+import {SwapsResponse} from "../models/book-swaps/SwapsResponse";
 
 const BOOK_OFFERS_API = 'http://localhost:8080/book-swaps/';
 
@@ -18,8 +19,8 @@ export class BookSwapsService {
 
   constructor(private http: HttpClient) { }
 
-  getSwaps(swapFilter: SwapFilter): Observable<SwapListItem[]>{
-    return this.http.post<SwapListItem[]>(BOOK_OFFERS_API + 'swaps', JSON.stringify(swapFilter), httpOptions);
+  getSwaps(swapFilter: SwapFilter, pageIndex: number, pageSize: number): Observable<SwapsResponse>{
+    return this.http.post<SwapsResponse>(BOOK_OFFERS_API + `swaps?page=${pageIndex}&size=${pageSize}`, JSON.stringify(swapFilter), httpOptions);
   }
 
   getUserAddressByUsername(username: string): Observable<ProfileData>{

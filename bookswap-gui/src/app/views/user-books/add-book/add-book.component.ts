@@ -1,5 +1,5 @@
 import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
-import {FormBuilder, FormControl, FormGroup, Validators} from "@angular/forms";
+import {FormBuilder, FormControl, FormGroup, FormGroupDirective, Validators} from "@angular/forms";
 import {ActivatedRoute, Router} from "@angular/router";
 import {TokenStorageService} from "../../../services/token-storage.service";
 import Swal from "sweetalert2";
@@ -18,13 +18,10 @@ import {COMMA, ENTER} from "@angular/cdk/keycodes";
 import {UserBookService} from "../../../services/user-book.service";
 import {BookData} from "../../../models/user-books/BookData";
 import {EBookLabel} from "../../../enums/EBookLabel";
+import {TranslateService} from "@ngx-translate/core";
+import {Label} from "../../../models/user-books/Label";
 
 const moment = _rollupMoment || _moment;
-
-export interface Label{
-  label: EBookLabel,
-  name: string
-}
 
 @Component({
   selector: 'app-add-book',
@@ -54,20 +51,20 @@ export class AddBookComponent implements OnInit {
   allCategories: string[] = [];
   file: File | null = null;
   fileName: string = '';
-  imageUrl = '';
 
-  labels: Label[] = [{label: EBookLabel.PERMANENT_SWAP, name: "Wymiana stała"},
-    {label: EBookLabel.TEMPORARY_SWAP, name: "Wymiana tymczasowa"}]
+  labels: Label[] = [];
 
   @ViewChild('categoryInput') categoryInput!: ElementRef<HTMLInputElement>;
 
-  formTitle = "Dodawanie książki";
+  @ViewChild(FormGroupDirective) formGroupDirective!: FormGroupDirective;
+
+  formTitle = "";
   isEditBookView = false;
   bookId?: number;
   checkEditImage = false;
 
   constructor(private formBuilder: FormBuilder,
-              private route: ActivatedRoute,
+              private route: ActivatedRoute, private translate: TranslateService,
               private router: Router, private userBookService : UserBookService,
               private tokenStorage: TokenStorageService) {
     const currentYear = moment();
@@ -77,6 +74,15 @@ export class AddBookComponent implements OnInit {
       startWith(null),
       map((category: string | null) => (category ? this._filter(category) : this.allCategories.slice())),
     );
+    this.labels = [
+      {
+        label: EBookLabel.PERMANENT_SWAP,
+        name: this.getTranslateMessage("user-books.add-book.label-permanent")
+      },
+      {
+        label: EBookLabel.TEMPORARY_SWAP,
+        name: this.getTranslateMessage("user-books.add-book.label-temporary")
+      }];
   }
 
   ngOnInit(): void {
@@ -86,7 +92,8 @@ export class AddBookComponent implements OnInit {
       publisher: ['', Validators.required],
       yearOfPublication: ['', Validators.required],
       label: [null, Validators.required],
-      description: ['']
+      description: [''],
+      image: ['']
     });
     if (this.tokenStorage.getToken()) {
       this.isLoggedIn = true;
@@ -113,8 +120,10 @@ export class AddBookComponent implements OnInit {
           if (params.id){
             this.isEditBookView = true;
             this.bookId = params.id;
-            this.formTitle = "Edycja książki";
+            this.formTitle = this.getTranslateMessage("user-books.add-book.edit-title")
             this.getBook(params.id)
+          } else {
+            this.formTitle = this.getTranslateMessage("user-books.add-book.add-title")
           }
         }
       );
@@ -128,7 +137,7 @@ export class AddBookComponent implements OnInit {
       }, err => {
         Swal.fire({
           position: 'top-end',
-          title: 'Pobranie danych książki nie powiodło się',
+          title: this.getTranslateMessage("user-books.add-book.load-error"),
           text: err.error.message,
           icon: 'error',
           showConfirmButton: false
@@ -164,6 +173,9 @@ export class AddBookComponent implements OnInit {
     if (value) {
       if(!this.categories.find(c => c === value)) {
         this.categories.push(value);
+        if(this.form.pristine){
+          this.form.markAsDirty();
+        }
       }
     }
 
@@ -177,12 +189,18 @@ export class AddBookComponent implements OnInit {
 
     if (index >= 0) {
       this.categories.splice(index, 1);
+      if(this.form.pristine){
+        this.form.markAsDirty();
+      }
     }
   }
 
   selected(event: MatAutocompleteSelectedEvent): void {
     if(!this.categories.find(c => c === event.option.viewValue)) {
       this.categories.push(event.option.viewValue);
+      if(this.form.pristine){
+        this.form.markAsDirty();
+      }
     }
     this.categoryInput.nativeElement.value = '';
     this.categoriesCtrl.setValue(null);
@@ -216,7 +234,7 @@ export class AddBookComponent implements OnInit {
         console.log(data);
         Swal.fire({
           position: 'top-end',
-          title: 'Pomyśnie dodano książkę',
+          title: this.getTranslateMessage("user-books.add-book.add-success"),
           icon: 'success',
           showConfirmButton: false
         })
@@ -225,7 +243,7 @@ export class AddBookComponent implements OnInit {
       err => {
         Swal.fire({
           position: 'top-end',
-          title: 'Dodawanie nie powiodło się',
+          title: this.getTranslateMessage("user-books.add-book.add-error"),
           text: err.error.message,
           icon: 'error',
           showConfirmButton: false
@@ -246,9 +264,10 @@ export class AddBookComponent implements OnInit {
     }, this.file, this.bookId!).subscribe(
       data => {
         console.log(data);
+        this.form.markAsPristine();
         Swal.fire({
           position: 'top-end',
-          title: 'Pomyśnie zaktualizowano książkę',
+          title: this.getTranslateMessage("user-books.add-book.update-success"),
           icon: 'success',
           showConfirmButton: false
         })
@@ -256,7 +275,7 @@ export class AddBookComponent implements OnInit {
       err => {
         Swal.fire({
           position: 'top-end',
-          title: 'Aktualizacja nie powiodła się',
+          title: this.getTranslateMessage("user-books.add-book.update-error"),
           text: err.error.message,
           icon: 'error',
           showConfirmButton: false
@@ -268,28 +287,33 @@ export class AddBookComponent implements OnInit {
   clearFields(){
     this.file = null;
     this.fileName = '';
-    this.categories = []
-    this.form.reset();
-    this.form.markAsUntouched();
+    this.categories = [];
+    this.clearFormGroupDirective();
+  }
+
+  clearFormGroupDirective() {
+    this.formGroupDirective.resetForm();
   }
 
   onFileSelected(event: any) {
     this.file = event.target.files[0];
     if (this.file) {
       this.fileName = this.file.name;
-      // var reader = new FileReader();
-      // reader.readAsDataURL(event.target.files[0]); // read file as data url
-      // reader.onload = (event) => { // called once readAsDataURL is completed
-      //   this.imageUrl = event.target!.result as string;
-      // }
     } else {
       this.fileName = '';
-      // this.imageUrl = '';
     }
   }
 
   reloadPage(): void {
     window.location.reload();
+  }
+
+  getTranslateMessage(key: string): string{
+    let message = "";
+    this.translate.get(key).subscribe(data =>
+      message = data
+    );
+    return message;
   }
 
 }

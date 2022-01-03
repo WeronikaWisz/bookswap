@@ -8,6 +8,9 @@ import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatToolbarModule } from '@angular/material/toolbar';
 
 import { MainNavComponent } from './main-nav.component';
+import {TranslateModule} from "@ngx-translate/core";
+import {RouterTestingModule} from "@angular/router/testing";
+import {MatMenuModule} from "@angular/material/menu";
 
 describe('MainNavComponent', () => {
   let component: MainNavComponent;
@@ -24,6 +27,9 @@ describe('MainNavComponent', () => {
         MatListModule,
         MatSidenavModule,
         MatToolbarModule,
+        TranslateModule.forRoot(),
+        RouterTestingModule,
+        MatMenuModule
       ]
     }).compileComponents();
   }));

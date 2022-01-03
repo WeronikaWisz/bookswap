@@ -7,6 +7,7 @@ import {UsersService} from "../../../services/manage-users/users.service";
 import {MatDialog} from "@angular/material/dialog";
 import {UpdateProfileDialogComponent} from "./update-profile-dialog/update-profile-dialog.component";
 import {ChangePasswordDialogComponent} from "./change-password-dialog/change-password-dialog.component";
+import {TranslateService} from "@ngx-translate/core";
 
 @Component({
   selector: 'app-profile',
@@ -18,7 +19,7 @@ export class ProfileComponent implements OnInit {
   isLoggedIn = false;
   profileData?: ProfileData;
 
-  constructor(private tokenStorage: TokenStorageService, private router: Router,
+  constructor(private tokenStorage: TokenStorageService, private router: Router, private translate: TranslateService,
               private usersService: UsersService, public dialog: MatDialog) { }
 
   ngOnInit(): void {
@@ -38,7 +39,7 @@ export class ProfileComponent implements OnInit {
       }, err => {
         Swal.fire({
           position: 'top-end',
-          title: 'Pobranie danych użytkownika nie powiodło się',
+          title: this.getTranslateMessage("manage-users.profile.load-data-error"),
           text: err.error.message,
           icon: 'error',
           showConfirmButton: false
@@ -81,6 +82,14 @@ export class ProfileComponent implements OnInit {
 
   reloadPage(): void {
     window.location.reload();
+  }
+
+  getTranslateMessage(key: string): string{
+    let message = "";
+    this.translate.get(key).subscribe(data =>
+      message = data
+    );
+    return message;
   }
 
 }

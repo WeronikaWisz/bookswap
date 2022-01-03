@@ -15,7 +15,7 @@
   flex-direction: column
   justify-content: space-between
 
-@media (min-width: 800px)
+@media (min-width: 600px)
   .request-info
     display: flex
     flex-direction: row
@@ -23,17 +23,19 @@
   .book-image
     padding-top: 10px
     max-width: 30%
+  img
+    max-height: 150px
 
-@media (max-width: 800px)
+@media (max-width: 600px)
   .request-info
     display: flex
     flex-direction: column
     justify-content: space-between
   .book-image
     padding-top: 10px
-    max-width: 50%
+    max-width: 40%
 
-@media (max-width: 500px)
+@media (max-width: 400px)
   .book-image
     max-width: 100%
 
@@ -63,7 +65,7 @@
   font-size: 14px
 
 img
-  max-height: 150px
+  object-fit: fill
 
 .request-status-select
   margin-right: 10px
@@ -80,3 +82,14 @@ img
 
 span
   margin-right: 5px
+
+::ng-deep .field-filter .mat-form-field-wrapper
+  padding-bottom: 0
+
+.empty-list
+  padding: 20px
+  text-align: center
+  color: rgba(0, 0, 0, 0.54)
+
+.mat-paginator
+  background-color: #f8f8f8

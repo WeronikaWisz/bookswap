@@ -9,6 +9,10 @@ import Swal from "sweetalert2";
 import {BookListItem} from "../../../models/user-books/BookListItem";
 import {BookDetailsDialogComponent} from "./book-details-dialog/book-details-dialog.component";
 import {FilterHints} from "../../../models/user-books/FilterHints";
+import {EBookLabel} from "../../../enums/EBookLabel";
+import {TranslateService} from "@ngx-translate/core";
+import {Label} from "../../../models/user-books/Label";
+import {PageEvent} from "@angular/material/paginator";
 
 @Component({
   selector: 'app-browse-books',
@@ -34,8 +38,31 @@ export class BrowseBooksComponent implements OnInit {
   filterHintsLoaded = false;
   hints?: FilterHints;
 
-  constructor(public dialog: MatDialog, private router: Router,
-              private userBookService : UserBookService, private tokenStorage: TokenStorageService) { }
+  bookLabel?: EBookLabel;
+
+  labels: Label[] = []
+
+  currentTab = 0;
+
+  emptySearchList = false;
+
+  totalBooksLength = 0;
+  pageSize = 10;
+  pageIndex = 0;
+  pageSizeOptions: number[] = [5, 10, 20];
+
+  constructor(public dialog: MatDialog, private router: Router, private translate: TranslateService,
+              private userBookService : UserBookService, private tokenStorage: TokenStorageService) {
+    this.labels = [
+      {
+        label: EBookLabel.PERMANENT_SWAP,
+        name: this.getTranslateMessage("user-books.browse-books.label-permanent")
+      },
+      {
+        label: EBookLabel.TEMPORARY_SWAP,
+        name: this.getTranslateMessage("user-books.browse-books.label-temporary")
+      }];
+  }
 
   ngOnInit(): void {
     if (this.tokenStorage.getToken()) {
@@ -65,7 +92,7 @@ export class BrowseBooksComponent implements OnInit {
         err => {
           Swal.fire({
             position: 'top-end',
-            title: 'Nie można załadować informacji o książce',
+            title: this.getTranslateMessage("user-books.browse-books.load-book-error"),
             text: err.error.message,
             icon: 'error',
             showConfirmButton: false
@@ -101,12 +128,14 @@ export class BrowseBooksComponent implements OnInit {
       console.log(result);
       if(result) {
         this.bookFilter = result;
+        this.pageIndex = 0;
         this.loadFilterBooks();
       }
     });
   }
 
   loadFilterBooks(){
+    this.emptySearchList = false;
     this.userBookService.loadFilteredBook({
       authors: this.bookFilter.authors,
       categories: this.bookFilter.categories,
@@ -116,19 +145,23 @@ export class BrowseBooksComponent implements OnInit {
         this.bookFilter.yearOfPublicationFrom : null!,
       yearOfPublicationTo: this.bookFilter.yearOfPublicationTo ?
         this.bookFilter.yearOfPublicationTo : null!,
-      label: null!,
+      label: this.bookFilter.label != undefined ? this.bookFilter.label : null!,
       status: this.bookFilter.status
-    })
+    }, this.pageIndex, this.pageSize)
       .subscribe(
         data => {
           console.log(data);
-          this.books = data;
-          this.bookCount = this.books.length;
+          this.books = data.booksList;
+          this.bookCount = data.totalBooksLength;
+          this.totalBooksLength = data.totalBooksLength;
+          if(this.books.length == 0){
+            this.emptySearchList = true;
+          }
         },
         err => {
           Swal.fire({
             position: 'top-end',
-            title: 'Nie można załadować książek',
+            title: this.getTranslateMessage("user-books.browse-books.load-error"),
             text: err.error.message,
             icon: 'error',
             showConfirmButton: false
@@ -143,13 +176,38 @@ export class BrowseBooksComponent implements OnInit {
 
   onTabChange(event: any){
     console.log(event);
+    this.currentTab = event.index;
     if(event.index === 1){
       this.bookFilter.status = 2;
+      this.bookFilter.label = undefined;
     } else if (event.index === 2){
       this.bookFilter.status = 1;
+      this.bookFilter.label = undefined
     } else {
       this.bookFilter.status = 0;
+      this.bookFilter.label = this.bookLabel;
     }
+    this.pageIndex = 0;
+    this.loadFilterBooks();
+  }
+
+  changeBookLabel(){
+    this.bookFilter.label = this.bookLabel;
+    this.loadFilterBooks()
+  }
+
+  getTranslateMessage(key: string): string{
+    let message = "";
+    this.translate.get(key).subscribe(data =>
+      message = data
+    );
+    return message;
+  }
+
+  pageChanged(event: PageEvent) {
+    console.log({ event });
+    this.pageSize = event.pageSize;
+    this.pageIndex = event.pageIndex;
     this.loadFilterBooks();
   }
 

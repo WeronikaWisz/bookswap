@@ -5,6 +5,9 @@ import com.bookswap.bookswapapp.enums.EBookLabel;
 import com.bookswap.bookswapapp.enums.EBookStatus;
 import com.bookswap.bookswapapp.enums.ERequestStatus;
 import com.bookswap.bookswapapp.enums.ESwapStatus;
+import com.bookswap.bookswapapp.exception.ApiExpectationFailedException;
+import com.bookswap.bookswapapp.exception.ApiForbiddenException;
+import com.bookswap.bookswapapp.exception.ApiNotFoundException;
 import com.bookswap.bookswapapp.helpers.FilterHelper;
 import com.bookswap.bookswapapp.helpers.ImageHelper;
 import com.bookswap.bookswapapp.models.*;
@@ -16,19 +19,14 @@ import com.bookswap.bookswapapp.security.userdetails.UserDetailsI;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -49,7 +47,7 @@ public class BookOffersService {
         this.swapRepository = swapRepository;
     }
 
-    public OffersResponse filterOffers(OfferFilter offerFilter){
+    public OffersResponse filterOffers(OfferFilter offerFilter, Integer page, Integer size){
         User user = getCurrentUser();
         List<Book> offerList = bookRepository
                 .findBookByStatusAndLabelAndUserIsNot(EBookStatus.AVAILABLE, offerFilter.getLabel(), user)
@@ -91,11 +89,19 @@ public class BookOffersService {
             offerList = offerList.stream().filter(book ->
                     FilterHelper.localizationMatches(offerFilter.getLocalization(), book)).collect(Collectors.toList());
         }
+        int total = offerList.size();
+        int start = page * size;
+        int end = Math.min(start + size, total);
         OffersResponse offersResponse = new OffersResponse();
-        offersResponse.setOffersList(offerListToOfferListItem(offerList));
+        if(end >= start) {
+            offersResponse.setOffersList(offerListToOfferListItem(offerList.stream()
+                    .sorted(Comparator.comparing(Book::getCreationDate).reversed()).collect(Collectors.toList())
+                    .subList(start, end)));
+        }
         long requestsCount = swapRequestRepository.countUserOfferRequest(offerFilter.getLabel(), user);
         long booksCount = bookRepository.countUserAvailableBooks(offerFilter.getLabel(), user);
         offersResponse.setAvailableOffersCount(booksCount - requestsCount);
+        offersResponse.setTotalOffersLength(total);
         return offersResponse;
     }
 
@@ -118,7 +124,7 @@ public class BookOffersService {
     @Transactional
     public OfferDetails getOffer(Long id){
         Book book = bookRepository.findById(id).orElseThrow(
-                () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Book not found")
+                () -> new ApiNotFoundException("exception.bookNotFound")
         );
         OfferDetails offerDetails = new OfferDetails(book.getPublisher(), book.getYearOfPublication(), book.getDescription(),
                 book.getLabel(), book.getStatus(), book.getUser().getUsername(),
@@ -134,48 +140,42 @@ public class BookOffersService {
         } else {
             offerDetails.setHasOfferFromUser(false);
         }
+        offerDetails.setLocalization(book.getUser().getCity() + ", " +
+                book.getUser().getPostalCode() + " " + book.getUser().getPost());
         return offerDetails;
     }
 
     @Transactional(isolation = Isolation.SERIALIZABLE)
     public void sendSwapRequest(BooksForSwap booksForSwap){
 
-        logger.info("start");
         Book book = bookRepository.findById(booksForSwap.getRequestedBookId()).orElseThrow(
-                () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Requested book not found")
+                () -> new ApiNotFoundException("exception.requestedBookNotFound")
         );
-        logger.info("founded book");
         if(book.getStatus() != EBookStatus.AVAILABLE){
-            throw new ResponseStatusException(HttpStatus.EXPECTATION_FAILED, "Requested book is not available");
+            throw new ApiExpectationFailedException("exception.requestedBookNotAvailable");
         }
-        logger.info("available");
         User user = getCurrentUser();
-        logger.info("founded current user");
         long requestsCount = swapRequestRepository.countUserOfferRequest(book.getLabel(), user);
-        logger.info("request count");
         long booksCount = bookRepository.countUserAvailableBooks(book.getLabel(), user);
-        logger.info("book count");
         if(booksCount - requestsCount == 0){
-            throw new ResponseStatusException(HttpStatus.EXPECTATION_FAILED, "User does not have books to swap");
+            throw new ApiExpectationFailedException("exception.noBookToSwap");
         }
-        logger.info("have books");
         if(booksForSwap.getUserBookIdForSwap() != null){
-            logger.info("can swap already");
             Book bookForSwap = bookRepository.findById(booksForSwap.getUserBookIdForSwap()).orElseThrow(
-                    () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Book for swap not found")
+                    () -> new ApiNotFoundException("exception.swapBookNotFound")
             );
             if(bookForSwap.getStatus() != EBookStatus.AVAILABLE){
-                throw new ResponseStatusException(HttpStatus.EXPECTATION_FAILED, "Book for swap is not available");
+                throw new ApiExpectationFailedException("exception.swapBookNotAvailable");
             }
 
             if(!book.getLabel().equals(bookForSwap.getLabel())){
-                throw new ResponseStatusException(HttpStatus.EXPECTATION_FAILED, "Book labels are not compatible");
+                throw new ApiExpectationFailedException("exception.labelIncompatible");
             }
 
             Optional<SwapRequest> existedSwapRequest = swapRequestRepository.findByBookAndUserAndStatus(bookForSwap,
                     book.getUser(), ERequestStatus.WAITING);
             if(existedSwapRequest.isEmpty()){
-                throw new ResponseStatusException(HttpStatus.EXPECTATION_FAILED, "Swap request for user is no longer waiting");
+                throw new ApiExpectationFailedException("exception.requestForUserNotWaiting");
             }
             Swap swap = new Swap();
             swap.setCreationDate(LocalDateTime.now());
@@ -206,14 +206,11 @@ public class BookOffersService {
             this.deniedWaitingRequestForBooks(swapBooks);
 
         } else {
-            logger.info("start sending request");
             Optional<SwapRequest> existedSwapRequest = swapRequestRepository
                     .findByBookAndUserAndStatus(book, user, ERequestStatus.WAITING);
-            logger.info("already exist that request");
             if(existedSwapRequest.isPresent()){
-                throw new ResponseStatusException(HttpStatus.EXPECTATION_FAILED, "Swap request is already send");
+                throw new ApiExpectationFailedException("exception.requestAlreadySend");
             }
-            logger.info("make a request");
             SwapRequest swapRequest = new SwapRequest();
             swapRequest.setCreationDate(LocalDateTime.now());
             swapRequest.setBook(book);
@@ -221,12 +218,11 @@ public class BookOffersService {
             swapRequest.setStatus(ERequestStatus.WAITING);
 
             swapRequestRepository.save(swapRequest);
-            logger.info("done");
         }
     }
 
     @Transactional
-    public List<SwapRequestListItem> getSentRequests(SwapRequestFilter swapRequestFilter){
+    public RequestsResponse getSentRequests(SwapRequestFilter swapRequestFilter, Integer page, Integer size){
         List<SwapRequest> swapRequests = swapRequestRepository.findByUserAndStatusIn(
                 getCurrentUser(), swapRequestFilter.getRequestStatus()
         ).orElse(Collections.emptyList());
@@ -235,11 +231,11 @@ public class BookOffersService {
                     swapRequest -> swapRequest.getBook().getLabel().equals(swapRequestFilter.getBookLabel()))
                     .collect(Collectors.toList());
         }
-        return getRequestListItems(swapRequests);
+        return getRequestsResponse(swapRequests, page, size);
     }
 
     @Transactional
-    public List<SwapRequestListItem> getReceivedRequests(SwapRequestFilter swapRequestFilter){
+    public RequestsResponse getReceivedRequests(SwapRequestFilter swapRequestFilter, Integer page, Integer size){
         List<SwapRequest> swapRequests = swapRequestRepository.findByBook_UserAndStatusIn(
                 getCurrentUser(), swapRequestFilter.getRequestStatus()
         ).orElse(Collections.emptyList());
@@ -248,15 +244,28 @@ public class BookOffersService {
                             swapRequest -> swapRequest.getBook().getLabel().equals(swapRequestFilter.getBookLabel()))
                     .collect(Collectors.toList());
         }
-        return getRequestListItems(swapRequests);
+        return getRequestsResponse(swapRequests, page, size);
+    }
+
+    private RequestsResponse getRequestsResponse(List<SwapRequest> swapRequests, Integer page, Integer size){
+        int total = swapRequests.size();
+        int start = page * size;
+        int end = Math.min(start + size, total);
+        RequestsResponse requestsResponse = new RequestsResponse();
+        if(end >= start){
+            requestsResponse.setRequestsList(getRequestListItems(swapRequests.stream()
+                    .sorted(Comparator.comparing(SwapRequest::getCreationDate).reversed()).collect(Collectors.toList()))
+                    .subList(start, end));
+        }
+        requestsResponse.setTotalRequestsLength(total);
+        return requestsResponse;
     }
 
     @Transactional
     public void cancelSwapRequest(Long id){
         SwapRequest swapRequest = getWaitingSwapRequest(id);
         if(swapRequest.getUser() != getCurrentUser()){
-            throw new ResponseStatusException(HttpStatus.FORBIDDEN,
-                    "Swap request can only be cancel by user who send it");
+            throw new ApiForbiddenException("exception.cannotCancel");
         }
         swapRequest.setUpdateDate(LocalDateTime.now());
         swapRequest.setStatus(ERequestStatus.CANCELED);
@@ -266,8 +275,7 @@ public class BookOffersService {
     public void denySwapRequest(Long id){
         SwapRequest swapRequest = getWaitingSwapRequest(id);
         if(swapRequest.getBook().getUser() != getCurrentUser()){
-            throw new ResponseStatusException(HttpStatus.FORBIDDEN,
-                    "Swap request can only be denied by user whose book was requested");
+            throw new ApiForbiddenException("exception.cannotDeny");
         }
         swapRequest.setUpdateDate(LocalDateTime.now());
         swapRequest.setStatus(ERequestStatus.DENIED);
@@ -276,9 +284,9 @@ public class BookOffersService {
     private SwapRequest getWaitingSwapRequest(Long id){
         SwapRequest swapRequest = swapRequestRepository.findById(id)
                 .orElseThrow(() ->
-                        new ResponseStatusException(HttpStatus.NOT_FOUND, "Swap request does not exist"));
+                        new ApiNotFoundException("exception.requestNotExists"));
         if(swapRequest.getStatus() != ERequestStatus.WAITING){
-            throw new ResponseStatusException(HttpStatus.EXPECTATION_FAILED, "Swap request is not waiting");
+            throw new ApiExpectationFailedException("exception.requestNotWaiting");
         }
         return swapRequest;
     }

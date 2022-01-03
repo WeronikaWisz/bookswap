@@ -2,9 +2,12 @@ package com.bookswap.bookswapapp.services;
 
 import com.bookswap.bookswapapp.dtos.bookswaps.SwapFilter;
 import com.bookswap.bookswapapp.dtos.bookswaps.SwapListItem;
+import com.bookswap.bookswapapp.dtos.bookswaps.SwapsResponse;
+import com.bookswap.bookswapapp.dtos.userbooks.BooksResponse;
 import com.bookswap.bookswapapp.enums.EBookLabel;
 import com.bookswap.bookswapapp.enums.EBookStatus;
 import com.bookswap.bookswapapp.enums.ESwapStatus;
+import com.bookswap.bookswapapp.exception.ApiNotFoundException;
 import com.bookswap.bookswapapp.helpers.ImageHelper;
 import com.bookswap.bookswapapp.models.Book;
 import com.bookswap.bookswapapp.models.Swap;
@@ -14,43 +17,40 @@ import com.bookswap.bookswapapp.security.userdetails.UserDetailsI;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class BookSwapsService {
 
-    private final BookRepository bookRepository;
     private final UserRepository userRepository;
-    private final SwapRequestRepository swapRequestRepository;
     private final SwapRepository swapRepository;
     private static final Logger logger = LoggerFactory.getLogger(BookSwapsService.class);
 
     @Autowired
-    public BookSwapsService(BookRepository bookRepository, UserRepository userRepository,
-                            SwapRequestRepository swapRequestRepository, SwapRepository swapRepository) {
-        this.bookRepository = bookRepository;
+    public BookSwapsService(UserRepository userRepository, SwapRepository swapRepository) {
         this.userRepository = userRepository;
-        this.swapRequestRepository = swapRequestRepository;
         this.swapRepository = swapRepository;
     }
 
     @Transactional
-    public List<SwapListItem> getSwaps(SwapFilter swapFilter){
+    public SwapsResponse getSwaps(SwapFilter swapFilter, Integer page, Integer size){
         List<SwapListItem> swapListItems = new ArrayList<>();
         User user = getCurrentUser();
         List<Swap> swaps = swapRepository.findUserSwaps(swapFilter.getSwapStatus(),
                 swapFilter.getBookLabel(), user).orElse(Collections.emptyList());
         logger.info("Label: " + swapFilter.getBookLabel());
+        swaps = swaps.stream()
+                .sorted(Comparator.comparing(Swap::getCreationDate).reversed()).collect(Collectors.toList());
         for(Swap swap: swaps){
             SwapListItem swapListItem = new SwapListItem();
             swapListItem.setId(swap.getId());
@@ -83,19 +83,27 @@ public class BookSwapsService {
             }
             swapListItems.add(swapListItem);
         }
-        return swapListItems;
+        int total = swapListItems.size();
+        int start = page * size;
+        int end = Math.min(start + size, total);
+        SwapsResponse swapsResponse = new SwapsResponse();
+        if(end >= start){
+            swapsResponse.setSwapsList(swapListItems.subList(start, end));
+        }
+        swapsResponse.setTotalSwapsLength(total);
+        return swapsResponse;
     }
 
     public User geUserAddressByUsername(String username){
         return userRepository.findByUsername(username).orElseThrow(
-                () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Username does not exist")
+                () -> new ApiNotFoundException("exception.usernameNotExists")
         );
     }
 
     @Transactional(isolation = Isolation.SERIALIZABLE)
     public SwapListItem confirmBookDelivery(Long swapId){
         Swap swap = swapRepository.findById(swapId).orElseThrow(
-                () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Swap does not exist")
+                () -> new ApiNotFoundException("exception.swapNotExists")
         );
         User user = getCurrentUser();
         ESwapStatus status = swap.getStatus();

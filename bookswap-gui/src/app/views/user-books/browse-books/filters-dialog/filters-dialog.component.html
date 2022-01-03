@@ -1,7 +1,7 @@
-<h2 mat-dialog-title>Filtry</h2>
+<h2 mat-dialog-title>{{ 'user-books.browse-books.filter' | translate}}</h2>
 <div mat-dialog-content>
   <mat-form-field class="full-width-input wider-inputs" appearance="outline">
-    <mat-label>Tytuł</mat-label>
+    <mat-label>{{ 'user-books.browse-books.title' | translate}}</mat-label>
     <mat-chip-list #chipListTitle aria-label="Title selection">
       <mat-chip
         *ngFor="let title of titles"
@@ -14,7 +14,7 @@
         </button>
       </mat-chip>
       <input
-        placeholder="Wybierz tytuł..."
+        placeholder="{{ 'user-books.browse-books.choose-title' | translate}}..."
         #titleInput
         [formControl]="titlesCtrl"
         [matAutocomplete]="autoTitle"
@@ -30,7 +30,7 @@
   </mat-form-field>
   <br/>
   <mat-form-field class="full-width-input left-mat-field" appearance="outline">
-    <mat-label>Autor</mat-label>
+    <mat-label>{{ 'user-books.browse-books.author' | translate}}</mat-label>
     <mat-chip-list #chipListAuthor aria-label="Author selection">
       <mat-chip
         *ngFor="let author of authors"
@@ -43,7 +43,7 @@
         </button>
       </mat-chip>
       <input
-        placeholder="Wybierz autora..."
+        placeholder="{{ 'user-books.browse-books.choose-author' | translate}}..."
         #authorInput
         [formControl]="authorsCtrl"
         [matAutocomplete]="autoAuthor"
@@ -58,7 +58,7 @@
     </mat-autocomplete>
   </mat-form-field>
   <mat-form-field class="full-width-input left-mat-field" appearance="outline">
-    <mat-label>Wydawnictwo</mat-label>
+    <mat-label>{{ 'user-books.browse-books.publisher' | translate}}</mat-label>
     <mat-chip-list #chipListPublisher aria-label="Publisher selection">
       <mat-chip
         *ngFor="let publisher of publishers"
@@ -71,7 +71,7 @@
         </button>
       </mat-chip>
       <input
-        placeholder="Wybierz wydawnictwo..."
+        placeholder="{{ 'user-books.browse-books.choose-publisher' | translate}}..."
         #publisherInput
         [formControl]="publishersCtrl"
         [matAutocomplete]="autoPublisher"
@@ -87,7 +87,7 @@
   </mat-form-field>
   <br/>
   <mat-form-field class="left-mat-field" appearance="outline">
-    <mat-label>Rok publikacji od</mat-label>
+    <mat-label>{{ 'user-books.browse-books.year-from' | translate}}</mat-label>
     <input matInput [max]="maxDate" [matDatepicker]="dp" [formControl]="dateFrom">
     <mat-datepicker-toggle matSuffix [for]="dp"></mat-datepicker-toggle>
     <mat-datepicker [calendarHeaderComponent]="exampleHeaderFrom" #dp
@@ -97,7 +97,7 @@
     </mat-datepicker>
   </mat-form-field>
   <mat-form-field class="left-mat-field" appearance="outline">
-    <mat-label>Rok publikacji do</mat-label>
+    <mat-label>{{ 'user-books.browse-books.year-to' | translate}}</mat-label>
     <input matInput [max]="maxDate" [matDatepicker]="dp2" [formControl]="dateTo">
     <mat-datepicker-toggle matSuffix [for]="dp2"></mat-datepicker-toggle>
     <mat-datepicker [calendarHeaderComponent]="exampleHeaderTo" #dp2
@@ -108,7 +108,7 @@
   </mat-form-field>
   <br/>
   <mat-form-field class="example-chip-list wider-inputs" appearance="outline">
-    <mat-label>Kategorie</mat-label>
+    <mat-label>{{ 'user-books.browse-books.categories' | translate}}</mat-label>
     <mat-chip-list #chipList aria-label="Category selection">
       <mat-chip
         *ngFor="let category of categories"
@@ -121,7 +121,7 @@
         </button>
       </mat-chip>
       <input
-        placeholder="Wybierz kategorię..."
+        placeholder="{{ 'user-books.browse-books.choose-category' | translate}}..."
         #categoryInput
         [formControl]="categoriesCtrl"
         [matAutocomplete]="auto"
@@ -137,6 +137,8 @@
   </mat-form-field>
 </div>
 <div mat-dialog-actions align="end">
-  <button mat-button (click)="onNoClick()">Zamknij</button>
-  <button mat-raised-button color="primary" [mat-dialog-close]="sendData()" [disabled]="dateTo.invalid">Zastosuj</button>
+  <button mat-button (click)="onNoClick()">{{ 'user-books.browse-books.close' | translate}}</button>
+  <button mat-raised-button color="primary" [mat-dialog-close]="sendData()" [disabled]="dateTo.invalid">
+    {{ 'user-books.browse-books.apply' | translate}}
+  </button>
 </div>

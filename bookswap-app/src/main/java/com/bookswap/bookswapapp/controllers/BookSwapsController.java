@@ -1,8 +1,8 @@
 package com.bookswap.bookswapapp.controllers;
 
-import com.bookswap.bookswapapp.dtos.bookoffers.SwapRequestListItem;
 import com.bookswap.bookswapapp.dtos.bookswaps.SwapFilter;
 import com.bookswap.bookswapapp.dtos.bookswaps.SwapListItem;
+import com.bookswap.bookswapapp.dtos.bookswaps.SwapsResponse;
 import com.bookswap.bookswapapp.dtos.manageusers.ProfileData;
 import com.bookswap.bookswapapp.models.User;
 import com.bookswap.bookswapapp.services.BookSwapsService;
@@ -33,9 +33,11 @@ public class BookSwapsController {
 
     @PostMapping(path = "/swaps")
     @PreAuthorize("hasRole('USER')")
-    public ResponseEntity<?> getSwaps(@RequestBody SwapFilter swapFilter) {
-        List<SwapListItem> swapListItems = bookSwapsService.getSwaps(swapFilter);
-        return ResponseEntity.ok(swapListItems);
+    public ResponseEntity<?> getSwaps(@RequestBody SwapFilter swapFilter,
+                                      @RequestParam(defaultValue = "0") int page,
+                                      @RequestParam(defaultValue = "10") int size) {
+        SwapsResponse swapsResponse = bookSwapsService.getSwaps(swapFilter, page, size);
+        return ResponseEntity.ok(swapsResponse);
     }
 
     @GetMapping(path = "/user-address/{username}")

@@ -7,6 +7,7 @@ import {EBookStatus} from "../../../../enums/EBookStatus";
 import Swal from "sweetalert2";
 import {BookOffersService} from "../../../../services/book-offers.service";
 import {FormBuilder, FormGroup} from "@angular/forms";
+import {TranslateService} from "@ngx-translate/core";
 
 @Component({
   selector: 'app-offer-details-dialog',
@@ -19,7 +20,7 @@ export class OfferDetailsDialogComponent implements OnInit {
   requestAlreadySend = false;
 
   constructor(
-    public dialogRef: MatDialogRef<OfferDetailsDialogComponent>,
+    public dialogRef: MatDialogRef<OfferDetailsDialogComponent>, private translate: TranslateService,
     @Inject(MAT_DIALOG_DATA) public data: OfferInfo, private formBuilder: FormBuilder,
     private router: Router, private bookOffersService : BookOffersService
   ) {
@@ -35,7 +36,7 @@ export class OfferDetailsDialogComponent implements OnInit {
   }
 
   onNoClick(): boolean {
-    return (this.getStatus() !== 'Dostępna' || this.requestAlreadySend);
+    return (this.getStatusValue() !== 0 || this.requestAlreadySend);
   }
 
   setBookToSwap(){
@@ -45,27 +46,40 @@ export class OfferDetailsDialogComponent implements OnInit {
     }
   }
 
-  getStatus(): string{
-    let status = this.data.offerDetails.status.valueOf() as unknown as string;
-    if(status === EBookStatus[EBookStatus.AVAILABLE]){
-      return 'Dostępna'
+  getStatusName(value: number): string{
+    if(value === 0){
+      return this.getTranslateMessage("book-offers.browse-offers.status-available")
     }
-    if(status === EBookStatus[EBookStatus.PERMANENT_SWAP]){
-      return 'Wymieniona'
+    if(value === 1){
+      return this.getTranslateMessage("book-offers.browse-offers.status-permanent")
     }
-    if(status === EBookStatus[EBookStatus.TEMPORARY_SWAP]){
-      return 'Na wymianie tymczasowej'
+    if(value === 2){
+      return this.getTranslateMessage("book-offers.browse-offers.status-temporary")
     }
     return ''
+  }
+
+  getStatusValue(): number{
+    let status = this.data.offerDetails.status.valueOf() as unknown as string;
+    if(status === EBookStatus[EBookStatus.AVAILABLE]){
+      return 0
+    }
+    if(status === EBookStatus[EBookStatus.PERMANENT_SWAP]){
+      return 1
+    }
+    if(status === EBookStatus[EBookStatus.TEMPORARY_SWAP]){
+      return 2
+    }
+    return 0
   }
 
   getLabel(): string{
     let label = this.data.offerDetails.label.valueOf() as unknown as string;
     if(label === EBookLabel[EBookLabel.PERMANENT_SWAP]){
-      return 'Stała'
+      return this.getTranslateMessage("book-offers.browse-offers.label-permanent-short")
     }
     if(label === EBookLabel[EBookLabel.TEMPORARY_SWAP]){
-      return 'Tymczasowa'
+      return this.getTranslateMessage("book-offers.browse-offers.label-temporary-short")
     }
     return ''
   }
@@ -83,7 +97,7 @@ export class OfferDetailsDialogComponent implements OnInit {
         this.disableSelect();
         Swal.fire({
           position: 'top-end',
-          title: 'Pomyśnie wysłano propozycję',
+          title: this.getTranslateMessage("book-offers.browse-offers.request-success"),
           icon: 'success',
           showConfirmButton: false
         })
@@ -91,7 +105,7 @@ export class OfferDetailsDialogComponent implements OnInit {
       err => {
         Swal.fire({
           position: 'top-end',
-          title: 'Nie można wysłać propozycji wymiany',
+          title: this.getTranslateMessage("book-offers.browse-offers.request-error"),
           text: err.error.message,
           icon: 'error',
           showConfirmButton: false
@@ -113,8 +127,8 @@ export class OfferDetailsDialogComponent implements OnInit {
         this.disableSelect()
         Swal.fire({
           position: 'top-end',
-          title: 'Pomyśnie wymieniono książki',
-          text: 'Przejdź do strony z wymianami, żeby zobaczyć',
+          title: this.getTranslateMessage("book-offers.browse-offers.swap-success-title"),
+          text: this.getTranslateMessage("book-offers.browse-offers.swap-success-text"),
           icon: 'success',
           showConfirmButton: false
         })
@@ -122,7 +136,7 @@ export class OfferDetailsDialogComponent implements OnInit {
       err => {
         Swal.fire({
           position: 'top-end',
-          title: 'Nie można wymienić wybranych książek',
+          title: this.getTranslateMessage("book-offers.browse-offers.swap-error"),
           text: err.error.message,
           icon: 'error',
           showConfirmButton: false
@@ -143,7 +157,7 @@ export class OfferDetailsDialogComponent implements OnInit {
         err => {
           Swal.fire({
             position: 'top-end',
-            title: 'Nie można załadować aktualnych informacji o książce',
+            title: this.getTranslateMessage("book-offers.browse-offers.load-book-data-error"),
             text: err.error.message,
             icon: 'error',
             showConfirmButton: false
@@ -153,11 +167,11 @@ export class OfferDetailsDialogComponent implements OnInit {
   }
 
   checkIfAvailable(){
-    if(this.getStatus() !== 'Dostępna'){
+    if(this.getStatusValue() !== 0){
       Swal.fire({
         position: 'top-end',
-        title: 'Książka przed chwilą została wymieniona',
-        text: 'Nie jest możliwe złożenie oferty',
+        title: this.getTranslateMessage("book-offers.browse-offers.error-swapped-title"),
+        text: this.getTranslateMessage("book-offers.browse-offers.error-swapped-text"),
         icon: 'info',
         showConfirmButton: false
       })
@@ -166,6 +180,14 @@ export class OfferDetailsDialogComponent implements OnInit {
 
   disableSelect(){
     this.form.get("requestedBooksCtrl")?.disable();
+  }
+
+  getTranslateMessage(key: string): string{
+    let message = "";
+    this.translate.get(key).subscribe(data =>
+      message = data
+    );
+    return message;
   }
 
 }

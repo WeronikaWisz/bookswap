@@ -12,6 +12,8 @@ import com.bookswap.bookswapapp.repositories.UserRepository;
 import com.bookswap.bookswapapp.security.jwt.JwtUtils;
 import com.bookswap.bookswapapp.security.userdetails.UserDetailsI;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -48,6 +50,9 @@ public class AuthController {
     @Autowired
     JwtUtils jwtUtils;
 
+    @Autowired
+    private MessageSource messageSource;
+
     @PostMapping("/signin")
     public ResponseEntity<?> authenticateUser(@RequestBody LoginRequest loginRequest) {
 
@@ -74,13 +79,15 @@ public class AuthController {
         if (userRepository.existsByUsername(signUpRequest.getUsername())) {
             return ResponseEntity
                     .badRequest()
-                    .body(new MessageResponse("Nazwa użytkownika zajęta"));
+                    .body(new MessageResponse(messageSource.getMessage(
+                            "exception.usernameUsed", null, LocaleContextHolder.getLocale())));
         }
 
         if (userRepository.existsByEmail(signUpRequest.getEmail())) {
             return ResponseEntity
                     .badRequest()
-                    .body(new MessageResponse("Istnieje już podany adres e-mail w systemie"));
+                    .body(new MessageResponse(messageSource.getMessage(
+                            "exception.emailUsed", null, LocaleContextHolder.getLocale())));
         }
 
         String phoneNumber = signUpRequest.getPhone();
@@ -101,12 +108,14 @@ public class AuthController {
         Set<Role> roles = new HashSet<>();
 
         Role userRole = roleRepository.findByName(ERole.ROLE_USER)
-                .orElseThrow(() -> new RuntimeException("Brak roli user"));
+                .orElseThrow(() -> new RuntimeException(messageSource.getMessage(
+                        "exception.userRoleMissing", null, LocaleContextHolder.getLocale())));
         roles.add(userRole);
 
         user.setRoles(roles);
         userRepository.save(user);
 
-        return ResponseEntity.ok(new MessageResponse("Użytkownik został pomyślnie zarejestrowany"));
+        return ResponseEntity.ok(new MessageResponse(messageSource.getMessage(
+                "success.userRegister", null, LocaleContextHolder.getLocale())));
     }
 }

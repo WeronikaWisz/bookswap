@@ -5,19 +5,37 @@
                [mode]="'over'">
     <mat-toolbar>Menu</mat-toolbar>
     <mat-nav-list>
-      <h2 matSubheader>MOJE KSIĄŻKI</h2>
-      <a mat-list-item href routerLink="add-book"><mat-icon>add_circle_outline</mat-icon> <span class="button-text">Dodaj książkę</span></a>
-      <a mat-list-item href routerLink="my-books"><mat-icon>list_alt</mat-icon> <span class="button-text">Przeglądaj</span></a>
-      <h2 matSubheader>OFERTY</h2>
-      <a mat-list-item href routerLink="browse-offers"><mat-icon>search</mat-icon> <span class="button-text">Szukaj książek</span></a>
-      <a mat-list-item href routerLink="swap-requests/sent"><mat-icon>chevron_right</mat-icon> <span class="button-text">Złożone ofery</span></a>
-      <a mat-list-item href routerLink="swap-requests/received"><mat-icon>chevron_left</mat-icon> <span class="button-text">Otrzymane oferty</span></a>
-      <h2 matSubheader>WYMIANY</h2>
-      <a mat-list-item href routerLink="browse-swaps/permanent"><mat-icon>swap_horiz</mat-icon> <span class="button-text">Stałe</span></a>
-      <a mat-list-item href routerLink="browse-swaps/temporary"><mat-icon>access_time</mat-icon> <span class="button-text">Tymczasowe</span></a>
-      <h2 matSubheader>MOJE KONTO</h2>
-      <a mat-list-item href routerLink="profile"><mat-icon>person_outline</mat-icon> <span class="button-text">Mój profil</span></a>
-      <a mat-list-item href (click)="logout()"><mat-icon>logout</mat-icon> <span class="button-text">Wyloguj</span></a>
+      <h2 matSubheader>{{ 'nav.my-books' | translate}}</h2>
+      <a mat-list-item href routerLink="add-book"><mat-icon>add_circle_outline</mat-icon>
+        <span class="button-text">{{ 'nav.add-book' | translate}}</span>
+      </a>
+      <a mat-list-item href routerLink="my-books"><mat-icon>list_alt</mat-icon>
+        <span class="button-text">{{ 'nav.browse-books' | translate}}</span>
+      </a>
+      <h2 matSubheader>{{ 'nav.offers' | translate}}</h2>
+      <a mat-list-item href routerLink="browse-offers"><mat-icon>search</mat-icon>
+        <span class="button-text">{{ 'nav.search-books' | translate}}</span>
+      </a>
+      <a mat-list-item href routerLink="swap-requests/sent"><mat-icon>chevron_right</mat-icon>
+        <span class="button-text">{{ 'nav.send-requests' | translate}}</span>
+      </a>
+      <a mat-list-item href routerLink="swap-requests/received"><mat-icon>chevron_left</mat-icon>
+        <span class="button-text">{{ 'nav.received-requests' | translate}}</span>
+      </a>
+      <h2 matSubheader>{{ 'nav.swaps' | translate}}</h2>
+      <a mat-list-item href routerLink="browse-swaps/permanent"><mat-icon>swap_horiz</mat-icon>
+        <span class="button-text">{{ 'nav.permanent' | translate}}</span>
+      </a>
+      <a mat-list-item href routerLink="browse-swaps/temporary"><mat-icon>access_time</mat-icon>
+        <span class="button-text">{{ 'nav.temporary' | translate}}</span>
+      </a>
+      <h2 matSubheader>{{ 'nav.my-account' | translate}}</h2>
+      <a mat-list-item href routerLink="profile"><mat-icon>person_outline</mat-icon>
+        <span class="button-text">{{ 'nav.my-profile' | translate}}</span>
+      </a>
+      <a mat-list-item href (click)="logout()"><mat-icon>logout</mat-icon>
+        <span class="button-text">{{ 'nav.logout' | translate}}</span>
+      </a>
     </mat-nav-list>
   </mat-sidenav>
   <mat-sidenav-content>
@@ -30,37 +48,66 @@
         *ngIf="(isHandset$ | async) && isLoggedIn">
         <mat-icon aria-label="Side nav toggle icon">menu</mat-icon>
       </button>
-      <span>Bookswap</span>
+      <span>BookSwap</span>
+      <button mat-button [matMenuTriggerFor]="intern">
+        <mat-icon>language</mat-icon> {{translate.currentLang}}
+      </button>
+      <mat-menu #intern="matMenu">
+        <button (click)="translate.use(lang)" *ngFor="let lang of translate.getLangs()" mat-menu-item>
+          {{lang}}
+        </button>
+      </mat-menu>
       <span class="spacer"></span>
       <span *ngIf="(isHandset$ | async) === false && isLoggedIn">
-        <button mat-button [matMenuTriggerFor]="books">Moje książki</button>
+        <button mat-button [matMenuTriggerFor]="books">{{ 'nav.my-books-l' | translate}}</button>
         <mat-menu #books="matMenu">
-          <button mat-menu-item routerLink="add-book"><mat-icon>add_circle_outline</mat-icon> Dodaj książkę</button>
-          <button mat-menu-item routerLink="my-books"><mat-icon>list_alt</mat-icon> Przeglądaj</button>
+          <button mat-menu-item routerLink="add-book">
+            <mat-icon>add_circle_outline</mat-icon> {{ 'nav.add-book' | translate}}
+          </button>
+          <button mat-menu-item routerLink="my-books">
+            <mat-icon>list_alt</mat-icon> {{ 'nav.browse-books' | translate}}
+          </button>
         </mat-menu>
       </span>
       <span *ngIf="(isHandset$ | async) === false && isLoggedIn">
-        <button mat-button [matMenuTriggerFor]="offers">Oferty</button>
+        <button mat-button [matMenuTriggerFor]="offers">{{ 'nav.offers-l' | translate}}</button>
         <mat-menu #offers="matMenu">
-          <button mat-menu-item routerLink="browse-offers"><mat-icon>search</mat-icon> Szukaj książek</button>
-          <button mat-menu-item routerLink="swap-requests/sent"><mat-icon>chevron_right</mat-icon> Złożone ofery</button>
-          <button mat-menu-item routerLink="swap-requests/received"><mat-icon>chevron_left</mat-icon> Otrzymane oferty</button>
+          <button mat-menu-item routerLink="browse-offers">
+            <mat-icon>search</mat-icon> {{ 'nav.search-books' | translate}}
+          </button>
+          <button mat-menu-item routerLink="swap-requests/sent">
+            <mat-icon>chevron_right</mat-icon> {{ 'nav.send-requests' | translate}}
+          </button>
+          <button mat-menu-item routerLink="swap-requests/received">
+            <mat-icon>chevron_left</mat-icon> {{ 'nav.received-requests' | translate}}
+          </button>
         </mat-menu>
       </span>
       <span *ngIf="(isHandset$ | async) === false && isLoggedIn">
-        <button mat-button [matMenuTriggerFor]="swaps">Wymiany</button>
+        <button mat-button [matMenuTriggerFor]="swaps">{{ 'nav.swaps-l' | translate}}</button>
         <mat-menu #swaps="matMenu">
-          <button mat-menu-item routerLink="browse-swaps/permanent"><mat-icon>swap_horiz</mat-icon> Stałe</button>
-          <button mat-menu-item routerLink="browse-swaps/temporary"><mat-icon>access_time</mat-icon> Tymczasowe</button>
+          <button mat-menu-item routerLink="browse-swaps/permanent">
+            <mat-icon>swap_horiz</mat-icon> {{ 'nav.permanent' | translate}}
+          </button>
+          <button mat-menu-item routerLink="browse-swaps/temporary">
+            <mat-icon>access_time</mat-icon> {{ 'nav.temporary' | translate}}
+          </button>
         </mat-menu>
       </span>
-      <button mat-button [matMenuTriggerFor]="profile" *ngIf="isLoggedIn"><span class="user-info">{{username}}</span><mat-icon>person</mat-icon></button>
+      <button mat-button [matMenuTriggerFor]="profile" *ngIf="isLoggedIn">
+        <span class="user-info">{{username}}</span>
+        <mat-icon>person</mat-icon>
+      </button>
       <mat-menu #profile="matMenu">
-        <button mat-menu-item routerLink="profile"><mat-icon>person_outline</mat-icon> Mój profil</button>
-        <button mat-menu-item (click)="logout()"><mat-icon>logout</mat-icon> Wyloguj</button>
+        <button mat-menu-item routerLink="profile">
+          <mat-icon>person_outline</mat-icon> {{ 'nav.my-profile' | translate}}
+        </button>
+        <button mat-menu-item (click)="logout()">
+          <mat-icon>logout</mat-icon> {{ 'nav.logout' | translate}}
+        </button>
       </mat-menu>
-      <button mat-button *ngIf="!isLoggedIn" routerLink="login">Logowanie</button>
-      <button mat-button *ngIf="!isLoggedIn" routerLink="register">Rejestracja</button>
+      <button mat-button *ngIf="!isLoggedIn" routerLink="login">{{ 'nav.login' | translate}}</button>
+      <button mat-button *ngIf="!isLoggedIn" routerLink="register">{{ 'nav.register' | translate}}</button>
     </mat-toolbar>
     <ng-content></ng-content>
     <div class="content">

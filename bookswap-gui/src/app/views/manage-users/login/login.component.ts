@@ -4,6 +4,7 @@ import { TokenStorageService } from '../../../services/token-storage.service';
 import {FormBuilder, FormGroup, Validators} from "@angular/forms";
 import {ActivatedRoute, Router} from "@angular/router";
 import Swal from "sweetalert2";
+import {TranslateService} from "@ngx-translate/core";
 
 @Component({
   selector: 'app-login',
@@ -19,7 +20,7 @@ export class LoginComponent implements OnInit {
 
   constructor(private formBuilder: FormBuilder,
               private route: ActivatedRoute,
-              private router: Router,
+              private router: Router, private translate: TranslateService,
               private authService: AuthService, private tokenStorage: TokenStorageService) { }
 
   ngOnInit(): void {
@@ -46,14 +47,14 @@ export class LoginComponent implements OnInit {
         console.log(data.token);
         this.isLoggedIn = true;
         this.roles = this.tokenStorage.getUser().roles;
-        this.router.navigate(['/my-books']).then(() => this.reloadPage());
+        this.router.navigate(['/browse-offers']).then(() => this.reloadPage());
       },
       err => {
         this.form.controls['username'].setErrors({'incorrect': true});
         this.form.controls['password'].setErrors({'incorrect': true});
         Swal.fire({
           position: 'top-end',
-          title: 'Logowanie nie powiodło się',
+          title: this.getTranslateMessage("manage-users.login.error-message"),
           text: err.error.message,
           icon: 'error',
           showConfirmButton: false
@@ -64,6 +65,14 @@ export class LoginComponent implements OnInit {
 
   reloadPage(): void {
     window.location.reload();
+  }
+
+  getTranslateMessage(key: string): string{
+    let message = "";
+    this.translate.get(key).subscribe(data =>
+      message = data
+    );
+    return message;
   }
 
 }

@@ -4,6 +4,7 @@ import { Observable } from 'rxjs';
 import { map, shareReplay } from 'rxjs/operators';
 import {TokenStorageService} from "../services/token-storage.service";
 import {Router} from "@angular/router";
+import {TranslateService} from "@ngx-translate/core";
 
 @Component({
   selector: 'app-main-nav',
@@ -22,7 +23,7 @@ export class MainNavComponent implements OnInit {
   isLoggedIn = false;
   username?: string;
 
-  constructor(private tokenStorageService: TokenStorageService,
+  constructor(private tokenStorageService: TokenStorageService, public translate: TranslateService,
               private breakpointObserver: BreakpointObserver,
               private router: Router) { }
 
