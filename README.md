@@ -4,7 +4,14 @@
 
 ### Prezentacja działania
 
-https://user-images.githubusercontent.com/32033773/182341503-515c48a6-1398-4474-9401-0d85396fc006.mp4
+
+
+
+https://user-images.githubusercontent.com/32033773/182342333-8b50ef36-0cb3-4417-bedc-eb7ca724132c.mp4
+
+
+
+
 
 ### Przed uruchomieniem aplikacji należy zainstalować:
 
