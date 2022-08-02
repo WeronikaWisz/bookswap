@@ -1,5 +1,12 @@
-# bookswap
-Przed uruchomieniem aplikacji należy zainstalować:
+# BookSwap
+
+**Aplikacja webowa, która umożliwia wymianę książek pomiędzy użytkownikami w prosty i szybki sposób.**
+
+### Prezentacja działania
+
+https://user-images.githubusercontent.com/32033773/182341503-515c48a6-1398-4474-9401-0d85396fc006.mp4
+
+### Przed uruchomieniem aplikacji należy zainstalować:
 
   * Intellij IDEA (bądź inne wybrane środowisko programistyczne).
   * Node.js oraz npm package manager - do uruchomienia części klienta.
