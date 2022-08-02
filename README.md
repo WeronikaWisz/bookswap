@@ -3,6 +3,7 @@
 Aplikacja webowa, która umożliwia wymianę książek pomiędzy użytkownikami w prosty i szybki sposób.
 
 ### Prezentacja działania
+Na prezentacji otworzono obok siebie dwa ekrany aplikacji z zalogowanymi różnymi użytkownikami, aby przedstawić jak działa wymiana.
 
 
 
