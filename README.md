@@ -1,6 +1,6 @@
 # BookSwap
 
-**Aplikacja webowa, która umożliwia wymianę książek pomiędzy użytkownikami w prosty i szybki sposób.**
+Aplikacja webowa, która umożliwia wymianę książek pomiędzy użytkownikami w prosty i szybki sposób.
 
 ### Prezentacja działania
 
